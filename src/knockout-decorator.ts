@@ -19,11 +19,13 @@ namespace variotry.KnockoutDecorator
 		});
 	}
 
-	export function observableArray( target: any, propertyKey: string ): void
+
+	// implement later
+	/*export function observableArray( target: any, propertyKey: string ): void
 	{
-		/*var v = target[propertyKey];
-		var o = ko.observableArray();*/
-	}
+		var v = target[propertyKey];
+		var o = ko.observableArray();
+	}*/
 
 	export function computed(): MethodDecorator
 	export function computed( extend: { [key: string]: any }): MethodDecorator;
