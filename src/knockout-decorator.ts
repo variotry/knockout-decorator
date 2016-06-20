@@ -11,7 +11,7 @@ namespace variotry.KnockoutDecorator
 	export function observable( target:any, propertyKey:string ) : void
 	{
 		var v = target[propertyKey];
-		var o = ko.observable( v );
+		var o = ko.observable();
 		pushObservable( target, propertyKey, o );
 		Object.defineProperty( target, propertyKey, {
 			get: o,
@@ -20,12 +20,52 @@ namespace variotry.KnockoutDecorator
 	}
 
 
-	// implement later
-	/*export function observableArray( target: any, propertyKey: string ): void
+	export function observableArray( target: any, propertyKey: string ): void
 	{
+		function replaceFunction( src: any[] )
+		{
+			var originals: { [fn: string]: Function } = {};
+			[ "splice", "pop", "push", "shift", "unshift", "reverse", "sort" ].forEach( fnName =>
+			{
+				originals[fnName] = src[fnName];
+				var mimicry = function ()
+				{
+					//console.log( "call mimicry,", fnName );
+
+					// restore the original function for call it inside ObservableArray.
+					src[fnName] = originals[fnName];
+
+					// call ObservableArray function
+					var res = ( o[fnName] as any ).apply( o, arguments );
+
+					// rewrite the original function again.
+					src[fnName] = mimicry;
+
+					return res;
+				};
+
+				// rewrite the original function
+				src[fnName] = mimicry;
+			});
+			
+			var nums: number[] = [];
+		}
+
+
 		var v = target[propertyKey];
-		var o = ko.observableArray();
-	}*/
+		//console.log( "v is,", v, target );
+		var o = ko.observableArray( v );
+		pushObservable( target, propertyKey, o );
+		Object.defineProperty( target, propertyKey, {
+			get: o,
+			set: newArray =>
+			{
+				replaceFunction( newArray );
+				//console.log( "new array is", newArray );
+				o( newArray );
+			}
+		});
+	}
 
 	export function computed(): MethodDecorator
 	export function computed( extend: { [key: string]: any }): MethodDecorator;
