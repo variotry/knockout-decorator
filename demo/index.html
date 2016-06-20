@@ -10,7 +10,9 @@
     <h1>Knockout Decorator Demo</h1>
 
     <div id="content">
-		x is <!-- ko text:x --><!-- /ko -->
+		first name <input type="text" data-bind="value:firstName" /><br />
+		family name <input type="text" data-bind="value:familyName" /><br />
+		full name <input type="text" data-bind="value:fullName" /><br />
 	</div>
 
 	<script src="js/knockout.js"></script>
