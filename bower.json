@@ -1,0 +1,7 @@
+{
+    "name": "knockout-decorator",
+    "private": true,
+	"dependencies": {
+		"knockout": "3.4.0"
+	}
+}
