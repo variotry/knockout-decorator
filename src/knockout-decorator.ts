@@ -6,14 +6,7 @@
 
 namespace variotry.KnockoutDecorator
 {
-	var storeObservableKey = "__vtKnockoutObservables__";
-	function pushObservable( target: any, propertyKey: string, o: KnockoutObservable<any> | KnockoutComputed<any> )
-	{
-		if ( !target[storeObservableKey] ) target[storeObservableKey] = [];
-
-		var store = target[storeObservableKey];
-		store[propertyKey] = o;
-	}
+	
 
 	export function observable( target:any, propertyKey:string ) : void
 	{
@@ -60,4 +53,34 @@ namespace variotry.KnockoutDecorator
 			}
 		}
 	}
+
+	export function getObservable<T>( target: any, propertyKey ): KnockoutObservable<T>
+	{
+		var o = getObservableObject( target, propertyKey );
+		return ko.isObservable( o ) ? o : null;
+	}
+
+	export function getComputed<T>( target: any, propertyKey ): KnockoutComputed<T>
+	{
+		var c = getObservableObject( target, propertyKey );
+		return ko.isComputed( c ) ? c : null;
+	}
+
+	// #region no export
+	const storeObservableKey = "__vtKnockoutObservables__";
+	function pushObservable( target: any, propertyKey: string, o: KnockoutObservable<any> | KnockoutComputed<any> )
+	{
+		if ( !target[storeObservableKey] ) target[storeObservableKey] = [];
+
+		var store = target[storeObservableKey];
+		store[propertyKey] = o;
+	}
+
+	function getObservableObject( target: any, propertyKey: string ): any
+	{
+		var store = target[storeObservableKey];
+		if ( !store ) return null;
+		return store[propertyKey];
+	}
+	// #endregion
 }
