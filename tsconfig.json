@@ -5,7 +5,8 @@
 		"removeComments": false,
 		"sourceMap": false,
 		"target": "es5",
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"allowUnreachableCode": true
 	},
 	"exclude": [
 		"node_modules",

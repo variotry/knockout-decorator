@@ -15,7 +15,8 @@ gulp.task( "build:ts", () =>
 {
 	gulp.task( "_build:ts", () => buildTypeScript( "src/**/*.ts", "dist" ) );
 	gulp.task( "_build:devTs", () => buildTypeScript( "src/**/*.ts", "dist", { min: false } ) );
-	return sequence( ["_build:ts", "_build:devTs"] );
+	gulp.task( "_build:demo", () => buildTypeScript( "src/**/*.ts", "demo/js", { min: false, sourceMap: true } ) );
+	return sequence( ["_build:ts", "_build:devTs", "_build:demo"] );
 } );
 
 gulp.task( "watch:ts", ["build:ts"], () =>
@@ -25,7 +26,6 @@ gulp.task( "watch:ts", ["build:ts"], () =>
 
 gulp.task( "build:demo", () =>
 {
-	gulp.task( "_build:ts", () => buildTypeScript( "src/**/*.ts", "demo/js", { min:false, sourceMap: true } ) );
 	gulp.task( "_buildDemo:ts", () => buildTypeScript( "demo/ts/**/*.ts", "demo/js", { min:false, sourceMap: true } ) );
 	gulp.task( "_buildDemo:sass", () =>
 	{
@@ -36,7 +36,7 @@ gulp.task( "build:demo", () =>
 			.pipe( sourcemaps.write( "../sourcemaps/sass" ) )
 			.pipe( gulp.dest( "demo/css" ) );
 	} );
-	return sequence( ["_build:ts", "_buildDemo:ts", "_buildDemo:sass"] );
+	return sequence( [ "_buildDemo:ts", "_buildDemo:sass"] );
 } );
 
 gulp.task( "install:bower", () =>

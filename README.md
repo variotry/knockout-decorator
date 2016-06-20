@@ -1,1 +1,4 @@
 # knockout-decorator
+
+## License
+MIT
