@@ -20,6 +20,8 @@
 		"run-sequence": "1.2.1",
 		"gulp-typescript": "2.13.6",
 		"gulp-sass": "2.3.2",
-		"gulp-bower": "0.0.13"
+		"gulp-bower": "0.0.13",
+		"typedoc": "0.4.4",
+		"gulp-typedoc": "2.0.0"
 	}
 }

@@ -9,7 +9,8 @@ var gulp = require( "gulp" ),
 	sequence = require( "run-sequence" ),
 	typescript = require( "gulp-typescript" ),
 	sass = require( "gulp-sass" ),
-	bower = require( "gulp-bower" );
+	bower = require( "gulp-bower" ),
+	typedoc = require( "gulp-typedoc" );
 
 gulp.task( "build:ts", () =>
 {
@@ -55,6 +56,19 @@ gulp.task( "install:typings", () =>
 {
 	return gulp.src( "./typings.json" )
 			.pipe(typings());
+} );
+
+gulp.task( "doc:ts", () =>
+{
+	return gulp.src( ["src/**/*.ts", "typings/index.d.ts"] )
+	.pipe( typedoc( {
+		module:"amd",
+		target: "es5",
+		out: "docs",
+		mode: "file",
+		name: "knockout-decorator.",
+		version:true
+	}));
 } );
 
 function buildTypeScript( src, dest, options )
