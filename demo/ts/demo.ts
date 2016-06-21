@@ -1,6 +1,7 @@
 ﻿/// <reference path="../../src/knockout-decorator.ts" />
 
 var vt = variotry.KnockoutDecorator;
+type ObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
 class Demo
 {
@@ -29,7 +30,7 @@ class Demo
 
 
 	@vt.observableArray
-	public list = ["a", "x", "t"];
+	public list = ["a", "x", "t"] as ObservableArray<string>;
 
 	public list2 = ko.observableArray( ["a", "x", "t"] );
 
@@ -78,20 +79,31 @@ class Demo
 			//var e2 = this.list2.reverse();
 			//console.log( e, e2 );
 
-			//var f = this.list.sort();
-			//var f2 = this.list2.sort();
-			//console.log( f, f2 );
+			/*var f = this.list.sort();
+			var f2 = this.list2.sort();
+			console.log( f, f2 );*/
 
-			
-			/*this.list.push( "g" );
+			/*var g = this.list.remove( "x" ); 
+			var g2 = this.list2.remove( "x" ); 
+			console.log( g, g2 );*/
+
+			/*var h = this.list.removeAll();
+			var h2= this.list2.removeAll();
+			console.log( h, h2 );*/
+
+			/*var i = this.list.replace( "x", "newX" );
+			var i2 = this.list2.replace( "x", "newX" );
+			console.log( i, i2 );*/
+					
+			this.list.push( "g" );
 			this.list.push( "h" );
 			this.list.push( "i" );
 
 			this.list2.push( "g" );
 			this.list2.push( "h" );
-			this.list2.push( "i" );*/
+			this.list2.push( "i" );
 		
-			//popArray();
+			popArray();
 		}, 1000 );
 
 		var popArray = () =>
@@ -99,7 +111,8 @@ class Demo
 			var id = setInterval(() =>
 			{
 				this.list.pop();
-				if ( this.list.length == 0 )
+				this.list2.pop();
+				if ( this.list.length === 0 && this.list2.length === 0 )
 				{
 					clearInterval( id );
 				}

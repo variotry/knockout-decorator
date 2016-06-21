@@ -14,10 +14,16 @@
 		family name <input type="text" data-bind="value:familyName" /><br />
 		full name <input type="text" data-bind="value:fullName" /><br />
 
+		<div>
+			list length is <!-- ko text:list.length --><!-- /ko -->
+		</div>
 		<ul data-bind="foreach:list">
 			<li data-bind="text:$data"></li>
 		</ul>
 		<hr />
+		<div>
+			list2 length is <!-- ko text:list2().length --><!-- /ko -->
+		</div>
 		<ul data-bind="foreach:list2">
 			<li data-bind="text:$data"></li>
 		</ul>

@@ -6,7 +6,20 @@
 
 namespace variotry.KnockoutDecorator
 {
-	
+	export interface IObservableArray<T> extends Array<T>
+	{
+		replace( oldItem: T, newItem: T ): void;
+
+		remove( item: T ): T[];
+		remove( removeFunction: ( item: T ) => boolean ): T[];
+		removeAll( items: T[] ): T[];
+		removeAll(): T[];
+
+		destroy( item: T ): void;
+		destroy( destroyFunction: ( item: T ) => boolean ): void;
+		destroyAll( items: T[] ): void;
+		destroyAll(): void;
+	}
 
 	export function observable( target:any, propertyKey:string ) : void
 	{
@@ -22,6 +35,7 @@ namespace variotry.KnockoutDecorator
 
 	export function observableArray( target: any, propertyKey: string ): void
 	{
+		var o = ko.observableArray();
 		function replaceFunction( src: any[] )
 		{
 			var originals: { [fn: string]: Function } = {};
@@ -36,7 +50,7 @@ namespace variotry.KnockoutDecorator
 					src[fnName] = originals[fnName];
 
 					// call ObservableArray function
-					var res = ( o[fnName] as any ).apply( o, arguments );
+					var res = ( o[fnName] as Function ).apply( o, arguments );
 
 					// rewrite the original function again.
 					src[fnName] = mimicry;
@@ -50,17 +64,28 @@ namespace variotry.KnockoutDecorator
 			
 			var nums: number[] = [];
 		}
+		function mergeFunction( src: any[] )
+		{
+			["replace", "remove", "removeAll", "destroy", "destroyAll"].forEach( fnName =>
+			{
+				src[fnName] = function ()
+				{
+					return ( o[fnName] as Function ).apply( o, arguments );
+				};
+			});
+		}
 
-
-		var v = target[propertyKey];
-		//console.log( "v is,", v, target );
-		var o = ko.observableArray( v );
 		pushObservable( target, propertyKey, o );
 		Object.defineProperty( target, propertyKey, {
 			get: o,
 			set: newArray =>
 			{
+				if ( newArray && Array.isArray( newArray ) === false )
+				{					
+					throw target["constructor"].name + "." + propertyKey + " attached the observableArray decorator must be array.";
+				}
 				replaceFunction( newArray );
+				mergeFunction( newArray );
 				//console.log( "new array is", newArray );
 				o( newArray );
 			}
