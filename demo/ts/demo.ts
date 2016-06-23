@@ -11,7 +11,7 @@ class Demo
 	@vt.observable
 	private familyName: string = "try";
 
-	@vt.computed()
+	@vt.computed
 	private get fullName() { return this.firstName + " " + this.familyName; }
 	private set fullName( name : string )
 	{
@@ -27,7 +27,6 @@ class Demo
 			this.familyName = "";
 		}
 	}
-
 
 	@vt.observableArray
 	public list = ["a", "x", "t"] as ObservableArray<string>;
@@ -54,6 +53,9 @@ class Demo
 		this.list2.push( "i" );
 		this.list2.push( "v" );
 
+		var o1 = vt.getObservable<string>( this, "firstName" );
+		var o2 = vt.getObservableArray<string>( this, "list" );
+		var o3 = vt.getObservable<string>( this, "fullName" );
 
 		setTimeout(() =>
 		{
