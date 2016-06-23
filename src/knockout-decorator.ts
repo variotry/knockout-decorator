@@ -44,12 +44,12 @@ namespace variotry.KnockoutDecorator
 	 * Just attach to a property as decorator.
 	 * If you change a property value, a view will also change. And vice versa.
 	 */
-	export function observable( target:any, propertyKey:string ) : void
+	export function observable( target:any, propertyName:string ) : void
 	{
-		var v = target[propertyKey];
+		var v = target[propertyName];
 		var o = ko.observable();
-		pushObservable( target, propertyKey, o );
-		Object.defineProperty( target, propertyKey, {
+		pushObservable( target, propertyName, o );
+		Object.defineProperty( target, propertyName, {
 			get: o,
 			set: o
 		});
@@ -60,7 +60,7 @@ namespace variotry.KnockoutDecorator
 	 * If you set a property to a new array data, a view will also change.
 	 * If you call a Array function such as push or pop, a view will also change.
 	 */
-	export function observableArray( target: any, propertyKey: string ): void
+	export function observableArray( target: any, propertyName: string ): void
 	{
 		var o = ko.observableArray();
 		function replaceFunction( src: any[] )
@@ -100,14 +100,14 @@ namespace variotry.KnockoutDecorator
 			});
 		}
 
-		pushObservable( target, propertyKey, o );
-		Object.defineProperty( target, propertyKey, {
+		pushObservable( target, propertyName, o );
+		Object.defineProperty( target, propertyName, {
 			get: o,
 			set: newArray =>
 			{
 				if ( newArray && Array.isArray( newArray ) === false )
 				{					
-					throw target["constructor"].name + "." + propertyKey + " attached the observableArray decorator must be array.";
+					throw target["constructor"].name + "." + propertyName + " attached the observableArray decorator must be array.";
 				}
 				replaceFunction( newArray );
 				mergeFunction( newArray );
@@ -122,7 +122,7 @@ namespace variotry.KnockoutDecorator
 	 * When changed a observable property value inside a getter, it will be called.
 	 * If you define also a setter, you can use it as writable computed.
 	 */
-	export function computed( target: any, propertyKey: string, descriptor: PropertyDescriptor ): MethodDecorator;
+	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): MethodDecorator;
 	/**
 	 * Just attach to a property accessor as decorator.
 	 * @param extend	KnockoutComputed.extend options Such as { throttle:500 }.
@@ -160,25 +160,36 @@ namespace variotry.KnockoutDecorator
 
 	/**
 	 * Get raw knockout observable object.
-	 * @param target		Instance object.
-	 * @param propertyKey	Name of a property which have the @observable.
+	 * @param target	Instance object.
+	 * @param propertyName		Name of a property which is attached the @observable.
 	 * @return If found then KnockoutObservable object, else null.
 	 */
-	export function getObservable<T>( target: any, propertyKey ): KnockoutObservable<T>
+	export function getObservable<T>( target: any, propertyName: string ): KnockoutObservable<T>
 	{
-		var o = getObservableObject( target, propertyKey );
-		return ko.isObservable( o ) ? o : null;
+		var o = getObservableObject( target, propertyName );
+		return ( ko.isObservable( o ) && o.indexOf === undefined ) ? o : null;
+	}
+
+	/**
+	 * Get row knockout observable array object.
+	 * @param target	Instance object.
+	 * @param propertyName		Name of a property which is attached the @observableArray.
+	 */
+	export function getObservableArray<T>( target: any, propertyName: string ): KnockoutObservableArray<T>
+	{
+		var o = getObservableObject( target, propertyName );
+		return ( ko.isObservable( o ) && o.indexOf !== undefined ) ? o : null;
 	}
 
 	/**
 	 * Get raw knockout computed object.
-	 * @param target		Instance object.
-	 * @param propertyKey	Name of a property which have the @computed.
+	 * @param target	Instance object.
+	 * @param propertyName		Name of a property which is attached the @computed.
 	 * @return If found then KnockoutComputed object, else null.
 	 */
-	export function getComputed<T>( target: any, propertyKey ): KnockoutComputed<T>
+	export function getComputed<T>( target: any, propertyName: string ): KnockoutComputed<T>
 	{
-		var c = getObservableObject( target, propertyKey );
+		var c = getObservableObject( target, propertyName );
 		return ko.isComputed( c ) ? c : null;
 	}
 
@@ -188,20 +199,19 @@ namespace variotry.KnockoutDecorator
 	const storeObservableKey = "__vtKnockoutObservables__";
 
 	/** @private */
-	function pushObservable( target: any, propertyKey: string, o: KnockoutObservable<any> | KnockoutComputed<any> )
+	function pushObservable( target: any, propertyName: string, o: KnockoutObservable<any> | KnockoutObservableArray<any> | KnockoutComputed<any> )
 	{
+		console.log( "push,", propertyName );
 		if ( !target[storeObservableKey] ) target[storeObservableKey] = [];
-
-		var store = target[storeObservableKey];
-		store[propertyKey] = o;
+		target[storeObservableKey][propertyName] = o;
 	}
 
 	/** @private */
-	function getObservableObject( target: any, propertyKey: string ): any
+	function getObservableObject( target: any, propertyName: string ): any
 	{
 		var store = target[storeObservableKey];
 		if ( !store ) return null;
-		return store[propertyKey];
+		return store[propertyName];
 	}
 	// #endregion
 }
