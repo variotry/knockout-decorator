@@ -119,18 +119,25 @@ namespace variotry.KnockoutDecorator
 
 	/**
 	 * Just attach to a property accessor as decorator.
-	 * When changed a observable property value inside a getter, it will be called.
-	 * If you define also a setter, you can use it as writable computed.
+	 * If a observable property value in the getter is changed, it will be called.
+	 * If you define also a setter, you can treat as writable computed.
 	 */
-	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): MethodDecorator;
+	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void;
 	/**
 	 * Just attach to a property accessor as decorator.
 	 * @param extend	KnockoutComputed.extend options Such as { throttle:500 }.
 	 */
 	export function computed( extend: { [key: string]: any }): MethodDecorator;
-	export function computed( extend?: { [key: string]: any }): MethodDecorator
+	export function computed() : any
 	{
-		return ( target: any, propertyKey: string, descriptor: PropertyDescriptor ) =>
+		var extend: { [key: string]: any; };
+		if ( arguments.length === 1 )
+		{
+			extend = arguments[0];
+		}
+
+		// decorator factory.
+		function factory ( target: any, propertyName: string, descriptor: PropertyDescriptor ) : void
 		{
 			var getter = descriptor.get;
 			var setter = descriptor.set;
@@ -145,7 +152,7 @@ namespace variotry.KnockoutDecorator
 				c.extend( extend );
 			}
 
-			pushObservable( target, propertyKey, c );
+			pushObservable( target, propertyName, c );
 
 			if ( getter )
 			{
@@ -155,7 +162,17 @@ namespace variotry.KnockoutDecorator
 			{
 				descriptor.set = c;
 			}
+		};
+
+		if ( arguments.length === 1 )
+		{
+			// return decorator factory if @computed is attached with argument.
+			return factory;
 		}
+
+		// Decorator factory aren't executed if @computed is attached without argument,
+		// thus I execute it and don't return it.
+		factory.apply( this, arguments );
 	}
 
 	/**
