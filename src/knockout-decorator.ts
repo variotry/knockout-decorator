@@ -44,10 +44,9 @@ namespace variotry.KnockoutDecorator
 	 * Just attach to a property as decorator.
 	 * If you change a property value, a view will also change. And vice versa.
 	 */
-	export function observable( target:any, propertyName:string ) : void
+	export function observable( target: any, propertyName: string ): void
 	{
-		var v = target[propertyName];
-		var o = ko.observable();
+		let o = ko.observable();
 		pushObservable( target, propertyName, o );
 		Object.defineProperty( target, propertyName, {
 			get: o,
@@ -62,20 +61,20 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function observableArray( target: any, propertyName: string ): void
 	{
-		var o = ko.observableArray();
+		let o = ko.observableArray();
 		function replaceFunction( src: any[] )
 		{
-			var originals: { [fn: string]: Function } = {};
+			let originals: { [fn: string]: Function } = {};
 			[ "splice", "pop", "push", "shift", "unshift", "reverse", "sort" ].forEach( fnName =>
 			{
 				originals[fnName] = src[fnName];
-				var mimicry = function ()
+				let mimicry = function ()
 				{
 					// restore the original function for call it inside ObservableArray.
 					src[fnName] = originals[fnName];
 
 					// call ObservableArray function
-					var res = ( o[fnName] as Function ).apply( o, arguments );
+					let res = ( o[fnName] as Function ).apply( o, arguments );
 
 					// rewrite the original function again.
 					src[fnName] = mimicry;
@@ -86,8 +85,6 @@ namespace variotry.KnockoutDecorator
 				// rewrite the original function
 				src[fnName] = mimicry;
 			});
-			
-			var nums: number[] = [];
 		}
 		function mergeFunction( src: any[] )
 		{
@@ -106,7 +103,7 @@ namespace variotry.KnockoutDecorator
 			set: newArray =>
 			{
 				if ( newArray && Array.isArray( newArray ) === false )
-				{					
+				{
 					throw target["constructor"].name + "." + propertyName + " attached the observableArray decorator must be array.";
 				}
 				replaceFunction( newArray );
@@ -128,21 +125,21 @@ namespace variotry.KnockoutDecorator
 	 * @param extend	KnockoutComputed.extend options Such as { throttle:500 }.
 	 */
 	export function computed( extend: { [key: string]: any }): MethodDecorator;
-	export function computed() : any
+	export function computed(): any
 	{
-		var extend: { [key: string]: any; };
+		let extend: { [key: string]: any; };
 		if ( arguments.length === 1 )
 		{
 			extend = arguments[0];
 		}
 
 		// decorator factory.
-		function factory ( target: any, propertyName: string, descriptor: PropertyDescriptor ) : void
+		function factory( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
 		{
-			var getter = descriptor.get;
-			var setter = descriptor.set;
+			let getter = descriptor.get;
+			let setter = descriptor.set;
 
-			var c = ko.computed( {
+			let c = ko.computed( {
 				read: getter ? () => getter.call( target ) : null,
 				write: setter ? ( v ) => setter.call( target, v ) : null
 			});
@@ -183,7 +180,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function getObservable<T>( target: any, propertyName: string ): KnockoutObservable<T>
 	{
-		var o = getObservableObject( target, propertyName );
+		let o = getObservableObject( target, propertyName );
 		return ( ko.isObservable( o ) && o.indexOf === undefined ) ? o : null;
 	}
 
@@ -194,7 +191,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function getObservableArray<T>( target: any, propertyName: string ): KnockoutObservableArray<T>
 	{
-		var o = getObservableObject( target, propertyName );
+		let o = getObservableObject( target, propertyName );
 		return ( ko.isObservable( o ) && o.indexOf !== undefined ) ? o : null;
 	}
 
@@ -206,7 +203,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function getComputed<T>( target: any, propertyName: string ): KnockoutComputed<T>
 	{
-		var c = getObservableObject( target, propertyName );
+		let c = getObservableObject( target, propertyName );
 		return ko.isComputed( c ) ? c : null;
 	}
 
@@ -226,7 +223,7 @@ namespace variotry.KnockoutDecorator
 	/** @private */
 	function getObservableObject( target: any, propertyName: string ): any
 	{
-		var store = target[storeObservableKey];
+		let store = target[storeObservableKey];
 		if ( !store ) return null;
 		return store[propertyName];
 	}
