@@ -1,0 +1,86 @@
+# knockout-decorator
+
+このプラグインは普段通りにプロパティを扱いならがも Knockout observable の機能を提供します。
+
+## インストール
+
+htmlに以下の様に記述して下さい。
+
+    <script src="path/knockout.js"></script>
+    <script src="path/knockout-decorator.js"></script>
+    
+## 使い方
+
+最初に `var vt = variotry.KnockoutDecorator` ようにショートネームを定義します。
+
+### 1.observable object の利用
+
+以下の様にプロパティに "@vt.observable" をアタッチして下さい。
+
+    @vt.observable
+    public firstName = "Bob";
+
+このコードは `public firstName = ko.observable("Bob")` と同様です。
+
+しかし、プロパティにアクセスする際に括弧'()'を書く必要がありません。
+
+プロパティに値をセット（例： `this.firstName = "John"` ）すると、ビューも更新されます。
+その逆も然りです。
+
+
+### 2.observable array の利用
+
+以下の様に配列型のプロパティに "@vt.observableArray" をアタッチしてください。
+
+    @vt.observableArray
+    public list = [ "data1", "data2", "data3" ];
+
+このコードは `public list = ko.observableArray([ "data1", "data2", "data3" ])` と同様です。
+
+プロパティに新しい配列データをセット( 例： `this.list = ["newData1", "newData2"]` )すると、ビューも更新されます。
+
+push, pop といった Array 関数を呼ぶと ( 例： `this.list.push("data4")`)、ビューも更新されます。
+
+
+以下に示すようキャストを行うと、インテリセンスの働きで KnockoubObservableArray の関数に簡単にアクセスできます。
+
+    @vt.observableArray
+    public list = [ "data1", "data2", "data3" ] as IObservableArray<string>;
+    
+(IObservableArray&lt;T&gt; は `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` のようにショートネーム定義しました）
+
+### 3.computed の利用
+
+以下の様にアクセッサにアタッチしてください。
+
+    @vt.observable
+    public firstName = "Bob";
+    
+    @vt.observable
+    public lastName = "Smith";
+    
+    @vt.computed
+    public get fullName() { return this.firstName + " " + this.lastName; }
+
+
+このコードは `public firstName  = ko.computed( () => this.firstName + " " + this.lastName )` と同様です。
+
+firstName もしくは lastName が変更されると、fullNameゲッターが呼ばれます。
+
+なお、setter も用意することで 書き込み可能な computed として利用できます。
+
+## 必須要件
+
+knockout(http://knockoutjs.com/)
+
+tsConfig.json の compilerOptions.experimentalDecorators を true にセット
+
+ es5 サポートブラウザ
+
+## License
+
+MIT (http://www.opensource.org/licenses/mit-license.php)
+
+## Author
+
+[vario](https://github.com/variotry/)
