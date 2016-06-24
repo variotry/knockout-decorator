@@ -46,9 +46,9 @@ You can easily access KnockoubObservableArray functions via intellisense by conv
     
 (Define IObservableArray&lt;T&gt; as `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` )
 
-### 3.Use computed
+### 3.Use pureComputed and computed
 
-Just attach "@vt.computed" to a accessor as below.
+Just attach "@vt.pureComputed" or "@vt.computed" to a accessor as below.
 
     @vt.observable
     public firstName = "Bob";
@@ -56,14 +56,41 @@ Just attach "@vt.computed" to a accessor as below.
     @vt.observable
     public lastName = "Smith";
     
-    @vt.computed
+    @vt.pureComputed
     public get fullName() { return this.firstName + " " + this.lastName; }
 
-This code similar to `public firstName  = ko.computed( () => this.firstName + " " + this.lastName )`.
+This code similar to `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName )`.
 
 When firstName or lastname is change, fullName getter will be called.
 
 In addition, you can treat as writable computed if you define also setter.
+
+### 4.Use extenders
+
+Just attach "@vt.extend to a property or accessor which is attached observable decorator as below.
+
+    @vt.pureComputed
+    @vt.extend( { rateLimit: 500 } )
+    public get fullName() { return this.firstName + " " + this.lastName; }
+    
+This code similar to `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName ).extend( { rateLimit: 500 } );`
+
+
+### 5.Get raw knockout observable object
+
+You can get a knockout observable object by using below functions.
+
+    getObservable<T>
+    getObservableArray<T>
+    getComputed<T>
+    
+Example of use.
+
+    getObservable<string>( this, "firstName" ).subscribe( newValue =>
+    {
+        console.log( "firstName value is", newValue );
+    });
+
 
 ## Requirement
 

@@ -49,9 +49,9 @@ push, pop ‚Æ‚¢‚Á‚½ Array ŠÖ”‚ğŒÄ‚Ô‚Æ ( —áF `this.list.push("data4")`)Aƒrƒ…[‚
     
 (IObservableArray&lt;T&gt; ‚Í `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` ‚Ì‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€’è‹`‚µ‚Ü‚µ‚½j
 
-### 3.computed ‚Ì—˜—p
+### 3.pureComputedAcomputed ‚Ì—˜—p
 
-ˆÈ‰º‚Ì—l‚ÉƒAƒNƒZƒbƒT‚ÉƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B
+ˆÈ‰º‚Ì—l‚ÉƒAƒNƒZƒbƒT‚É "@vt.pureComputed" ‚à‚µ‚­‚Í "@vt.computed" ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B
 
     @vt.observable
     public firstName = "Bob";
@@ -59,15 +59,40 @@ push, pop ‚Æ‚¢‚Á‚½ Array ŠÖ”‚ğŒÄ‚Ô‚Æ ( —áF `this.list.push("data4")`)Aƒrƒ…[‚
     @vt.observable
     public lastName = "Smith";
     
-    @vt.computed
+    @vt.pureComputed
     public get fullName() { return this.firstName + " " + this.lastName; }
 
 
-‚±‚ÌƒR[ƒh‚Í `public firstName  = ko.computed( () => this.firstName + " " + this.lastName )` ‚Æ“¯—l‚Å‚·B
+‚±‚ÌƒR[ƒh‚Í `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName )` ‚Æ“¯—l‚Å‚·B
 
 firstName ‚à‚µ‚­‚Í lastName ‚ª•ÏX‚³‚ê‚é‚ÆAfullNameƒQƒbƒ^[‚ªŒÄ‚Î‚ê‚Ü‚·B
 
-‚È‚¨Asetter ‚à—pˆÓ‚·‚é‚±‚Æ‚Å ‘‚«‚İ‰Â”\‚È computed ‚Æ‚µ‚Ä—˜—p‚Å‚«‚Ü‚·B
+‚È‚¨Asetter ‚à—pˆÓ‚·‚é‚±‚Æ‚Å‘‚«‚İ‰Â”\‚È computed ‚Æ‚µ‚Ä—˜—p‚Å‚«‚Ü‚·B
+
+### 4.extenders ‚Ì—˜—p
+
+ˆÈ‰º‚Ì—l‚É observable ƒfƒRƒŒ[ƒ^‚ğƒAƒ^ƒbƒ`‚µ‚½ƒvƒƒpƒeƒB‚É "@vt.extend" ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢
+
+    @vt.pureComputed
+    @vt.extend( { rateLimit: 500 } )
+    public get fullName() { return this.firstName + " " + this.lastName; }
+
+‚±‚ÌƒR[ƒh‚Í `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName ).extend( { rateLimit:500 } )` ‚Æ“¯—l‚Å‚·B
+
+### 5.Œ³‚Æ‚È‚é knockout observable ƒIƒuƒWƒFƒNƒg‚Ìæ“¾
+
+ˆÈ‰º‚ÌŠÖ”‚ğg‚¤–‚ÅAknockout observable ƒIƒuƒWƒFƒNƒg‚ğæ“¾‚Å‚«‚Ü‚·B
+
+    getObservable<T>
+    getObservableArray<T>
+    getComputed<T>
+
+g—p—áF
+
+    getObservable<string>( this, "firstName" ).subscribe( newValue =>
+    {
+        console.log( "firstName value is", newValue );
+    });
 
 ## •K{—vŒ
 
