@@ -4,31 +4,199 @@
 <head>
     <meta charset="utf-8" />
     <title>TypeScript HTML App</title>
-    <link rel="stylesheet" href="css/demo.css" type="text/css" />	
+
+	<link rel="stylesheet" href="js/SyntaxHighlighter/styles/shCore.css" />
+	<link rel="stylesheet" href="js/SyntaxHighlighter/styles/shThemeRDark.css" />
+
+	<link rel="stylesheet" href="css/demo.css" type="text/css" />	
+
+	<script src="js/SyntaxHighlighter/scripts/XRegExp.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shCore.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shAutoloader.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shBrushJScript.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shBrushXML.js"></script>
+	<script>SyntaxHighlighter.all();</script>
 </head>
 <body>
     <h1>Knockout Decorator Demo</h1>
 
-    <div id="content">
-		first name <input type="text" data-bind="value:firstName" /><br />
-		family name <input type="text" data-bind="value:familyName" /><br />
-		full name <input type="text" data-bind="value:fullName" /><br />
-
-		<div>
-			list length is <!-- ko text:list.length --><!-- /ko -->
-		</div>
-		<ul data-bind="foreach:list">
-			<li data-bind="text:$data"></li>
+	<nav id="tab" class="invisible" data-bind="css:{invisible:false}">
+		<ul>
+			<li data-bind="click:onClickTab.bind( $data, 'with'), css:{active:page=='with'}">
+				with decorator
+			</li>
+			<li data-bind="click:onClickTab.bind( $data, 'without') , css:{active:page=='without'}">
+				without decorator
+			</li>
 		</ul>
-		<hr />
-		<div>
-			list2 length is <!-- ko text:list2().length --><!-- /ko -->
-		</div>
-		<ul data-bind="foreach:list2">
-			<li data-bind="text:$data"></li>
-		</ul>
+	</nav>	
+	<article id="withDecorator" class="View invisible" data-bind="css:{invisible:!isVisible}">
+		<!-- sampli input -->
+		First name <input type="text" data-bind="value:firstName" /><br />
+		Last name <input type="text" data-bind="value:lastName" /><br />
+		I'm "<!-- ko text:fullName --><!-- /ko -->".
 
-	</div>
+		<!-- sampli list -->
+		<article class="list"> 
+			List length is <!-- ko text:list.length --><!-- /ko -->.
+			<ul data-bind="foreach:list">
+				<li data-bind="text:$data"></li>
+			</ul>
+			Push data <input type="text" data-bind="value:pushValue" />
+			<button type="button" data-bind="click:onPush">Push</button>
+			<button type="button" data-bind="click:onPop">Pop</button>
+		</article>
+
+		<article class="code">
+			<dl>
+				<dt>HTML</dt>
+				<dd>
+					<pre class="brush: html" data-bind="disableBinding:true">
+<article id="withDecorator" class="View invisible" data-bind="css:{invisible:!isVisible}">
+	<!-- sampli input -->
+	First name <input type="text" data-bind="value:firstName" /><br />
+	Last name <input type="text" data-bind="value:lastName" /><br />
+	I'm "<!-- ko text:fullName --><!-- /ko -->".
+	<!-- sampli list -->
+	<article class="list"> 
+		List length is <!-- ko text:list.length --><!-- /ko -->.
+							<ul data-bind="foreach:list">
+							<li data-bind="text:$data"></li>
+		</ul>
+		Push data <input type="text" data-bind="value:pushValue" />
+							<button type="button" data-bind="click:onPush">Push</button>
+							<button type="button" data-bind="click:onPop">Pop</button>
+	</article>
+</article>
+					</pre>
+				</dd>
+			</dl>
+			<dl>
+				<dt>TypeScript</dt>
+				<dd>
+					<pre class="brush: js" data-bind="disableBinding:true">
+class DemoWithDecorator
+{
+	@vt.observable
+	private firstName = "vario";
+
+	@vt.observable
+	private lastName = "try";
+
+	@vt.pureComputed
+	private get fullName(): string { return this.firstName + " " + this.lastName; }
+
+	@vt.observableArray
+	private list = ["data1", "data2", "data3"];
+
+	@vt.observable
+	private pushValue = "";
+
+	@vt.observable
+	public isVisible = false;
+
+	private onPush(): void
+	{
+		this.list.push( this.pushValue );
+	}
+
+	private onPop(): void
+	{
+		this.list.pop();
+	}
+
+}
+ko.applyBindings( new DemoWithDecorator(), document.getElementById( "withDecorator" ) );
+					</pre>
+				</dd>
+			</dl>			
+		</article>
+	</article>
+
+	<article id="withoutDecorator" class="View invisible" data-bind="css:{invisible:!isVisible()}">
+		<!-- sampli input -->
+		First name <input type="text" data-bind="value:firstName" /><br />
+		Last name <input type="text" data-bind="value:lastName" /><br />
+		I'm "<!-- ko text:fullName --><!-- /ko -->".
+
+		<!-- sampli list -->
+		<article class="list">
+			List length is <!-- ko text:list().length --><!-- /ko -->.
+			<ul data-bind="foreach:list">
+				<li data-bind="text:$data"></li>
+			</ul>
+			Push data <input type="text" data-bind="value:pushValue" />
+			<button type="button" data-bind="click:onPush">Push</button>
+			<button type="button" data-bind="click:onPop">Pop</button>
+		</article>
+
+		<article class="code">
+			<dl>
+				<dt>HTML</dt>
+				<dd>
+					<pre class="brush: html" data-bind="disableBinding:true">
+<article id="withoutDecorator" class="View invisible" data-bind="css:{invisible:!isVisible()}">
+	<!-- sampli input -->
+	First name <input type="text" data-bind="value:firstName" /><br />
+	Last name <input type="text" data-bind="value:lastName" /><br />
+	I'm "<!-- ko text:fullName --><!-- /ko -->".
+	<!-- sampli list -->
+	<article class="list"> 
+		List length is <!-- ko text:list().length --><!-- /ko -->.
+							<ul data-bind="foreach:list">
+							<li data-bind="text:$data"></li>
+		</ul>
+		Push data <input type="text" data-bind="value:pushValue" />
+							<button type="button" data-bind="click:onPush">Push</button>
+							<button type="button" data-bind="click:onPop">Pop</button>
+	</article>
+</article>
+					</pre>
+				</dd>
+			</dl>
+			<dl>
+				<dt>TypeScript</dt>
+				<dd>
+					<pre class="brush: js" data-bind="disableBinding:true">
+class DemoWithoutDecorator
+{
+
+	private firstName = ko.observable( "vario" );
+
+
+	private lastName = ko.observable( "try" );
+
+
+	private fullName = ko.computed(() => this.firstName() + " " + this.lastName() );
+
+	
+	private list = ko.observableArray(["data1", "data2", "data3"] );
+
+	
+	private pushValue = ko.observable( "" )
+
+	private isVisible = ko.observable( false );
+	public setVisible( v: boolean ): void
+	{
+		this.isVisible( v );
+	}
+	
+	private onPush(): void
+	{
+		this.list.push( this.pushValue );
+	}
+	private onPop(): void
+	{
+		this.list.pop();
+	}
+}
+ko.applyBindings( new DemoWithDecorator(), document.getElementById( "withDecorator" ) );
+					</pre>
+				</dd>
+			</dl>
+		</article>
+
+	</article>
 
 	<script src="js/knockout.js"></script>
 	<script src="js/knockout-decorator.js"></script>

@@ -1,2 +1,68 @@
-﻿body {
+﻿.invisible
+{
+	display:none;
+}
+
+nav
+{
+	ul
+	{
+		display:flex;
+		li
+		{
+			font-size:20pt;
+			padding:10px;
+			list-style:none;
+			border:1px solid #ccc;
+			border-top-left-radius:20px;
+			border-top-right-radius:20px;
+			border-bottom:none;
+			margin-right:10px;
+			background-color:gray;
+			z-index:1000;
+
+			&:hover
+			{
+				cursor:pointer;
+			}
+
+			&.active
+			{
+				background-color:white;
+				&:hover
+				{
+					cursor:default;
+				}
+			}
+
+		}
+		margin:0;
+	}
+}
+
+
+.View
+{
+	border:1px solid #ccc;
+	margin-top:-1px;
+	padding:20px;
+
+	.list
+	{
+		margin-top:20px;
+	}
+
+	.code
+	{
+		display:flex;
+		dl
+		{
+			flex:1;
+			margin-right:20px;
+		}
+		dd
+		{
+			margin-left:0;
+		}
+	}
 }
