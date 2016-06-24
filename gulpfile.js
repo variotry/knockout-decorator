@@ -10,12 +10,13 @@ var gulp = require( "gulp" ),
 	typescript = require( "gulp-typescript" ),
 	sass = require( "gulp-sass" ),
 	bower = require( "gulp-bower" ),
-	typedoc = require( "gulp-typedoc" );
+	typedoc = require( "gulp-typedoc" )
+	merge2 = require( "merge2" );
 
 gulp.task( "build:ts", () =>
 {
 	gulp.task( "_build:ts", () => buildTypeScript( "src/**/*.ts", "dist" ) );
-	gulp.task( "_build:devTs", () => buildTypeScript( "src/**/*.ts", "dist", { min: false } ) );
+	gulp.task( "_build:devTs", () => buildTypeScript( "src/**/*.ts", "dist", { min: false, genDefinition: true } ) );
 	gulp.task( "_build:demo", () => buildTypeScript( "src/**/*.ts", "demo/js", { min: false, sourceMap: true } ) );
 	return sequence( ["_build:ts", "_build:devTs", "_build:demo"] );
 } );
@@ -82,14 +83,39 @@ function buildTypeScript( src, dest, options )
 		src = [src];
 	}
 	
-	return gulp.src( src.concat("typings/index.d.ts") )
+	var stream = gulp.src( src.concat("typings/index.d.ts") )
 		.pipe( plumber() )
 		.pipe( options.sourceMap ? sourcemaps.init() : gutil.noop() )
-		.pipe( typescript( config.compilerOptions ) )
-		.pipe( options.min ? uglify( {
+		.pipe( typescript( config.compilerOptions ) );
+		
+	let restTasks = [
+		stream.pipe( options.min ? uglify( {
 			preserveComments: "some"
 		} ) : gutil.noop() )
-		.pipe( options.min ? rename( { extname:".min.js"} ) : gutil.noop() )
-		.pipe( options.sourceMap ? sourcemaps.write( "../sourcemaps/ts" ) : gutil.noop() )
-		.pipe( gulp.dest( dest ) );
+			.pipe( options.min ? rename( { extname: ".min.js" } ) : gutil.noop() )
+			.pipe( options.sourceMap ? sourcemaps.write( "../sourcemaps/ts" ) : gutil.noop() )
+			.pipe( gulp.dest( dest ) )
+	];
+
+	if ( options.genDefinition )
+	{
+		restTasks.push( stream.dts.pipe( gulp.dest( dest ) ) );
+	}
+	
+
+	return merge2( restTasks );
+
+	/*return merge2( [
+		stream.dts.pipe( gulp.dest( dest ) ),
+		stream.pipe( options.min ? uglify( {
+				preserveComments: "some"
+			} ) : gutil.noop() )
+			.pipe( options.min ? rename( { extname:".min.js"} ) : gutil.noop() )
+			.pipe( options.sourceMap ? sourcemaps.write( "../sourcemaps/ts" ) : gutil.noop() )
+			.pipe( gulp.dest( dest ) )
+	] );*/
+	//.pipe( gulp.dest( dest ) );
+
+
+	return stream;
 }

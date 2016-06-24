@@ -6,7 +6,8 @@
 		"sourceMap": false,
 		"target": "es5",
 		"experimentalDecorators": true,
-		"allowUnreachableCode": true
+		"allowUnreachableCode": true,
+		"declaration": true
 	},
 	"exclude": [
 		"node_modules",

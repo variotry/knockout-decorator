@@ -22,6 +22,7 @@
 		"gulp-sass": "2.3.2",
 		"gulp-bower": "0.0.13",
 		"typedoc": "0.4.4",
-		"gulp-typedoc": "2.0.0"
+		"gulp-typedoc": "2.0.0",
+		"merge2": "1.0.2"
 	}
 }
