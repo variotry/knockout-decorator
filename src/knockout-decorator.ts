@@ -6,6 +6,7 @@
 
 namespace variotry.KnockoutDecorator
 {
+	// #region declare interfaces.
 	/**
 	 * You can easily access KnockoubObservableArray functions via intellisense
 	 * by converting a array property which is attached @observableArray to this.
@@ -39,6 +40,8 @@ namespace variotry.KnockoutDecorator
 		/** Execute KnockoutObservableArray.destroyAll */
 		destroyAll(): void;
 	}
+
+	// #endregion
 
 	/**
 	 * Just attach to a property as decorator.
@@ -223,13 +226,18 @@ namespace variotry.KnockoutDecorator
 		return ( target: Object, propertyName: string , descriptor: PropertyDescriptor ) =>
 		{
 			let getter = descriptor.get;
+			if ( !getter )
+			{
+				throw ( isPure ? "@pureComputed" : "@computed" ) + "require getter.";
+			}
 			let setter = descriptor.set;
 
 			let computed = isPure ? ko.pureComputed : ko.computed;
 			
 			let c = computed( {
-				read: getter ? () => getter.call( target ) : null,
-				write: setter ? ( v ) => setter.call( target, v ) : null
+				read: getter,
+				write: setter,
+				owner: target
 			});
 
 			if ( extend )
