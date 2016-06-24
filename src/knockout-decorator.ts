@@ -41,6 +41,14 @@ namespace variotry.KnockoutDecorator
 		destroyAll(): void;
 	}
 
+	export interface IComputedOptions
+	{
+		pure?: boolean;
+		deferEvaluation?: boolean;
+		disposeWhen?(): boolean;
+		disposeWhenNodeIsRemoved?: Node;
+	}
+
 	// #endregion
 
 	/**
@@ -123,8 +131,14 @@ namespace variotry.KnockoutDecorator
 	 * If you define also a setter, you can treat as writable computed.
 	 */
 	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
+	export function computed( options: IComputedOptions ): MethodDecorator;
+	export function computed(): any
 	{
-		getComputedDecoratorFactory( target, propertyName, descriptor, false );
+		if ( arguments.length == 1 )
+		{
+			return getComputedDecoratorFactory( arguments[0] );
+		}
+		getComputedDecoratorFactory( null ).apply( this, arguments );
 	}
 
 	/**
@@ -132,7 +146,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function pureComputed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	{
-		getComputedDecoratorFactory( target, propertyName, descriptor, true );
+		getComputedDecoratorFactory( { pure: true } )( target, propertyName, descriptor );
 	}
 
 	/**
@@ -227,32 +241,52 @@ namespace variotry.KnockoutDecorator
 
 
 	/** @private */
-	function getComputedDecoratorFactory( target: Object, propertyName: string, descriptor: PropertyDescriptor, isPure: boolean ) : void
+	function getComputedDecoratorFactory( options: IComputedOptions ): MethodDecorator
 	{
-		let getter = descriptor.get;
-		if ( !getter )
+		return ( target: Object, propertyName: string, descriptor: PropertyDescriptor ) =>
 		{
-			throw ( isPure ? "@pureComputed" : "@computed" ) + " require getter.";
-		}
-		let setter = descriptor.set;
+			let getter = descriptor.get;
+			if ( !getter )
+			{
+				throw "@Computed and @pureComputed require getter.";
+			}
+			let setter = descriptor.set;
 
-		let c = ko.computed( {
-			read: getter,
-			write: setter,
-			owner: target,
-			pure: isPure
-		});
+			let computedOptions: KnockoutComputedDefine<any> = {
+				read: getter,
+				write: setter,
+				owner: target
+			};
+			if ( options )
+			{
+				for ( var key in options )
+				{
+					if ( typeof options[key] === "function" )
+					{
+						var fn = options[key];
+						options[key] = function ()
+						{
+							fn.apply( target, arguments );
+						}
+					}
+					computedOptions[key] = options[key];
+				}
+			}
+			console.log( computedOptions );
+			let c = ko.computed( computedOptions );
 
-		pushObservable( target, propertyName, c );
+			pushObservable( target, propertyName, c );
 
-		if ( getter )
-		{
-			descriptor.get = c;
+			if ( getter )
+			{
+				descriptor.get = c;
+			}
+			if ( setter )
+			{
+				descriptor.set = c;
+			}
 		}
-		if ( setter )
-		{
-			descriptor.set = c;
-		}
+		
 	}
 
 	// #endregion
