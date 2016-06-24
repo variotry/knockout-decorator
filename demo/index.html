@@ -18,7 +18,11 @@
 	<script>SyntaxHighlighter.all();</script>
 </head>
 <body>
-    <h1>Knockout Decorator Demo</h1>
+	<h1>Knockout Decorator Demo -compare with decorator and without decorator-</h1>
+	<p>
+		This decorator remove the bunden of writing parenthesis on your code.<br />
+		So, I think that you can write code easily while benefiting from powerful knockout.
+	</p>
 
 	<nav id="tab" class="invisible" data-bind="css:{invisible:false}">
 		<ul>
@@ -29,7 +33,7 @@
 				without decorator
 			</li>
 		</ul>
-	</nav>	
+	</nav>
 	<article id="withDecorator" class="View invisible" data-bind="css:{invisible:!isVisible}">
 		<!-- sampli input -->
 		First name <input type="text" data-bind="value:firstName" /><br />
@@ -37,7 +41,7 @@
 		I'm "<!-- ko text:fullName --><!-- /ko -->".
 
 		<!-- sampli list -->
-		<article class="list"> 
+		<article class="list">
 			List length is <!-- ko text:list.length --><!-- /ko -->.
 			<ul data-bind="foreach:list">
 				<li data-bind="text:$data"></li>
@@ -58,14 +62,14 @@
 	Last name <input type="text" data-bind="value:lastName" /><br />
 	I'm "<!-- ko text:fullName --><!-- /ko -->".
 	<!-- sampli list -->
-	<article class="list"> 
+					<article class="list"> 
 		List length is <!-- ko text:list.length --><!-- /ko -->.
-							<ul data-bind="foreach:list">
-							<li data-bind="text:$data"></li>
+					<ul data-bind="foreach:list">
+					<li data-bind="text:$data"></li>
 		</ul>
 		Push data <input type="text" data-bind="value:pushValue" />
-							<button type="button" data-bind="click:onPush">Push</button>
-							<button type="button" data-bind="click:onPop">Pop</button>
+					<button type="button" data-bind="click:onPush">Push</button>
+					<button type="button" data-bind="click:onPop">Pop</button>
 	</article>
 </article>
 					</pre>
@@ -79,37 +83,29 @@ class DemoWithDecorator
 {
 	@vt.observable
 	private firstName = "vario";
-
 	@vt.observable
 	private lastName = "try";
-
 	@vt.pureComputed
 	private get fullName(): string { return this.firstName + " " + this.lastName; }
-
 	@vt.observableArray
 	private list = ["data1", "data2", "data3"];
-
 	@vt.observable
 	private pushValue = "";
-
 	@vt.observable
 	public isVisible = false;
-
 	private onPush(): void
 	{
 		this.list.push( this.pushValue );
 	}
-
 	private onPop(): void
 	{
 		this.list.pop();
 	}
-
 }
 ko.applyBindings( new DemoWithDecorator(), document.getElementById( "withDecorator" ) );
 					</pre>
 				</dd>
-			</dl>			
+			</dl>
 		</article>
 	</article>
 
@@ -141,14 +137,14 @@ ko.applyBindings( new DemoWithDecorator(), document.getElementById( "withDecorat
 	Last name <input type="text" data-bind="value:lastName" /><br />
 	I'm "<!-- ko text:fullName --><!-- /ko -->".
 	<!-- sampli list -->
-	<article class="list"> 
+					<article class="list"> 
 		List length is <!-- ko text:list().length --><!-- /ko -->.
-							<ul data-bind="foreach:list">
-							<li data-bind="text:$data"></li>
+					<ul data-bind="foreach:list">
+					<li data-bind="text:$data"></li>
 		</ul>
 		Push data <input type="text" data-bind="value:pushValue" />
-							<button type="button" data-bind="click:onPush">Push</button>
-							<button type="button" data-bind="click:onPop">Pop</button>
+					<button type="button" data-bind="click:onPush">Push</button>
+					<button type="button" data-bind="click:onPop">Pop</button>
 	</article>
 </article>
 					</pre>
@@ -160,21 +156,13 @@ ko.applyBindings( new DemoWithDecorator(), document.getElementById( "withDecorat
 					<pre class="brush: js" data-bind="disableBinding:true">
 class DemoWithoutDecorator
 {
-
 	private firstName = ko.observable( "vario" );
-
-
 	private lastName = ko.observable( "try" );
-
-
 	private fullName = ko.computed(() => this.firstName() + " " + this.lastName() );
-
 	
 	private list = ko.observableArray(["data1", "data2", "data3"] );
-
 	
 	private pushValue = ko.observable( "" )
-
 	private isVisible = ko.observable( false );
 	public setVisible( v: boolean ): void
 	{
