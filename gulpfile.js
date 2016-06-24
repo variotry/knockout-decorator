@@ -41,16 +41,43 @@ gulp.task( "build:demo", () =>
 	return sequence( [ "_buildDemo:ts", "_buildDemo:sass"] );
 } );
 
+gulp.task( "watch:demo", ["build:demo"], () =>
+{
+	gulp.watch( ["demo/ts/**/*.ts", "demo/sass/**/*.scss"], ["build:demo"] );
+} );
+
 gulp.task( "install:bower", () =>
 {
 	var bowerDir = "bower_components";
 	gulp.task( "_install:bower", () => bower( bowerDir ) );
-	gulp.task( "_move:distToDemo", () =>
+	gulp.task( "_move:knockout", () =>
 	{
-		gulp.src( bowerDir + "/knockout/dist/knockout.js" )
+		return gulp.src( bowerDir + "/knockout/dist/knockout.js" )
 			.pipe( gulp.dest( "demo/js" ) );
 	} );
-	return sequence( "_install:bower", "_move:distToDemo" );
+	gulp.task( "_move:SyntaxHighlighter", () =>
+	{
+		let dir = bowerDir + "/SyntaxHighlighter";
+		let names = ["shCore", "shAutoloader", "XRegExp", "shBrushJScript", "shBrushXml"];
+		let srcFiles = [];
+		for ( let i = 0; i < names.length; ++i )
+		{
+			srcFiles.push( dir + "/scripts/" + names[i] + ".js" );
+		}
+		gulp.src( srcFiles )
+			.pipe( gulp.dest( "demo/js/SyntaxHighlighter/scripts" ) );
+
+		names = ["shCore", "shThemeRDark"];
+		srcFiles = [];
+		for ( let i = 0; i < names.length; ++i )
+		{
+			srcFiles.push( dir + "/styles/" + names[i] + ".css" );
+		}
+		return gulp.src( srcFiles )
+			.pipe( gulp.dest( "demo/js/SyntaxHighlighter/styles" ) );
+	} );
+
+	return sequence( "_install:bower", "_move:knockout", "_move:SyntaxHighlighter" );
 } );
 
 gulp.task( "install:typings", () =>
