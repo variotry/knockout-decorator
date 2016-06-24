@@ -122,45 +122,52 @@ namespace variotry.KnockoutDecorator
 	 * If a observable property value in the getter is changed, it will be called.
 	 * If you define also a setter, you can treat as writable computed.
 	 */
-	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void;
-	/**
-	 * Just attach to a property accessor as decorator.
-	 * @param extend	KnockoutComputed.extend options Such as { throttle:500 }.
-	 */
-	export function computed( extend: { [key: string]: any }): MethodDecorator;
-	export function computed(): any
+	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	{
-		if ( arguments.length === 1 )
-		{
-			// return decorator factory if @computed is attached with argument.
-			return getComputedDecoratorFactory( arguments[0], false );
-		}
-		// Decorator factory aren't executed if @computed is attached without argument,
-		// thus I execute it and don't return it.
-		getComputedDecoratorFactory( null, false ).apply( this, arguments );
+		getComputedDecoratorFactory( target, propertyName, descriptor, false );
 	}
 
-
 	/**
 	 * Just attach to a property accessor as decorator.
 	 */
-	export function pureComputed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void;
-	/**
-	 * Just attach to a property accessor as decorator.
-	 * @param extend	KnockoutComputed.extend options Such as { throttle:500 }.
-	 */
-	export function pureComputed( extend: { [key: string]: any }): MethodDecorator;
-	export function pureComputed(): any
+	export function pureComputed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	{
-		if ( arguments.length === 1 )
-		{
-			// return decorator factory if @pureComputed is attached with argument.
-			return getComputedDecoratorFactory( arguments[0], true );
-		}
+		getComputedDecoratorFactory( target, propertyName, descriptor, true );
+	}
 
-		// Decorator factory aren't executed if @pureComputed is attached without argument,
-		// thus I execute it and don't return it.
-		getComputedDecoratorFactory( null, true ).apply( this, arguments );
+	/**
+	 * Just attach to a property or property accessor.
+	 * @extend require attaching observable decorator.
+	 * @param options	Set parameter which define ko.extenders such as rateLimit.
+	 */
+	export function extend( options: { [key: string]: any }): any// PropertyDecorator | MethodDecorator
+	{
+		return ( target: any, propertyName: string, descriptor?: PropertyDescriptor ) =>
+		{
+			var o = getObservableObject( target, propertyName );
+			if ( !o )
+			{
+				// I try get observable object again
+				// to get it if @extend is attached after observable decorator.
+				setTimeout(() =>
+				{
+					o = getObservableObject( target, propertyName );
+					if ( o )
+					{
+						o.extend( options );
+					}
+					else
+					{
+						var msg = "Can't get observable object from '";
+						msg += target["constructor"].name + "." + propertyName + "'.\n";
+						msg += "In order to use @extend need attach observable decorator.";
+						console.error( msg );
+					}
+				});
+				return;
+			}
+			o.extend( options );
+		};
 	}
 
 	/**
@@ -206,8 +213,7 @@ namespace variotry.KnockoutDecorator
 	/** @private */
 	function pushObservable( target: any, propertyName: string, o: KnockoutObservable<any> | KnockoutObservableArray<any> | KnockoutComputed<any> )
 	{
-		console.log( "push,", propertyName );
-		if ( !target[storeObservableKey] ) target[storeObservableKey] = [];
+		if ( !target[storeObservableKey] ) target[storeObservableKey] = {};
 		target[storeObservableKey][propertyName] = o;
 	}
 
@@ -221,40 +227,31 @@ namespace variotry.KnockoutDecorator
 
 
 	/** @private */
-	function getComputedDecoratorFactory( extend: { [key: string]: any; }, isPure : boolean ): MethodDecorator
+	function getComputedDecoratorFactory( target: Object, propertyName: string, descriptor: PropertyDescriptor, isPure: boolean ) : void
 	{
-		return ( target: Object, propertyName: string , descriptor: PropertyDescriptor ) =>
+		let getter = descriptor.get;
+		if ( !getter )
 		{
-			let getter = descriptor.get;
-			if ( !getter )
-			{
-				throw ( isPure ? "@pureComputed" : "@computed" ) + "require getter.";
-			}
-			let setter = descriptor.set;
+			throw ( isPure ? "@pureComputed" : "@computed" ) + " require getter.";
+		}
+		let setter = descriptor.set;
 
-			let computed = isPure ? ko.pureComputed : ko.computed;
-			
-			let c = computed( {
-				read: getter,
-				write: setter,
-				owner: target
-			});
+		let c = ko.computed( {
+			read: getter,
+			write: setter,
+			owner: target,
+			pure: isPure
+		});
 
-			if ( extend )
-			{
-				c.extend( extend );
-			}
+		pushObservable( target, propertyName, c );
 
-			pushObservable( target, propertyName, c );
-
-			if ( getter )
-			{
-				descriptor.get = c;
-			}
-			if ( setter )
-			{
-				descriptor.set = c;
-			}
+		if ( getter )
+		{
+			descriptor.get = c;
+		}
+		if ( setter )
+		{
+			descriptor.set = c;
 		}
 	}
 
