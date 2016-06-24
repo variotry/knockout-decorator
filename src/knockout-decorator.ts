@@ -41,6 +41,9 @@ namespace variotry.KnockoutDecorator
 		destroyAll(): void;
 	}
 
+	/**
+	 * @computed argument options.
+	 */
 	export interface IComputedOptions
 	{
 		pure?: boolean;
@@ -131,6 +134,11 @@ namespace variotry.KnockoutDecorator
 	 * If you define also a setter, you can treat as writable computed.
 	 */
 	export function computed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
+	/**
+	 * Just attach to a property accessor as decorator.
+	 * @param options	Knockout computed options.
+	 * @see <a href="http://knockoutjs.com/documentation/computed-reference.html" target="_blank">Computed Observable Reference</a>
+	 */
 	export function computed( options: IComputedOptions ): MethodDecorator;
 	export function computed(): any
 	{
