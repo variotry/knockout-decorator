@@ -69,5 +69,6 @@ nav
 
 .syntaxhighlighter table td
 {
+	// This is to prevent style broken under the firefox.
 	vertical-align:top !important;
 }
