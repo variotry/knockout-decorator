@@ -127,49 +127,37 @@ namespace variotry.KnockoutDecorator
 	export function computed( extend: { [key: string]: any }): MethodDecorator;
 	export function computed(): any
 	{
-		let extend: { [key: string]: any; };
-		if ( arguments.length === 1 )
-		{
-			extend = arguments[0];
-		}
-
-		// decorator factory.
-		function factory( target: any, propertyName: string, descriptor: PropertyDescriptor ): void
-		{
-			let getter = descriptor.get;
-			let setter = descriptor.set;
-
-			let c = ko.computed( {
-				read: getter ? () => getter.call( target ) : null,
-				write: setter ? ( v ) => setter.call( target, v ) : null
-			});
-
-			if ( extend )
-			{
-				c.extend( extend );
-			}
-
-			pushObservable( target, propertyName, c );
-
-			if ( getter )
-			{
-				descriptor.get = c;
-			}
-			if ( setter )
-			{
-				descriptor.set = c;
-			}
-		};
-
 		if ( arguments.length === 1 )
 		{
 			// return decorator factory if @computed is attached with argument.
-			return factory;
+			return getComputedDecoratorFactory( arguments[0], false );
 		}
-
 		// Decorator factory aren't executed if @computed is attached without argument,
 		// thus I execute it and don't return it.
-		factory.apply( this, arguments );
+		getComputedDecoratorFactory( null, false ).apply( this, arguments );
+	}
+
+
+	/**
+	 * Just attach to a property accessor as decorator.
+	 */
+	export function pureComputed( target: any, propertyName: string, descriptor: PropertyDescriptor ): void;
+	/**
+	 * Just attach to a property accessor as decorator.
+	 * @param extend	KnockoutComputed.extend options Such as { throttle:500 }.
+	 */
+	export function pureComputed( extend: { [key: string]: any }): MethodDecorator;
+	export function pureComputed(): any
+	{
+		if ( arguments.length === 1 )
+		{
+			// return decorator factory if @pureComputed is attached with argument.
+			return getComputedDecoratorFactory( arguments[0], true );
+		}
+
+		// Decorator factory aren't executed if @pureComputed is attached without argument,
+		// thus I execute it and don't return it.
+		getComputedDecoratorFactory( null, true ).apply( this, arguments );
 	}
 
 	/**
@@ -227,5 +215,40 @@ namespace variotry.KnockoutDecorator
 		if ( !store ) return null;
 		return store[propertyName];
 	}
+
+
+	/** @private */
+	function getComputedDecoratorFactory( extend: { [key: string]: any; }, isPure : boolean ): MethodDecorator
+	{
+		return ( target: Object, propertyName: string , descriptor: PropertyDescriptor ) =>
+		{
+			let getter = descriptor.get;
+			let setter = descriptor.set;
+
+			let computed = isPure ? ko.pureComputed : ko.computed;
+			
+			let c = computed( {
+				read: getter ? () => getter.call( target ) : null,
+				write: setter ? ( v ) => setter.call( target, v ) : null
+			});
+
+			if ( extend )
+			{
+				c.extend( extend );
+			}
+
+			pushObservable( target, propertyName, c );
+
+			if ( getter )
+			{
+				descriptor.get = c;
+			}
+			if ( setter )
+			{
+				descriptor.set = c;
+			}
+		}
+	}
+
 	// #endregion
 }
