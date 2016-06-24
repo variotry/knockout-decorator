@@ -280,7 +280,6 @@ namespace variotry.KnockoutDecorator
 					computedOptions[key] = options[key];
 				}
 			}
-			console.log( computedOptions );
 			let c = ko.computed( computedOptions );
 
 			pushObservable( target, propertyName, c );
