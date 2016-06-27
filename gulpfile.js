@@ -28,7 +28,7 @@ gulp.task( "watch:ts", ["build:ts"], () =>
 
 gulp.task( "build:demo", () =>
 {
-	gulp.task( "_buildDemo:ts", () => buildTypeScript( "demo/ts/**/*.ts", "demo/js", { min:false, sourceMap: true } ) );
+	gulp.task( "_buildDemo:ts", () => buildTypeScript( ["dist/knockout-decorator.d.ts", "demo/ts/**/*.ts"], "demo/js", { min: false, sourceMap: true } ) );
 	gulp.task( "_buildDemo:sass", () =>
 	{
 		return gulp.src( "demo/sass/**/*.scss" )

@@ -1,7 +1,5 @@
-﻿/// <reference path="../../src/knockout-decorator.ts" />
-
-var vt = variotry.KnockoutDecorator;
-type ObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
+﻿let vt = variotry.KnockoutDecorator;
+type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
 ko.bindingHandlers["disableBinding"] =
 {
@@ -11,7 +9,7 @@ ko.bindingHandlers["disableBinding"] =
 	}
 }
 
-class DemoWithDecorator
+class ObservableVariablesDemo
 {
 	@vt.observable
 	private firstName = "vario";
@@ -20,88 +18,103 @@ class DemoWithDecorator
 	private lastName = "try";
 
 	@vt.pureComputed
+	@vt.extend( { rateLimit: 1 } )
 	private get fullName(): string
 	{
 		return this.firstName + " " + this.lastName;
 	}
 
-	@vt.observableArray
-	private list = ["data1", "data2", "data3"];
-
-	@vt.observable
-	private pushValue = "";
-
-	@vt.observable
-	public isVisible = false;
-
-	private onPush(): void
+	private onReset()
 	{
-		this.list.push( this.pushValue );
+		this.firstName = "vario";
+		this.lastName = "try";
 	}
-
-	private onPop(): void
-	{
-		this.list.pop();
-	}
+	
 }
 
-class DemoWithoutDecorator
+class ObservableArrayDemo
 {
-	private firstName = ko.observable( "vario" );
-	private lastName = ko.observable( "try" );
-	private fullName = ko.computed(() => this.firstName() + " " + this.lastName() );
+	@vt.observableArray
+	private list = ["data1", "data2", "data3"] as IObservableArray<string>;
 
-	private list = ko.observableArray(["data1", "data2", "data3"] );
+	@vt.observable
+	private pushData = "";
 
-	private pushValue = ko.observable( "" );
+	@vt.observable
+	public pushErrorMsg = "";
 
-	private isVisible = ko.observable( false );
-	public setVisible( v: boolean ): void
-	{
-		this.isVisible( v );
-	}
+	@vt.observableArray
+	private removeTargets = [] as IObservableArray<string>;
 
 	private onPush(): void
 	{
-		this.list.push( this.pushValue() );
+		if ( !this.pushData.trim() ) return;
+		if ( 0 <= this.list.indexOf( this.pushData ) )
+		{
+			this.pushErrorMsg = "'" + this.pushData + "' already exists.";
+			return;
+		}
+		this.pushErrorMsg = "";
+
+		this.list.push( this.pushData );
+		this.pushData = "";
 	}
 
 	private onPop(): void
 	{
-		this.list.pop();
+		this.removeTargets.remove( this.list.pop() );
+	}
+
+	private onRemove(): void
+	{
+		this.removeTargets.forEach( data =>
+		{
+			this.list.remove( data );
+		});
+		this.removeTargets.removeAll();
 	}
 }
 
 
-
-let d1 = new DemoWithDecorator();
-let d2 = new DemoWithoutDecorator();
-ko.applyBindings( d1, document.getElementById( "withDecorator" ) );
-ko.applyBindings( d2, document.getElementById( "withoutDecorator" ) );
-
-
+interface INavItem
+{
+	uid: string;
+	title: string;
+}
 class Nav
 {
+	private items: INavItem[] = [
+		{ uid: "observable", title: "observe variables" },
+		{ uid: "observableArray", title: "observe array" }
+	];
+
 	@vt.observable
-	private page = "with";
+	private uid: string;
 
-	public constructor( d1: DemoWithDecorator, d2: DemoWithoutDecorator )
+	public constructor()
 	{
-		ko.applyBindings( this, document.getElementById( "tab" ) );
-		this.changePage();
+		this.uid = this.items[0].uid;
 	}
 
-	private changePage()
+	private onClickTab( item: INavItem ): void
 	{
-		d1.isVisible = this.page === "with";
-		d2.setVisible( this.page === "without" );
-	}
-
-	private onClickTab( page: string ): void
-	{
-		if ( this.page === page ) return;
-		this.page = page;
-		this.changePage();
+		this.uid = item.uid;
 	}
 }
-new Nav( d1, d2 );
+
+class Demo
+{
+	private nav: Nav;
+	private observableDemo: ObservableVariablesDemo;
+	private observableArrayDemo: ObservableArrayDemo;
+
+	public constructor()
+	{
+		this.nav = new Nav();
+		this.observableDemo = new ObservableVariablesDemo();
+		this.observableArrayDemo = new ObservableArrayDemo();
+		ko.applyBindings( this, document.body );
+	}
+}
+
+new Demo();

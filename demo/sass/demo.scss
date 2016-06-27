@@ -1,7 +1,9 @@
-﻿.invisible
+﻿body
 {
-	display:none;
+	margin:8px;
 }
+
+.invisible { display:none !important; }
 
 nav
 {
@@ -40,19 +42,23 @@ nav
 	}
 }
 
-
 .View
 {
+	display:inline-block;
 	border:1px solid #ccc;
-	margin-top:-1px;
-	padding:20px;
+	padding:5px;
+	margin:-1px 20px 20px 20px;
+	//width:1750px;
 
-	.list
-	{
-		margin-top:20px;
-	}
+	//&.invisible { display:none; }
 
-	.code
+	>div { display:flex; }
+	h1 { margin: 5px; }
+	
+	
+	
+
+	/*.code
 	{
 		display:flex;
 		dl
@@ -64,6 +70,56 @@ nav
 		{
 			margin-left:0;
 		}
+	}*/
+}
+
+.InputSample
+{
+	margin-right:40px;
+	padding-right:40px;
+
+	>div
+	{
+		
+		display:flex;
+		margin-left:20px;
+
+		dt
+		{
+			text-align:right;
+			display:inline-block;
+			width:75px;
+			margin-bottom:8px;
+		}
+		dd
+		{
+			margin:0;
+			display:inline;
+			&:after
+			{
+				content:"\A";
+				white-space:pre;
+			}
+		}
+
+		button
+		{
+			margin:20px 0 0 20px;
+			height:1.8em;
+		}
+	}
+}
+
+.ListSample
+{
+	ul
+	{
+		margin:5px 0 5px 10px;
+	}
+
+	.error
+	{
+		color:red;
 	}
 }
 
