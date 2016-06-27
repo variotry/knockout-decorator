@@ -89,7 +89,7 @@ firstName もしくは lastName が変更されると、fullNameゲッターが呼ばれます。
 
 使用例：
 
-    getObservable<string>( this, "firstName" ).subscribe( newValue =>
+    vt.getObservable<string>( this, "firstName" ).subscribe( newValue =>
     {
         console.log( "firstName value is", newValue );
     });

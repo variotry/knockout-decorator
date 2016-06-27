@@ -86,7 +86,7 @@ You can get a knockout observable object by using below functions.
     
 Example of use.
 
-    getObservable<string>( this, "firstName" ).subscribe( newValue =>
+    vt.getObservable<string>( this, "firstName" ).subscribe( newValue =>
     {
         console.log( "firstName value is", newValue );
     });
