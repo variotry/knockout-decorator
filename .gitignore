@@ -10,7 +10,6 @@
 *.csproj.user
 /typings
 /docs
-/dist
 /demo/css
 /demo/js
 /demo/sourcemaps
