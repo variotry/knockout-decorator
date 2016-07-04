@@ -24,8 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="demo\index.html" />
-    <Content Include="demo\js\knockout-decorator.js" />
-    <Content Include="demo\js\knockout.js" />
     <Content Include="gulpfile.js" />
   </ItemGroup>
   <ItemGroup>
