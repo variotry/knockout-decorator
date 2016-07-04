@@ -7,6 +7,8 @@ This plug-in makes it easier for you to write a code with knockout observable.
 See https://demo.variotry.com/knockoutDecorator/ or demo/index.html.
 
 (I have checked demo with Google Chrome, IE11, Edge and firefox.)
+
+If you refer to demo/index.html, execute `npm install` and `gulp install`
     
 ## Usage
 

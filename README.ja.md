@@ -4,9 +4,11 @@
 
 ## デモ
 
-https://demo.variotry.com/knockoutDecorator/ にアクセスするかdemo/index.html を参照して下さい。
+https://demo.variotry.com/knockoutDecorator/ にアクセスするか demo/index.html を参照して下さい。
 
-（GoogleChrome, IE11, Edge, firefox で確認してます。）
+GoogleChrome, IE11, Edge, firefox で確認してます。）
+
+demo/index.html を参照する際は、`npm install` と `gulp install` を実行してください。
     
 ## 使い方
 
