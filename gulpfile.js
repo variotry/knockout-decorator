@@ -27,15 +27,13 @@ gulp.task( "watch:ts", ["build:ts"], () =>
 
 gulp.task( "build:demo", () =>
 {
-	gulp.task( "_build:demo", () => buildTypeScript( "src/**/*.ts", "demo/js", { min: false, sourceMap: true } ) );
-	gulp.task( "_buildDemo:ts", () => buildTypeScript( ["dist/knockout-decorator.d.ts", "demo/ts/**/*.ts"], "demo/js", { min: false, sourceMap: true } ) );
+	gulp.task( "_build:demo", () => buildTypeScript( "src/**/*.ts", "demo/js", { min: true, sourceMap: false } ) );
+	gulp.task( "_buildDemo:ts", () => buildTypeScript( ["dist/knockout-decorator.d.ts", "demo/ts/**/*.ts"], "demo/js", { min: true, sourceMap: false } ) );
 	gulp.task( "_buildDemo:sass", () =>
 	{
 		return gulp.src( "demo/sass/**/*.scss" )
-			.pipe( sourcemaps.init() )
 			.pipe( plumber() )
 			.pipe( sass() )
-			.pipe( sourcemaps.write( "../sourcemaps/sass" ) )
 			.pipe( gulp.dest( "demo/css" ) );
 	} );
 	return sequence( "_build:demo", ["_buildDemo:ts", "_buildDemo:sass"] );
@@ -136,18 +134,4 @@ function buildTypeScript( src, dest, options )
 	
 
 	return merge2( restTasks );
-
-	/*return merge2( [
-		stream.dts.pipe( gulp.dest( dest ) ),
-		stream.pipe( options.min ? uglify( {
-				preserveComments: "some"
-			} ) : gutil.noop() )
-			.pipe( options.min ? rename( { extname:".min.js"} ) : gutil.noop() )
-			.pipe( options.sourceMap ? sourcemaps.write( "../sourcemaps/ts" ) : gutil.noop() )
-			.pipe( gulp.dest( dest ) )
-	] );*/
-	//.pipe( gulp.dest( dest ) );
-
-
-	return stream;
 }
