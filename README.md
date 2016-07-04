@@ -10,7 +10,7 @@ See https://demo.variotry.com/knockoutDecorator/ or demo/index.html.
     
 ## Usage
 
-Write as below on a html.
+Copy .js and d.ts inside dist directory in any directory and write as below on a html.
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.js"></script>
@@ -31,7 +31,7 @@ If you set the propety to a value ( e.g. `this.firstName = "John"` ) , a view wi
 
 ### 2.Use observable array
 
-Just attach "@vt.observableArray" to a Array type property as below.
+Just attach "@vt.observableArray" to an Array type property as below.
 
     @vt.observableArray
     public list = [ "data1", "data2", "data3" ];
@@ -51,7 +51,7 @@ You can easily access KnockoubObservableArray functions via intellisense by conv
 
 ### 3.Use pureComputed and computed
 
-Just attach "@vt.pureComputed" or "@vt.computed" to a accessor as below.
+Just attach "@vt.pureComputed" or "@vt.computed" to an accessor as below.
 
     @vt.observable
     public firstName = "Bob";

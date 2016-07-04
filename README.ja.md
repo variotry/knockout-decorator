@@ -10,7 +10,7 @@ https://demo.variotry.com/knockoutDecorator/ ‚ÉƒAƒNƒZƒX‚·‚é‚©demo/index.html ‚ğ
     
 ## g‚¢•û
 
-html‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰º‚³‚¢B
+dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì js, d.ts ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰º‚³‚¢B
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.js"></script>
