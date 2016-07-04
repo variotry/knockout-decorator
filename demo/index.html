@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>TypeScript HTML App</title>
+
+	<link rel="stylesheet" href="js/SyntaxHighlighter/styles/shCore.css" />
+	<link rel="stylesheet" href="js/SyntaxHighlighter/styles/shThemeRDark.css" />
+
+	<link rel="stylesheet" href="css/demo.css" type="text/css" />	
+
+	<script src="js/SyntaxHighlighter/scripts/XRegExp.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shCore.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shAutoloader.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shBrushJScript.js"></script>
+	<script src="js/SyntaxHighlighter/scripts/shBrushXml.js"></script>
+	<script>SyntaxHighlighter.all();</script>
+</head>
+<body class="invisible" data-bind="css:{invisible:false}">
+	<h1>Knockout Decorator Demo</h1>
+	<p>
+		This plug-in makes it easier for you to write a code with knockout observable.
+	</p>
+
+	<nav id="tab" data-bind="with:nav">
+		<ul data-bind="foreach:items">
+			<li data-bind="click:$parent.onClickTab.bind( $parent, $data),
+							css:{active:$parent.uid==$data.uid},
+							text:$data.title">
+			</li>
+		</ul>
+	</nav>
+	<article id="ObservableVariables" class="View" data-bind="css:{invisible:nav.uid!=='observable'}">
+		<article class="InputSample" data-bind="with:observableDemo">
+			<h1>input sample</h1>
+			<div>
+				<dl>
+					<dt>First name</dt>
+					<dd>
+						<input type="text" data-bind="textInput:firstName" />
+					</dd>
+					<dt>Last name</dt>
+					<dd>
+						<input type="text" data-bind="textInput:lastName" />
+					</dd>
+					<dt>I'm</dt>
+					<dd>
+						"<!-- ko text:fullName --><!-- /ko -->".
+					</dd>
+				</dl>
+				<button type="button" data-bind="click:onReset">Reset Name</button>
+			</div>
+		</article>
+
+		<article class="code">
+			<dl>
+				<dt>HTML</dt>
+				<dd>
+					<pre class="brush: html" data-bind="disableBinding:true">
+<dl>
+	<dt>First name</dt>
+	<dd>
+		<input type="text" data-bind="textInput:firstName" />
+	</dd>
+	<dt>Last name</dt>
+	<dd>
+		<input type="text" data-bind="textInput:lastName" />
+	</dd>
+	<dt>I'm</dt>
+	<dd>
+		"<!-- ko text:fullName --><!-- /ko -->".
+	</dd>
+</dl>
+<button type="button" data-bind="click:onReset">
+	Reset Name
+</button>
+					</pre>
+				</dd>
+			</dl>
+
+			<dl>
+				<dt>TypeScript</dt>
+				<dd>
+					<pre class="brush: js" data-bind="disableBinding:true">
+class DemoWithDecorator
+{
+	@vt.observable
+	private firstName = "vario";
+
+	@vt.observable
+	private lastName = "try";
+
+	@vt.pureComputed
+	@vt.extend( { rateLimit: 1 } )
+	private get fullName(): string
+	{
+		return this.firstName + " " + this.lastName;
+	}
+
+	private onReset()
+	{
+		this.firstName = "vario";
+		this.lastName = "try";
+	}
+}
+					</pre>
+				</dd>
+			</dl>
+		</article>
+	</article>
+
+	<article id="ObservableArray" class="View" data-bind="css:{invisible:nav.uid!=='observableArray'}">
+		<article class="ListSample" data-bind="with:observableArrayDemo">
+			<h1>array sample</h1>
+			Push data <input type="text" data-bind="value:pushData" />
+			<button type="button" data-bind="click:onPush">Push</button>
+			<p class="error" data-bind="if:pushErrorMsg">
+				<!-- ko text:pushErrorMsg --><!-- /ko -->
+			</p>
+			List length is <!-- ko text:list.length --><!-- /ko -->.
+			<ul data-bind="foreach:list">
+				<li>
+					<label>
+						<input type="checkbox" data-bind="value:$data, checked:$parent.removeTargets" />
+						<span data-bind="text:$data"></span>
+					</label>
+				</li>
+			</ul>
+
+			<button type="button" data-bind="click:onPop">Pop</button>
+			<button type="button" data-bind="click:onRemove">Remove Checked Data</button>
+		</article>
+
+		<article class="code">
+			<dl>
+				<dt>HTML</dt>
+				<dd>
+					<pre class="brush: html" data-bind="disableBinding:true">
+<article class="ListSample">
+	<h1>array sample</h1>
+	Push data <input type="text" data-bind="value:pushData" />
+	<button type="button" data-bind="click:onPush">Push</button>
+	<p class="error" data-bind="if:pushErrorMsg">
+		<!-- ko text:pushErrorMsg --><!-- /ko -->
+	</p>
+	List length is <!-- ko text:list.length --><!-- /ko -->.
+	<ul data-bind="foreach:list">
+		<li>
+			<label>
+				<input type="checkbox" data-bind="value:$data, checked:$parent.removeTargets" />
+				<span data-bind="text:$data"></span>
+			</label>
+		</li>
+	</ul>
+
+	<button type="button" data-bind="click:onPop">Pop</button>
+	<button type="button" data-bind="click:onRemove">Remove Checked Data</button>
+</article>
+					</pre>
+				</dd>
+			</dl>
+			<dl>
+				<dt>TypeScript</dt>
+				<dd>
+					<pre class="brush: js" data-bind="disableBinding:true">
+class ObservableArrayDemo
+{
+	@vt.observableArray
+	private list = ["data1", "data2", "data3"] as IObservableArray&lt;string>;
+
+	@vt.observable
+	private pushData = "";
+
+	@vt.observable
+	public pushErrorMsg = "";
+
+	@vt.observableArray
+	private removeTargets = [] as IObservableArray&lt;string>;
+
+	private onPush(): void
+	{
+		if ( !this.pushData.trim() ) return;
+		if ( 0 <= this.list.indexOf( this.pushData ) )
+		{
+			this.pushErrorMsg = "'" + this.pushData + "' already exists.";
+			return;
+		}
+		this.pushErrorMsg = "";
+
+		this.list.push( this.pushData );
+		this.pushData = "";
+	}
+
+	private onPop(): void
+	{
+		this.removeTargets.remove( this.list.pop() );
+	}
+
+	private onRemove(): void
+	{
+		this.removeTargets.forEach( data =>
+		{
+			this.list.remove( data );
+		});
+		this.removeTargets.removeAll();
+	}
+}
+					</pre>
+				</dd>
+			</dl>
+		</article>
+
+	</article>
+
+	<script src="js/knockout.js"></script>
+	<script src="js/knockout-decorator.min.js"></script>
+	<script src="js/demo.min.js"></script>
+</body>
+</html>

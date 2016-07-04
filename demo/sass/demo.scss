@@ -1,0 +1,130 @@
+﻿body
+{
+	margin:8px;
+}
+
+.invisible { display:none !important; }
+
+nav
+{
+	ul
+	{
+		display:flex;
+		li
+		{
+			font-size:20pt;
+			padding:10px;
+			list-style:none;
+			border:1px solid #ccc;
+			border-top-left-radius:20px;
+			border-top-right-radius:20px;
+			border-bottom:none;
+			margin-right:10px;
+			background-color:gray;
+			z-index:1000;
+
+			&:hover
+			{
+				cursor:pointer;
+			}
+
+			&.active
+			{
+				background-color:white;
+				&:hover
+				{
+					cursor:default;
+				}
+			}
+
+		}
+		margin:0;
+	}
+}
+
+.View
+{
+	display:inline-block;
+	border:1px solid #ccc;
+	padding:5px;
+	margin:-1px 20px 20px 20px;
+	//width:1750px;
+
+	//&.invisible { display:none; }
+
+	>div { display:flex; }
+	h1 { margin: 5px; }
+	
+	
+	
+
+	/*.code
+	{
+		display:flex;
+		dl
+		{
+			flex:1;
+			margin-right:20px;
+		}
+		dd
+		{
+			margin-left:0;
+		}
+	}*/
+}
+
+.InputSample
+{
+	margin-right:40px;
+	padding-right:40px;
+
+	>div
+	{
+		
+		display:flex;
+		margin-left:20px;
+
+		dt
+		{
+			text-align:right;
+			display:inline-block;
+			width:75px;
+			margin-bottom:8px;
+		}
+		dd
+		{
+			margin:0;
+			display:inline;
+			&:after
+			{
+				content:"\A";
+				white-space:pre;
+			}
+		}
+
+		button
+		{
+			margin:20px 0 0 20px;
+			height:1.8em;
+		}
+	}
+}
+
+.ListSample
+{
+	ul
+	{
+		margin:5px 0 5px 10px;
+	}
+
+	.error
+	{
+		color:red;
+	}
+}
+
+.syntaxhighlighter table td
+{
+	// This is to prevent style broken under the firefox.
+	vertical-align:top !important;
+}
