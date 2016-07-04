@@ -1,17 +1,22 @@
 # knockout-decorator
 
-This plug-in provides the function of Knockout observable as if to use usual property. 
+This plug-in makes it easier for you to write a code with knockout observable.
 
-## Install
+## Demo
+
+See https://demo.variotry.com/knockoutDecorator/ or demo/index.html.
+
+(I have checked demo with Google Chrome, IE11, Edge and firefox.)
+    
+## Usage
 
 Write as below on a html.
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.js"></script>
-    
-## Usage
+	<script src="yourScript.js"></script>
 
-First define a shortName such as `var vt = variotry.KnockoutDecorator`.
+And define a shortName such as `var vt = variotry.KnockoutDecorator`.
 
 ### 1.Use observable object
 
@@ -21,8 +26,6 @@ Just attach "@vt.observable" to a property as below.
     public firstName = "Bob";
 
 This code is similar to `public firstName = ko.observable("Bob")`.
-
-However, when you access the property, you need not write parentheses.
 
 If you set the propety to a value ( e.g. `this.firstName = "John"` ) , a view will also update, and vice versa.
 
@@ -61,9 +64,9 @@ Just attach "@vt.pureComputed" or "@vt.computed" to a accessor as below.
 
 This code similar to `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName )`.
 
-When firstName or lastname is change, fullName getter will be called.
+When firstName or lastName is change, fullName getter will be called.
 
-In addition, you can treat as writable computed if you define also setter.
+In addition, you can treat firstName as writable computed if you define also setter.
 
 ### 4.Use extenders
 
@@ -98,7 +101,7 @@ knockout(http://knockoutjs.com/)
 
 tsConfig.json compilerOptions.experimentalDecorators set true
 
- es5 support browser
+es5 support browser
 
 ## License
 

@@ -1,17 +1,22 @@
 # knockout-decorator
 
-‚±‚Ìƒvƒ‰ƒOƒCƒ“‚Í•’i’Ê‚è‚ÉƒvƒƒpƒeƒB‚ğˆµ‚¢‚È‚ç‚ª‚à Knockout observable ‚Ì‹@”\‚ğ’ñ‹Ÿ‚µ‚Ü‚·B
+‚±‚Ìƒvƒ‰ƒOƒCƒ“‚Í knockout observable‚ğ—p‚¢‚½ƒR[ƒh‚Ì‹Lq‚ğŠy‚É‚µ‚Ü‚·B
 
-## ƒCƒ“ƒXƒg[ƒ‹
+## ƒfƒ‚
+
+https://demo.variotry.com/knockoutDecorator/ ‚ÉƒAƒNƒZƒX‚·‚é‚©demo/index.html ‚ğQÆ‚µ‚Ä‰º‚³‚¢B
+
+iGoogleChrome, IE11, Edge, firefox ‚ÅŠm”F‚µ‚Ä‚Ü‚·Bj
+    
+## g‚¢•û
 
 html‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰º‚³‚¢B
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.js"></script>
-    
-## g‚¢•û
+	<script src="yourScript.js"></script>
 
-Å‰‚É `var vt = variotry.KnockoutDecorator` ‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€‚ğ’è‹`‚µ‚Ü‚·B
+‚»‚µ‚Ä `var vt = variotry.KnockoutDecorator` ‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€‚ğ’è‹`‚µ‚Ü‚·B
 
 ### 1.observable object ‚Ì—˜—p
 
@@ -21,8 +26,6 @@ html‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰º‚³‚¢B
     public firstName = "Bob";
 
 ‚±‚ÌƒR[ƒh‚Í `public firstName = ko.observable("Bob")` ‚Æ“¯—l‚Å‚·B
-
-‚µ‚©‚µAƒvƒƒpƒeƒB‚ÉƒAƒNƒZƒX‚·‚éÛ‚ÉŠ‡ŒÊ'()'‚ğ‘‚­•K—v‚ª‚ ‚è‚Ü‚¹‚ñB
 
 ƒvƒƒpƒeƒB‚É’l‚ğƒZƒbƒgi—áF `this.firstName = "John"` j‚·‚é‚ÆAƒrƒ…[‚àXV‚³‚ê‚Ü‚·B
 ‚»‚Ì‹t‚à‘R‚è‚Å‚·B
@@ -47,7 +50,7 @@ push, pop ‚Æ‚¢‚Á‚½ Array ŠÖ”‚ğŒÄ‚Ô‚Æ ( —áF `this.list.push("data4")`)Aƒrƒ…[‚
     @vt.observableArray
     public list = [ "data1", "data2", "data3" ] as IObservableArray<string>;
     
-(IObservableArray&lt;T&gt; ‚Í `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` ‚Ì‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€’è‹`‚µ‚Ü‚µ‚½j
+(IObservableArray&lt;T&gt; ‚Í `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` ‚Ì‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€’è‹`‚µ‚Ä‚¢‚Ü‚·j
 
 ### 3.pureComputedAcomputed ‚Ì—˜—p
 
@@ -96,11 +99,11 @@ firstName ‚à‚µ‚­‚Í lastName ‚ª•ÏX‚³‚ê‚é‚ÆAfullNameƒQƒbƒ^[‚ªŒÄ‚Î‚ê‚Ü‚·B
 
 ## •K{—vŒ
 
-knockout(http://knockoutjs.com/)
+knockout(http://knockoutjs.com/) 
 
 tsConfig.json ‚Ì compilerOptions.experimentalDecorators ‚ğ true ‚ÉƒZƒbƒg
 
- es5 ƒTƒ|[ƒgƒuƒ‰ƒEƒU
+es5 ƒTƒ|[ƒgƒuƒ‰ƒEƒU
 
 ## License
 
