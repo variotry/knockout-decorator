@@ -15,7 +15,7 @@ demo/index.html を参照する際は、`npm install` と `gulp install` を実行してくださ
 dist ディレクトリ内の js, d.ts を任意の場所にコピーし、htmlに以下の様に記述して下さい。
 
     <script src="path/knockout.js"></script>
-    <script src="path/knockout-decorator.js"></script>
+    <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
 そして `var vt = variotry.KnockoutDecorator` ようにショートネームを定義します。

@@ -15,7 +15,7 @@ If you refer to demo/index.html, execute `npm install` and `gulp install`
 Copy .js and d.ts inside dist directory in any directory and write as below on a html.
 
     <script src="path/knockout.js"></script>
-    <script src="path/knockout-decorator.js"></script>
+    <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
 And define a shortName such as `var vt = variotry.KnockoutDecorator`.
