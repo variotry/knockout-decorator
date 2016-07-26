@@ -15,9 +15,7 @@ var gulp = require( "gulp" ),
 
 gulp.task( "build:ts", () =>
 {
-	gulp.task( "_build:ts", () => buildTypeScript( "src/**/*.ts", "dist" ) );
-	gulp.task( "_build:devTs", () => buildTypeScript( "src/**/*.ts", "dist", { min: false, genDefinition: true } ) );
-	return sequence( ["_build:ts", "_build:devTs" ] );
+	return buildTypeScript( "src/**/*.ts", "dist", { genDefinition: true } );
 } );
 
 gulp.task( "watch:ts", ["build:ts"], () =>
@@ -27,8 +25,9 @@ gulp.task( "watch:ts", ["build:ts"], () =>
 
 gulp.task( "build:demo", () =>
 {
-	gulp.task( "_build:demo", () => buildTypeScript( "src/**/*.ts", "demo/js", { min: true, sourceMap: false } ) );
-	gulp.task( "_buildDemo:ts", () => buildTypeScript( ["dist/knockout-decorator.d.ts", "demo/ts/**/*.ts"], "demo/js", { min: true, sourceMap: false } ) );
+	let buildOptions = { sourceMap: false };
+	gulp.task( "_build:demo", () => buildTypeScript( "src/**/*.ts", "demo/js", buildOptions ) );
+	gulp.task( "_buildDemo:ts", () => buildTypeScript( ["dist/knockout-decorator.d.ts", "demo/ts/**/*.ts"], "demo/js", buildOptions ) );
 	gulp.task( "_buildDemo:sass", () =>
 	{
 		return gulp.src( "demo/sass/**/*.scss" )
@@ -46,7 +45,7 @@ gulp.task( "watch:demo", ["build:demo"], () =>
 
 gulp.task( "install:bower", () =>
 {
-	var bowerDir = "bower_components";
+	let bowerDir = "bower_components";
 	gulp.task( "_install:bower", () => bower( bowerDir ) );
 	gulp.task( "_move:knockout", () =>
 	{
@@ -105,24 +104,23 @@ gulp.task( "doc:ts", () =>
 function buildTypeScript( src, dest, options )
 {
 	options = options || {};
-	if ( options.min === undefined ) options.min = true;
 
-	var config = require( "./tsconfig.json" );
+	let config = require( "./tsconfig.json" );
 	if ( Array.isArray( src ) === false )
 	{
 		src = [src];
 	}
 	
-	var stream = gulp.src( src.concat("typings/index.d.ts") )
+	let stream = gulp.src( src.concat("typings/index.d.ts") )
 		.pipe( plumber() )
 		.pipe( options.sourceMap ? sourcemaps.init() : gutil.noop() )
 		.pipe( typescript( config.compilerOptions ) );
 		
 	let restTasks = [
-		stream.pipe( options.min ? uglify( {
+		stream.pipe( uglify( {
 			preserveComments: "some"
-		} ) : gutil.noop() )
-			.pipe( options.min ? rename( { extname: ".min.js" } ) : gutil.noop() )
+		} ) )
+			.pipe( rename( { extname: ".min.js" } ) )
 			.pipe( options.sourceMap ? sourcemaps.write( "../sourcemaps/ts" ) : gutil.noop() )
 			.pipe( gulp.dest( dest ) )
 	];
@@ -131,7 +129,5 @@ function buildTypeScript( src, dest, options )
 	{
 		restTasks.push( stream.dts.pipe( gulp.dest( dest ) ) );
 	}
-	
-
 	return merge2( restTasks );
 }

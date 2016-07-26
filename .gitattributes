@@ -1,0 +1,3 @@
+dist/* linguist-vendored
+demo/* linguist-vendored
+gulpfile.js linguist-vendored
