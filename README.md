@@ -18,13 +18,13 @@ Copy .js and d.ts inside dist directory in any directory and write as below on a
     <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
-And define a shortName such as `var vt = variotry.KnockoutDecorator`.
+And define a shortName such as `var kd = variotry.KnockoutDecorator`.
 
 ### 1.Use observable object
 
-Just attach "@vt.observable" to a property as below.
+Just attach "@kd.observable" to a property as below.
 
-    @vt.observable
+    @kd.observable
     public firstName = "Bob";
 
 This code is similar to `public firstName = ko.observable("Bob")`.
@@ -33,9 +33,9 @@ If you set the propety to a value ( e.g. `this.firstName = "John"` ) , a view wi
 
 ### 2.Use observable array
 
-Just attach "@vt.observableArray" to an Array type property as below.
+Just attach "@kd.observableArray" to an Array type property as below.
 
-    @vt.observableArray
+    @kd.observableArray
     public list = [ "data1", "data2", "data3" ];
     
 This code is similar to `public list = ko.observableArray([ "data1", "data2", "data3" ])`.
@@ -46,22 +46,22 @@ If you call Array function such as push or pop  ( e.g. `this.list.push("data4")`
 
 You can easily access KnockoubObservableArray functions via intellisense by converting as below.
 
-    @vt.observableArray
+    @kd.observableArray
     public list = [ "data1", "data2", "data3" ] as IObservableArray<string>;
     
 (Define IObservableArray&lt;T&gt; as `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` )
 
 ### 3.Use pureComputed and computed
 
-Just attach "@vt.pureComputed" or "@vt.computed" to an accessor as below.
+Just attach "@kd.pureComputed" or "@kd.computed" to an accessor as below.
 
-    @vt.observable
+    @kd.observable
     public firstName = "Bob";
     
-    @vt.observable
+    @kd.observable
     public lastName = "Smith";
     
-    @vt.pureComputed
+    @kd.pureComputed
     public get fullName() { return this.firstName + " " + this.lastName; }
 
 This code similar to `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName )`.
@@ -72,10 +72,10 @@ In addition, you can treat firstName as writable computed if you define also set
 
 ### 4.Use extenders
 
-Just attach "@vt.extend to a property or accessor which is attached observable decorator as below.
+Just attach "@kd.extend to a property or accessor which is attached observable decorator as below.
 
-    @vt.pureComputed
-    @vt.extend( { rateLimit: 500 } )
+    @kd.pureComputed
+    @kd.extend( { rateLimit: 500 } )
     public get fullName() { return this.firstName + " " + this.lastName; }
     
 This code similar to `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName ).extend( { rateLimit: 500 } );`
@@ -91,7 +91,7 @@ You can get a knockout observable object by using below functions.
     
 Example of use.
 
-    vt.getObservable<string>( this, "firstName" ).subscribe( newValue =>
+    kd.getObservable<string>( this, "firstName" ).subscribe( newValue =>
     {
         console.log( "firstName value is", newValue );
     });
