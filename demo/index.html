@@ -85,14 +85,14 @@
 					<pre class="brush: js" data-bind="disableBinding:true">
 class DemoWithDecorator
 {
-	@vt.observable
+	@kd.observable
 	private firstName = "vario";
 
-	@vt.observable
+	@kd.observable
 	private lastName = "try";
 
-	@vt.pureComputed
-	@vt.extend( { rateLimit: 1 } )
+	@kd.pureComputed
+	@kd.extend( { rateLimit: 1 } )
 	private get fullName(): string
 	{
 		return this.firstName + " " + this.lastName;
@@ -166,16 +166,16 @@ class DemoWithDecorator
 					<pre class="brush: js" data-bind="disableBinding:true">
 class ObservableArrayDemo
 {
-	@vt.observableArray
+	@kd.observableArray
 	private list = ["data1", "data2", "data3"] as IObservableArray&lt;string>;
 
-	@vt.observable
+	@kd.observable
 	private pushData = "";
 
-	@vt.observable
+	@kd.observable
 	public pushErrorMsg = "";
 
-	@vt.observableArray
+	@kd.observableArray
 	private removeTargets = [] as IObservableArray&lt;string>;
 
 	private onPush(): void

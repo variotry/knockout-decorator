@@ -1,4 +1,4 @@
-﻿let vt = variotry.KnockoutDecorator;
+﻿let kd = variotry.KnockoutDecorator;
 type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
 ko.bindingHandlers["disableBinding"] =
@@ -11,14 +11,14 @@ ko.bindingHandlers["disableBinding"] =
 
 class ObservableVariablesDemo
 {
-	@vt.observable
+	@kd.observable
 	private firstName = "vario";
 
-	@vt.observable
+	@kd.observable
 	private lastName = "try";
 
-	@vt.pureComputed
-	@vt.extend( { rateLimit: 1 } )
+	@kd.pureComputed
+	@kd.extend( { rateLimit: 1 } )
 	private get fullName(): string
 	{
 		return this.firstName + " " + this.lastName;
@@ -34,16 +34,16 @@ class ObservableVariablesDemo
 
 class ObservableArrayDemo
 {
-	@vt.observableArray
+	@kd.observableArray
 	private list = ["data1", "data2", "data3"] as IObservableArray<string>;
 
-	@vt.observable
+	@kd.observable
 	private pushData = "";
 
-	@vt.observable
+	@kd.observable
 	public pushErrorMsg = "";
 
-	@vt.observableArray
+	@kd.observableArray
 	private removeTargets = [] as IObservableArray<string>;
 
 	private onPush(): void
@@ -88,7 +88,7 @@ class Nav
 		{ uid: "observableArray", title: "observe array" }
 	];
 
-	@vt.observable
+	@kd.observable
 	private uid: string;
 
 	public constructor()
