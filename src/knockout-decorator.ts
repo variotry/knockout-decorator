@@ -166,11 +166,10 @@ namespace variotry.KnockoutDecorator
 	{
 		return ( target: any, propertyName: string, descriptor?: PropertyDescriptor ) =>
 		{
-			var o = getObservableObject( target, propertyName );
+			let o = getObservableObject( target, propertyName );
 			if ( !o )
 			{
-				// I try get observable object again
-				// to get it if @extend is attached after observable decorator.
+				// I try get observable object again to get it if @extend is attached after observable decorator.
 				setTimeout(() =>
 				{
 					o = getObservableObject( target, propertyName );
@@ -180,7 +179,7 @@ namespace variotry.KnockoutDecorator
 					}
 					else
 					{
-						var msg = "Can't get observable object from '";
+						let msg = "Can't get observable object from '";
 						msg += target["constructor"].name + "." + propertyName + "'.\n";
 						msg += "In order to use @extend need attach observable decorator.";
 						console.error( msg );
@@ -190,6 +189,49 @@ namespace variotry.KnockoutDecorator
 			}
 			o.extend( options );
 		};
+	}
+
+	/**
+	 * Just attach to a number type property.
+	 * Convert to number type if set a value other than number type such as via input element on a browser.
+	 * If the converted value is nan, it treat as zero.
+	 * @extend require attaching observable decorator.
+	 */
+	export function asNumber( target: any, propertyName: string ): void
+	{
+		let o = getObservableObject( target, propertyName );
+		function subscribe( o: any )
+		{
+			o.subscribe( newValue =>
+			{
+				if ( typeof newValue !== "number" )
+				{
+					let v = parseFloat( newValue );
+					o( isNaN( v ) ? 0 : v );
+				}
+			});
+		}
+		if ( !o )
+		{
+			// I try get observable object again to get it if @asNumber is attached after observable decorator.
+			setTimeout(() =>
+			{
+				o = getObservableObject( target, propertyName );
+				if ( o )
+				{
+					subscribe( o );
+				}
+				else
+				{
+					let msg = "Can't get observable object from '";
+					msg += target["constructor"].name + "." + propertyName + "'.\n";
+					msg += "In order to use @asNumber need attach observable decorator.";
+					console.error( msg );
+				}
+			});
+			return;
+		}
+		subscribe( o );
 	}
 
 	/**
@@ -267,11 +309,11 @@ namespace variotry.KnockoutDecorator
 			};
 			if ( options )
 			{
-				for ( var key in options )
+				for ( let key in options )
 				{
 					if ( typeof options[key] === "function" )
 					{
-						var fn = options[key];
+						let fn = options[key];
 						options[key] = function ()
 						{
 							fn.apply( target, arguments );

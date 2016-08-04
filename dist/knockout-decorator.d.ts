@@ -73,6 +73,13 @@ declare namespace variotry.KnockoutDecorator {
         [key: string]: any;
     }): any;
     /**
+     * Just attach to a number type property.
+     * Convert to number type if set a value other than number type such as via input element on a browser.
+     * If the converted value is nan, it treat as zero.
+     * @extend require attaching observable decorator.
+     */
+    function asNumber(target: any, propertyName: string): void;
+    /**
      * Get raw knockout observable object.
      * @param target	Instance object.
      * @param propertyName		Name of a property which is attached the @observable.
