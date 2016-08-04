@@ -74,8 +74,8 @@ declare namespace variotry.KnockoutDecorator {
     }): any;
     /**
      * Just attach to a number type property.
-     * Convert to number type if set a value other than number type such as via input element on a browser.
-     * If the converted value is nan, it treat as zero.
+     * This convert to number type if set a value other than number type such as value is changed via input element on a browser.
+     * If the converted value is NaN, it treat as zero.
      * @extend require attaching observable decorator.
      */
     function asNumber(target: any, propertyName: string): void;
