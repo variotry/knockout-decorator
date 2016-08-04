@@ -72,7 +72,7 @@ In addition, you can treat firstName as writable computed if you define also set
 
 ### 4.Use extenders
 
-Just attach "@kd.extend to a property or accessor which is attached observable decorator as below.
+Just attach "@kd.extend" to a property or accessor which is attached observable decorator as below.
 
     @kd.pureComputed
     @kd.extend( { rateLimit: 500 } )
@@ -80,8 +80,21 @@ Just attach "@kd.extend to a property or accessor which is attached observable d
     
 This code similar to `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName ).extend( { rateLimit: 500 } );`
 
+### 5.Added feature
 
-### 5.Get raw knockout observable object
+Even though you declare as `x:number = 0`, the property type may become string type such as value is changed via input elements on browser.
+
+In a case like that, use "@kd.asNumber" as below.
+
+    @kd.observable
+	@kd.asNumber
+	public x:number = 0
+
+Thus, the property keep number type if set a value other than number type.
+
+If the conveted value is NaN, it treat as zero.
+
+### 6.Get raw knockout observable object
 
 You can get a knockout observable object by using below functions.
 

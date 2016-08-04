@@ -6,7 +6,7 @@
 
 https://demo.variotry.com/knockoutDecorator/ にアクセスするか demo/index.html を参照して下さい。
 
-GoogleChrome, IE11, Edge, firefox で確認してます。）
+（GoogleChrome, IE11, Edge, firefox で確認してます。）
 
 demo/index.html を参照する際は、`npm install` と `gulp install` を実行してください。
     
@@ -84,7 +84,21 @@ firstName もしくは lastName が変更されると、fullNameゲッターが呼ばれます。
 
 このコードは `public firstName  = ko.pureComputed( () => this.firstName + " " + this.lastName ).extend( { rateLimit:500 } )` と同様です。
 
-### 5.元となる knockout observable オブジェクトの取得
+### 5.追加機能
+
+`private x:number = 0` のように定義しても、ブラウザ上のinput要素を介して値を変更するなどでプロパティがstring型になる場合があります。
+
+そのような場合は以下のように "@kd.asNumber" を利用してください。
+
+    @kd.observable
+	@kd.asNumber
+	private x:number = 0
+
+こうすることで、number型以外の値をセットしてもプロパティはnumber型を保ちます。
+
+numberへの変換でNaNになる場合は0として扱います。
+
+### 6.元となる knockout observable オブジェクトの取得
 
 以下の関数を使う事で、knockout observable オブジェクトを取得できます。
 
