@@ -41,19 +41,19 @@ declare namespace variotry.KnockoutDecorator {
      * Just attach to a property as decorator.
      * If you change a property value, a view will also change. And vice versa.
      */
-    function observable(target: any, propertyName: string): void;
+    function observable(_class: any, propertyName: string): void;
     /**
      * Just attach to a array property as decorator.
      * If you set a property to a new array data, a view will also change.
      * If you call a Array function such as push or pop, a view will also change.
      */
-    function observableArray(target: any, propertyName: string): void;
+    function observableArray(_class: any, propertyName: string): void;
     /**
      * Just attach to a property accessor as decorator.
      * If a observable property value in the getter is changed, it will be called.
      * If you define also a setter, you can treat as writable computed.
      */
-    function computed(target: any, propertyName: string, descriptor: PropertyDescriptor): void;
+    function computed(_class: any, propertyName: string, descriptor: PropertyDescriptor): void;
     /**
      * Just attach to a property accessor as decorator.
      * @param options	Knockout computed options.
@@ -63,7 +63,7 @@ declare namespace variotry.KnockoutDecorator {
     /**
      * Just attach to a property accessor as decorator.
      */
-    function pureComputed(target: any, propertyName: string, descriptor: PropertyDescriptor): void;
+    function pureComputed(_class: any, propertyName: string, descriptor: PropertyDescriptor): void;
     /**
      * Just attach to a property or property accessor.
      * @extend require attaching observable decorator.
@@ -78,25 +78,25 @@ declare namespace variotry.KnockoutDecorator {
      * If the converted value is NaN, it treat as zero.
      * @extend require attaching observable decorator.
      */
-    function asNumber(target: any, propertyName: string): void;
+    function asNumber(_class: any, propertyName: string): void;
     /**
      * Get raw knockout observable object.
-     * @param target	Instance object.
+     * @param instancedObj	Instanced object.
      * @param propertyName		Name of a property which is attached the @observable.
      * @return If found then KnockoutObservable object, else null.
      */
-    function getObservable<T>(target: any, propertyName: string): KnockoutObservable<T>;
+    function getObservable<T>(instancedObj: any, propertyName: string): KnockoutObservable<T>;
     /**
      * Get row knockout observable array object.
-     * @param target	Instance object.
+     * @param instancedObj	Instanced object.
      * @param propertyName		Name of a property which is attached the @observableArray.
      */
-    function getObservableArray<T>(target: any, propertyName: string): KnockoutObservableArray<T>;
+    function getObservableArray<T>(instancedObj: any, propertyName: string): KnockoutObservableArray<T>;
     /**
      * Get raw knockout computed object.
-     * @param target	Instance object.
+     * @param instancedObj	Instanced object.
      * @param propertyName		Name of a property which is attached the @computed.
      * @return If found then KnockoutComputed object, else null.
      */
-    function getComputed<T>(target: any, propertyName: string): KnockoutComputed<T>;
+    function getComputed<T>(instancedObj: any, propertyName: string): KnockoutComputed<T>;
 }
