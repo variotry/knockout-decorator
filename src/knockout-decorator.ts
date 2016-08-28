@@ -54,16 +54,159 @@ namespace variotry.KnockoutDecorator
 
 	// #endregion
 
+	export interface ITrackOptions
+	{
+		pureComputed: boolean
+	}
+
+	/**
+	 * Just attach to a class as decorator.
+	 * This decorator converts all properties and accessors to observable.
+	 * Points to consider.
+	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
+	 * 2. Have to set array value for array properties to be recognized as oservable array.
+	 *    If you first set null to a array property, the property will recognize as KnockoutObservable&lt;T[]>, not KnockoutObservableArray&lt;T>.
+	 * 3. Accessors will be converted to pure computed.
+	 *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
+	 *    or attach `@computed` decorator to accessors.
+	 * 4. If you want to prevent properties or accessors from converting to observable,
+	 *    attach `@ignore` decorator to them.
+	 */
+	export function track( constructor: Function );
+	/**
+	 * Just attach to a class as decorator.
+	 * This decorator converts all properties and accessors to observable.
+	 * Points to consider.
+	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
+	 * 2. Have to set array value for array properties to be recognized as oservable array.
+	 *    If you first set null to a array property, the property will recognize as KnockoutObservable<T[]>, not KnockoutObservableArray<T>.
+	 * 3. Accessors will be converted to pure computed.
+	 *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
+	 *    or attach `@computed` decorator to accessors.
+	 * 4. If you want to prevent properties or accessors from converting to observable,
+	 *    attach `@ignore` decorator to them.
+	 */
+	export function track( options: ITrackOptions );
+	export function track( arg:any ) : any
+	{
+		let options: ITrackOptions;
+		if ( typeof arg === "function" )
+		{
+			options = {
+				pureComputed: true
+			};
+		}
+		else
+		{
+			options = arg;
+		}
+
+		function classFactory( constructor: Function )
+		{
+			let original = constructor;
+			function isIgnore( properyName: string )
+			{
+				if ( !constructor[ignoresKey] ) return false;
+				return constructor[ignoresKey].indexOf( properyName ) >= 0;
+			}
+
+			function trackConstructor( args )
+			{
+				let c: any = function ()
+				{
+					return original.apply( this, args );
+				}
+				c.prototype = original.prototype;
+
+				let functions = Object.keys( c.prototype );
+				let computedAccessors = [];
+				functions.forEach( f =>
+				{
+					if ( isRegisteredObserbable( c.prototype, f ) )
+					{
+						computedAccessors.push( f );
+						return;
+					}
+					if ( isIgnore( f ) ) return;
+					let d = Object.getOwnPropertyDescriptor( c.prototype, f );
+					if ( !d || !d.get ) return;
+
+					let factory = getComputedDecoratorFactory( {
+						pure: options.pureComputed
+					} );
+					factory( c.prototype, f, d );
+					Object.defineProperty( c.prototype, f, d );
+					computedAccessors.push( f );
+				});
+
+				let o = new c();
+				let properties = Object.keys( o );
+
+				properties.forEach( p =>
+				{
+					if ( isRegisteredObserbable( c.prototype, p ) ) return;
+					if ( p.match( /^__vtKnockout/ ) ) return;
+					if ( isIgnore( p ) ) return;
+
+					let v = o[p];
+					delete o[p];
+					if ( Array.isArray( v ) )
+					{
+						observableArray( c.prototype, p );
+					}
+					else
+					{
+						observable( c.prototype, p );
+					}
+					o[p] = v;
+				});
+
+				computedAccessors.forEach( a => o[a] );
+				computedAccessors = null;
+				functions = null;
+				properties = null;
+				return o;
+			}
+			return trackConstructor;
+		}
+		
+		if ( typeof arg === "function" )
+		{
+			return classFactory( arg );
+		}
+		else
+		{
+			return function ( constructor: Function )
+			{
+				return classFactory( constructor );
+			}
+		}
+	}
+
+	/** @private */
+	const ignoresKey = "__vtKnockoutIgnoresKey__";
+
+	/**
+	 * Just attach to a property or accessor as decorator.
+	 * This decorator prevents a property or a accessor from converting to observable in @track.
+	 */
+	export function ignore( _class: any, propertyName: string ): void
+	{
+		let constructor = _class.constructor;
+		if ( !constructor[ignoresKey] ) constructor[ignoresKey] = [];
+		constructor[ignoresKey].push( propertyName );
+	}
+
 	/**
 	 * Just attach to a property as decorator.
 	 * If you change a property value, a view will also change. And vice versa.
 	 */
 	export function observable( _class: any, propertyName: string ): void
 	{
+		if ( isRegisteredObserbable( _class, propertyName ) ) return;
 		function registerProperty( instancedObj: any ): void
 		{
 			let o = ko.observable();
-			
 			setObservableObjet( instancedObj, propertyName, o );
 			assignExtendForInstancedObj( _class, instancedObj, propertyName );
 			Object.defineProperty( instancedObj, propertyName, {
@@ -71,6 +214,7 @@ namespace variotry.KnockoutDecorator
 				set: o
 			});
 		}
+
 		Object.defineProperty( _class, propertyName, {
 			get: function (): any
 			{
@@ -92,6 +236,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function observableArray( _class: any, propertyName: string ): void
 	{
+		if ( isRegisteredObserbable( _class, propertyName ) ) return;
 		function replaceFunction( src: any[], o: KnockoutObservableArray<any> )
 		{
 			let originals: { [fn: string]: Function } = {};
@@ -285,6 +430,8 @@ namespace variotry.KnockoutDecorator
 	{
 		return ( _class: Object, propertyName: string, descriptor: PropertyDescriptor ) =>
 		{
+			if ( isRegisteredObserbable( _class, propertyName ) ) return;
+
 			let getter = descriptor.get;
 			if ( !getter )
 			{
@@ -337,8 +484,21 @@ namespace variotry.KnockoutDecorator
 					registerProperty( this );
 					this[propertyName] = value;
 				}
-			}			
+			}
 		}
+	}
+	/** @private */
+	const registerObjserbablesKey = "__vtKnockoutRegisterObserbables__";
+	function isRegisteredObserbable( _class: any, propertyName: string ): boolean
+	{
+		if ( _class[registerObjserbablesKey] && _class[registerObjserbablesKey].indexOf( propertyName ) >= 0 ) return true;
+
+		if ( !_class[registerObjserbablesKey] )
+		{
+			_class[registerObjserbablesKey] = [];
+		}
+		_class[registerObjserbablesKey].push( propertyName );
+		return false;
 	}
 
 	/** @private */
@@ -379,12 +539,12 @@ namespace variotry.KnockoutDecorator
 
 
 	/** @private */
-	function assignExtendForInstancedObj( _class:any, instancedObj: any, propertyName ): void
+	function assignExtendForInstancedObj( _class:any, instancedObj: any, propertyName: string ): void
 	{
-		var o = getObservableObject( instancedObj, propertyName );
-		var ext = getExtend( _class, propertyName );
+		let o = getObservableObject( instancedObj, propertyName );
+		let ext = getExtend( _class, propertyName );
 		if ( ext ) o.extend( ext );
-		var subscribers = getSubscribers( _class, propertyName );
+		let subscribers = getSubscribers( _class, propertyName );
 		if ( subscribers )
 		{
 			for ( let i = 0; i < subscribers.length; ++i )
@@ -393,6 +553,6 @@ namespace variotry.KnockoutDecorator
 			}
 		}
 	}
-
+	
 	// #endregion
 }

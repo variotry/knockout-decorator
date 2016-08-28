@@ -37,6 +37,42 @@ declare namespace variotry.KnockoutDecorator {
         disposeWhen?(): boolean;
         disposeWhenNodeIsRemoved?: Node;
     }
+    interface ITrackOptions {
+        pureComputed: boolean;
+    }
+    /**
+     * Just attach to a class as decorator.
+     * This decorator converts all properties and accessors to observable.
+     * Points to consider.
+     * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
+     * 2. Have to set array value for array properties to be recognized as oservable array.
+     *    If you first set null to a array property, the property will recognize as KnockoutObservable&lt;T[]>, not KnockoutObservableArray&lt;T>.
+     * 3. Accessors will be converted to pure computed.
+     *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
+     *    or attach `@computed` decorator to accessors.
+     * 4. If you want to prevent properties or accessors from converting to observable,
+     *    attach `@ignore` decorator to them.
+     */
+    function track(constructor: Function): any;
+    /**
+     * Just attach to a class as decorator.
+     * This decorator converts all properties and accessors to observable.
+     * Points to consider.
+     * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
+     * 2. Have to set array value for array properties to be recognized as oservable array.
+     *    If you first set null to a array property, the property will recognize as KnockoutObservable<T[]>, not KnockoutObservableArray<T>.
+     * 3. Accessors will be converted to pure computed.
+     *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
+     *    or attach `@computed` decorator to accessors.
+     * 4. If you want to prevent properties or accessors from converting to observable,
+     *    attach `@ignore` decorator to them.
+     */
+    function track(options: ITrackOptions): any;
+    /**
+     * Just attach to a property or accessor as decorator.
+     * This decorator prevents a property or a accessor from converting to observable in @track.
+     */
+    function ignore(_class: any, propertyName: string): void;
     /**
      * Just attach to a property as decorator.
      * If you change a property value, a view will also change. And vice versa.
