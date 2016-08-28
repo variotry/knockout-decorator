@@ -144,7 +144,6 @@ namespace variotry.KnockoutDecorator
 
 				properties.forEach( p =>
 				{
-					if ( isRegisteredObserbable( c.prototype, p ) ) return;
 					if ( p.match( /^__vtKnockout/ ) ) return;
 					if ( isIgnore( p ) ) return;
 
@@ -152,6 +151,7 @@ namespace variotry.KnockoutDecorator
 					delete o[p];
 					if ( Array.isArray( v ) )
 					{
+						console.log( "array", p );
 						observableArray( c.prototype, p );
 					}
 					else
