@@ -151,7 +151,6 @@ namespace variotry.KnockoutDecorator
 					delete o[p];
 					if ( Array.isArray( v ) )
 					{
-						console.log( "array", p );
 						observableArray( c.prototype, p );
 					}
 					else
