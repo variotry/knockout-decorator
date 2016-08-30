@@ -37,8 +37,19 @@ declare namespace variotry.KnockoutDecorator {
         disposeWhen?(): boolean;
         disposeWhenNodeIsRemoved?: Node;
     }
+    /**
+     * Argument of @track decorator.
+     */
     interface ITrackOptions {
-        pureComputed: boolean;
+        /**
+         * Convert to pure computed if true, non pure computed otherwise.
+         */
+        pureComputed?: boolean;
+        /**
+         * Set name of method that you want to execute after a constructor.
+         * You can get raw observable object using getObservable<T> and so on in the method.
+         */
+        initializeMethod?: string;
     }
     /**
      * Just attach to a class as decorator.
@@ -52,6 +63,7 @@ declare namespace variotry.KnockoutDecorator {
      *    or attach `@computed` decorator to accessors.
      * 4. If you want to prevent properties or accessors from converting to observable,
      *    attach `@ignore` decorator to them.
+     * 5. You can't get raw observable objects in a constructor.
      */
     function track(constructor: Function): any;
     /**
@@ -66,6 +78,7 @@ declare namespace variotry.KnockoutDecorator {
      *    or attach `@computed` decorator to accessors.
      * 4. If you want to prevent properties or accessors from converting to observable,
      *    attach `@ignore` decorator to them.
+     * 5. You can't get raw observable objects in a constructor.
      */
     function track(options: ITrackOptions): any;
     /**
