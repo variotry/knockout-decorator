@@ -102,6 +102,18 @@ class Nav
 	}
 }
 
+@kd.track
+class TrackDemo
+{
+	private firstName = "vario";
+	private lastName = "try";
+
+	public get name()
+	{
+		return this.firstName + " " + this.lastName;
+	}
+}
+
 class Demo
 {
 	private nav: Nav;
@@ -110,10 +122,11 @@ class Demo
 
 	public constructor()
 	{
-		this.nav = new Nav();
+		/*this.nav = new Nav();
 		this.observableDemo = new ObservableVariablesDemo();
 		this.observableArrayDemo = new ObservableArrayDemo();
-		ko.applyBindings( this, document.body );
+		ko.applyBindings( this, document.body );*/
+		ko.applyBindings( new TrackDemo(), document.getElementById( "trackView" ) );
 	}
 }
 

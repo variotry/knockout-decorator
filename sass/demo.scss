@@ -1,0 +1,28 @@
+﻿#main
+{
+	h2
+	{
+		font-size:12pt;
+	}
+}
+
+#trackView
+{
+	dt
+	{
+		display:inline-block; 
+		width:80px;
+		text-align:right;
+		height:2em;
+		line-height:2em;
+	}
+	dd
+	{
+		display:inline;
+		&:after
+		{
+			content:"\A";
+			white-space:pre;
+		}
+	}
+}

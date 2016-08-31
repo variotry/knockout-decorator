@@ -40,6 +40,9 @@
     <TypeScriptCompile Include="js\knockout-decorator.d.ts" />
     <TypeScriptCompile Include="ts\demo.ts" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="sass\demo.scss" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>

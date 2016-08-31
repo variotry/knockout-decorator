@@ -23,6 +23,18 @@ gulp.task( "watch:ts", ["build:ts"], () =>
 	return gulp.watch( "ts/**/*.ts", ["build:ts"] );
 } );
 
+gulp.task( "build:sass", ()=>
+{
+	return gulp.src( "sass/**/*.scss" )
+			.pipe( plumber() )
+			.pipe( sass() )
+			.pipe( gulp.dest( "stylesheets" ) );
+} )
+gulp.task( "watch:sass", ["build:sass"], () =>
+{
+	return gulp.watch( "sass/**/*.scss", ["build:sass"] );
+} );
+
 
 gulp.task( "install:bower", () =>
 {
