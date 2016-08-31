@@ -62,7 +62,7 @@ gulp.task( "install:typings", () =>
 
 gulp.task( "install", () =>
 {
-	return sequence( ["install:bower", "install:typings"], "build:ts" )
+	return sequence( ["install:bower", "install:typings"], ["build:ts", "build:sass"] )
 });
 
 function buildTypeScript( src, dest, options )
