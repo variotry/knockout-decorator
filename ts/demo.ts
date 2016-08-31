@@ -105,12 +105,21 @@ class Nav
 @kd.track
 class TrackDemo
 {
+	// properties is recognized as observable.
 	private firstName = "vario";
 	private lastName = "try";
 
+	// accessors is recognized as pure computed.
 	public get name()
 	{
 		return this.firstName + " " + this.lastName;
+	}
+
+	// do nothing for methods.
+	private onReset(): void
+	{
+		this.firstName = "vario";
+		this.lastName = "try";
 	}
 }
 

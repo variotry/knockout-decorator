@@ -52,14 +52,17 @@
 					</h1>
 					<article id="trackView">
 						<h2>observable object and pure computed.</h2>
-						<dl>
-							<dt>firstName:</dt>
-							<dd><input type="text" data-bind="textInput:firstName" /></dd>
-							<dt>lastName:</dt>
-							<dd><input type="text" data-bind="textinput:lastName" /></dd>
-							<dt>name:</dt>
-							<dd data-bind="text:name" title="computed result"></dd>
-						</dl>
+						<div>
+							<dl>
+								<dt>firstName:</dt>
+								<dd><input type="text" data-bind="textInput:firstName" /></dd>
+								<dt>lastName:</dt>
+								<dd><input type="text" data-bind="textinput:lastName" /></dd>
+								<dt>name:</dt>
+								<dd data-bind="text:name" title="computed result"></dd>
+							</dl>
+							<button data-bind="click:onReset">Reset Name</button>
+						</div>
 					</article>
 
 					<aside class="src">

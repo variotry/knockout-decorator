@@ -1,18 +1,22 @@
 #main h2 {
   font-size: 12pt; }
 
-#trackView dt {
-  display: inline-block;
-  width: 80px;
-  text-align: right;
-  height: 2em;
-  line-height: 2em; }
-
-#trackView dd {
-  display: inline; }
-  #trackView dd:after {
-    content: "\A";
-    white-space: pre; }
+#trackView > div {
+  display: flex;
+  align-items: flex-start; }
+  #trackView > div dt {
+    display: inline-block;
+    width: 80px;
+    text-align: right;
+    height: 2em;
+    line-height: 2em; }
+  #trackView > div dd {
+    display: inline; }
+    #trackView > div dd:after {
+      content: "\A";
+      white-space: pre; }
+  #trackView > div button {
+    margin: 30px 0 0 20px; }
 
 aside.src h1 {
   font-size: 10pt;
