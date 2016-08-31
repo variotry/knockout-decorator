@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="stylesheets/github-dark.css">
 	<link rel="stylesheet" href="stylesheets/demo.css">
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script type="text/javascript" src="javascripts/script.js"></script>
 
 	<title>Knockout-decorator</title>
 	<meta name="description" content="This plug-in makes it easier for you to write a code with knockout observable.">
@@ -45,13 +44,21 @@
 						The plugin requires es5 support browser.
 					</p>
 				</article>
-				<article class="trackDemo">
+
+				<div class="tab invisible" data-bind="with:nav, css:{invisible:false}">
+					<h1>select demo</h1>
+					<ul data-bind="foreach:items">
+						<li data-bind="click:$parent.onChange.bind($parent,$index()), css:{isActive:$parent.selectedIndex==$index()}">
+							<div data-bind="text:$data"></div>
+						</li>
+					</ul>
+				</div>
+
+				<article class="demo1 invisible" data-bind="if:nav.selectedIndex==0, css:{invisible:false}">
 					<h1>
-						<a id="track-demo" class="anchor" href="#track-demo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-						@track decorator simple demo
+						demo1:@track decorator simple demo
 					</h1>
-					<article id="trackView">
-						<h2>observable object and pure computed.</h2>
+					<article class="view" data-bind="with:demo1">
 						<div>
 							<dl>
 								<dt>firstName:</dt>
@@ -73,6 +80,41 @@
 						<script src="https://gist.github.com/variotry/c08351513021243be81ad9d5d68bab07.js"></script>
 					</aside>
 				</article>
+
+				<article class="demo2 invisible"  data-bind="if:nav.selectedIndex==1, css:{invisible:false}">
+					<h1>
+						demo2:@asNumber and @ignore demo
+					</h1>
+					<article class="view" data-bind="with:demo2">
+						<h2>calculation check.</h2>
+						<div class="flex">
+							<dl>
+								<dt>x:</dt>
+								<dd><input type="number" data-bind="textInput:x" /></dd>
+								<dt>x:</dt>
+								<dd><input type="number" data-bind="textInput:y" /></dd>
+								<dt>x+y:</dt>
+								<dd><input type="number" data-bind="textInput:total" /></dd>
+							</dl>
+							<button data-bind="click:onReset">Reset Name</button>
+						</div>
+						<h2>ignore check</h2>
+						<div class="ignoreCheck">
+							<input type="text" data-bind="textInput:ignoreParam" />
+							<div>
+								ignoreParam value is ”<!-- ko text:ignoreParam --><!-- /ko -->”
+							</div>
+						</div>
+					</article>
+					<aside class="src">
+						<p>Code is below.</p>
+						<h1>ViewModel</h1>
+						<script src="https://gist.github.com/variotry/24d07578395429e5562e0e2178bf8716.js"></script>
+						<h1>View</h1>
+						<script src="https://gist.github.com/variotry/123bee53047a1014be798cfc3b3cffb8.js"></script>
+					</aside>
+				</article>
+
 			</article>
 		</div>
 	</div>

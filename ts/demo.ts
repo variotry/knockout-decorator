@@ -1,13 +1,13 @@
 ﻿let kd = variotry.KnockoutDecorator;
 type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
-ko.bindingHandlers["disableBinding"] =
+/*ko.bindingHandlers["disableBinding"] =
 {
 	init: ( element: any, valueAccessor: () => boolean ) =>
 	{
 		return { controlsDescendantBindings: valueAccessor() };
 	}
-}
+}*/
 
 class ObservableVariablesDemo
 {
@@ -81,29 +81,31 @@ interface INavItem
 	uid: string;
 	title: string;
 }
+
+@kd.track
 class Nav
 {
-	private items: INavItem[] = [
-		{ uid: "observable", title: "observe variables" },
-		{ uid: "observableArray", title: "observe array" }
-	];
-
-	@kd.observable
-	private uid: string;
+	private items: string[];
+	private selectedIndex: number = 0;
 
 	public constructor()
 	{
-		this.uid = this.items[0].uid;
+		this.items = [];
+		for ( let i = 1; i <= 2; ++i )
+		{
+			this.items.push( "demo" + i );
+		}
 	}
 
-	private onClickTab( item: INavItem ): void
+	private onChange( index: number ): void
 	{
-		this.uid = item.uid;
+		this.selectedIndex = index;
 	}
 }
 
+// @track decorator simple demo.
 @kd.track
-class TrackDemo
+class Demo1
 {
 	// properties is recognized as observable.
 	private firstName = "vario";
@@ -115,7 +117,7 @@ class TrackDemo
 		return this.firstName + " " + this.lastName;
 	}
 
-	// do nothing for methods.
+	// @track do nothing for methods.
 	private onReset(): void
 	{
 		this.firstName = "vario";
@@ -123,19 +125,55 @@ class TrackDemo
 	}
 }
 
+@kd.track
+class Demo2
+{
+	// @asNumber decorator always keeps number type.
+	@kd.asNumber
+	private x = 10;
+
+	@kd.asNumber
+	private y = 20;
+
+	public get total()
+	{
+		return this.x + this.y;
+	}
+	// setter is recognized as writable (pure) computed.
+	public set total( v: number )
+	{
+		this.x = v / 3;
+		this.y = v * 2 / 3;
+	}
+
+	// @ignore decorator won't be recognized as observable.
+	@kd.ignore
+	public ignoreParam: string = "ignore";
+	
+	private onReset(): void
+	{
+		this.x = 10;
+		this.y = 20;
+	}
+}
+
+
 class Demo
 {
-	private nav: Nav;
-	private observableDemo: ObservableVariablesDemo;
-	private observableArrayDemo: ObservableArrayDemo;
+	private nav = new Nav();
+	private demo1 = new Demo1();
+	private demo2 = new Demo2();
+	//private observableDemo: ObservableVariablesDemo;
+	//private observableArrayDemo: ObservableArrayDemo;
 
 	public constructor()
 	{
-		/*this.nav = new Nav();
-		this.observableDemo = new ObservableVariablesDemo();
+		/*this.observableDemo = new ObservableVariablesDemo();
 		this.observableArrayDemo = new ObservableArrayDemo();
 		ko.applyBindings( this, document.body );*/
-		ko.applyBindings( new TrackDemo(), document.getElementById( "trackView" ) );
+		//ko.applyBindings( new Nav(), document.getElementById( "tab" ) );
+		//ko.applyBindings( new TrackDemo(), document.getElementById( "trackView" ) );
+		ko.applyBindings( this, document.getElementById( "main" ) );
 	}
 }
 

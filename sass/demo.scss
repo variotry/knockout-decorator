@@ -3,42 +3,102 @@
 	h2
 	{
 		font-size:12pt;
+		margin:0 0 0 15px;
 	}
-}
 
-#trackView
-{
-	>div
+	.tab
 	{
-		display:flex;
-		align-items:flex-start;
-		dt
+		h1
 		{
-			display:inline-block; 
-			width:80px;
-			text-align:right;
-			height:2em;
-			line-height:2em;
+			font-size:12pt;
+			margin:0;
 		}
-		dd
+		ul
 		{
-			display:inline;
-			&:after
+			margin:10px 0 0 30px;;
+			padding:0;
+			display:flex;
+			list-style:none;
+			li
 			{
-				content:"\A";
-				white-space:pre;
+				cursor:pointer;
+				border:1px solid #000;
+				margin-right:10px;
+				padding:10px;
+				&:hover
+				{
+					border-color:#ff6a00;
+				}
+				&.isActive
+				{
+					>div
+					{
+						border-bottom:3px solid #ff4646;
+					}
+				}
+			}	
+		}
+	}
+
+	.demo1
+	{
+		.view
+		{
+			>div
+			{
+				display:flex;
+				align-items:flex-start;
+				button
+				{
+					margin:30px 0 0 20px;
+				}
 			}
 		}
-		button
+	}
+	.demo2
+	{
+		.view
 		{
-			margin:30px 0 0 20px;
+			>div.flex
+			{
+				display:flex;
+				align-items:flex-start;
+				button
+				{
+					margin:30px 0 0 20px;
+				}
+			}
+			.ignoreCheck
+			{
+				margin-left:30px;
+			}
+		}
+
+	}
+
+	// common
+	dt
+	{
+		display:inline-block; 
+		width:80px;
+		text-align:right;
+		height:2em;
+		line-height:2em;
+	}
+	dd
+	{
+		display:inline;
+		&:after
+		{
+			content:"\A";
+			white-space:pre;
 		}
 	}
-	
-	
 }
 
+
 // common
+.invisible { display:none; }
 aside.src
 {
 	h1
