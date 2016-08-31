@@ -42,7 +42,7 @@ declare namespace variotry.KnockoutDecorator {
      */
     interface ITrackOptions {
         /**
-         * Convert to pure computed if true, non pure computed otherwise.
+         * Convert to pure computed if true or undefined, non pure computed otherwise.
          */
         pureComputed?: boolean;
         /**
