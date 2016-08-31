@@ -26,6 +26,9 @@
     <Content Include="index.html" />
     <Content Include="js\knockout-decorator.min.js" />
     <Content Include="js\knockout.js" />
+    <Content Include="stylesheets\demo.css" />
+    <Content Include="stylesheets\github-dark.css" />
+    <Content Include="stylesheets\stylesheet.css" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="package.json" />

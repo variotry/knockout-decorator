@@ -13,3 +13,10 @@
   #trackView dd:after {
     content: "\A";
     white-space: pre; }
+
+aside.src h1 {
+  font-size: 10pt;
+  margin: 0; }
+
+aside.src td {
+  width: auto !important; }
