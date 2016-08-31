@@ -2,14 +2,8 @@
 
 ‚±‚Ìƒvƒ‰ƒOƒCƒ“‚Í knockout observable‚ğ—p‚¢‚½ƒR[ƒh‚Ì‹Lq‚ğŠy‚É‚µ‚Ü‚·B
 
-## ƒfƒ‚
+ [ƒfƒ‚](https://variotry.github.io/knockout-decorator/)‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B(ƒuƒ‰ƒEƒU‚Íes5‚ğƒTƒ|[ƒg‚µ‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·)
 
-https://demo.variotry.com/knockoutDecorator/ ‚ÉƒAƒNƒZƒX‚·‚é‚© demo/index.html ‚ğQÆ‚µ‚Ä‰º‚³‚¢B
-
-iGoogleChrome, IE11, Edge, firefox ‚ÅŠm”F‚µ‚Ä‚Ü‚·Bj
-
-demo/index.html ‚ğQÆ‚·‚éÛ‚ÍA`npm install` ‚Æ `gulp install` ‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B
-    
 ## g‚¢•û
 
 dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì js, d.ts ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰º‚³‚¢B
@@ -18,7 +12,7 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì js, d.ts ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰
     <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
-‚»‚µ‚Ä `var kd = variotry.KnockoutDecorator` ‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€‚ğ’è‹`‚µ‚Ü‚·B
+‚»‚µ‚Ä `let kd = variotry.KnockoutDecorator` ‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€‚ğ’è‹`‚µ‚Ü‚·B
 
 ### 1.observable object ‚Ì—˜—p
 

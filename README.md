@@ -2,14 +2,8 @@
 
 This plug-in makes it easier for you to write a code with knockout observable.
 
-## Demo
+See [demo](https://variotry.github.io/knockout-decorator/).(Require es5 support browser.)
 
-See https://demo.variotry.com/knockoutDecorator/ or demo/index.html.
-
-(I have checked demo with Google Chrome, IE11, Edge and firefox.)
-
-If you refer to demo/index.html, execute `npm install` and `gulp install`
-    
 ## Usage
 
 Copy .js and d.ts inside dist directory in any directory and write as below on a html.
@@ -18,7 +12,7 @@ Copy .js and d.ts inside dist directory in any directory and write as below on a
     <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
-And define a shortName such as `var kd = variotry.KnockoutDecorator`.
+And define a shortName such as `let kd = variotry.KnockoutDecorator`.
 
 ### 1.Use observable object
 
