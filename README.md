@@ -52,8 +52,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
 
 `@track` decorator has points to consider.
 
-  1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
-
+  1.Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
 
     @kd.track
     class Sample1
@@ -68,8 +67,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         }
     }
 
-  2. Have to set array value for array properties to be recognized as oservable array. If you first set null to a array property, the property will recognize as KnockoutObservable&lt;T[]>, not KnockoutObservableArray&lt;T>.
-
+  2.Have to set array value for array properties to be recognized as oservable array. If you first set null to a array property, the property will recognize as KnockoutObservable&lt;T[]>, not KnockoutObservableArray&lt;T>.
 
     @kd.track
     class Sample2
@@ -78,8 +76,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         private array2 : string[] = null;   // array2 is recognized as obserbable<string[]>.
     }
 
-  3. Accessors will be converted to pure computed. If you want to use non pure computed, pass { pureComputed:false } to `@track` or attach `@computed` decorator to accessors.
-
+  3.Accessors will be converted to pure computed. If you want to use non pure computed, pass { pureComputed:false } to `@track` or attach `@computed` decorator to accessors.
 
     @kd.track
     class Sample3_1
@@ -141,8 +138,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
 
 
 
-  4. If you want to prevent properties or accessors from converting to observable, attach `@ignore` decorator to them. See [demo2](https://variotry.github.io/knockout-decorator/#demo2)
-
+  4.If you want to prevent properties or accessors from converting to observable, attach `@ignore` decorator to them. See [demo2](https://variotry.github.io/knockout-decorator/#demo2)
 
     @kd.track
     class Sample4
@@ -153,8 +149,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         private lastName = "Try";  // lastName isn't recognized as obserbable.
     }
 
-  5. You can't get or use observable objects in a constructor.
-
+  5.You can't get or use observable objects in a constructor.
 
     type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
@@ -185,7 +180,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         }
     }
 
-### .Use `observable` decorator
+### Use `observable` decorator
 
 `@obserbable` decorator will convert to obserbable for individual properties.
 
