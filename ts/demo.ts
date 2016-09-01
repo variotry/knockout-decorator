@@ -156,7 +156,7 @@ class Demo3
 {
 	private list = ["data1", "data2", "data3"] as IObservableArray<string>;
 	private pushData = "";
-	public pushErrorMsg = "";
+	private pushErrorMsg = "";
 	private removeTargets = [] as IObservableArray<string>;
 
 	private onPush(): void
