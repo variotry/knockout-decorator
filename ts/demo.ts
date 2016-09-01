@@ -1,14 +1,6 @@
 ﻿let kd = variotry.KnockoutDecorator;
 type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
-/*ko.bindingHandlers["disableBinding"] =
-{
-	init: ( element: any, valueAccessor: () => boolean ) =>
-	{
-		return { controlsDescendantBindings: valueAccessor() };
-	}
-}*/
-
 class ObservableVariablesDemo
 {
 	@kd.observable
@@ -82,16 +74,18 @@ interface INavItem
 	title: string;
 }
 
-@kd.track
 class Nav
 {
 	private items: string[];
+
+	@kd.observable
 	private selectedIndex: number = 0;
 
 	public constructor()
 	{
 		this.items = [];
-		for ( let i = 1; i <= 2; ++i )
+		const demoNum = 3;
+		for ( let i = 1; i <= demoNum; ++i )
 		{
 			this.items.push( "demo" + i );
 		}
@@ -139,7 +133,7 @@ class Demo2
 	{
 		return this.x + this.y;
 	}
-	// setter is recognized as writable (pure) computed.
+	// setter is recognized as writable computed.
 	public set total( v: number )
 	{
 		this.x = v / 3;
@@ -157,24 +151,49 @@ class Demo2
 	}
 }
 
+@kd.track
+class Demo3
+{
+	private list = ["data1", "data2", "data3"] as IObservableArray<string>;
+	private pushData = "";
+	public pushErrorMsg = "";
+	private removeTargets = [] as IObservableArray<string>;
+
+	private onPush(): void
+	{
+		if ( !this.pushData.trim() ) return;
+		if ( 0 <= this.list.indexOf( this.pushData ) )
+		{
+			this.pushErrorMsg = "'" + this.pushData + "' already exists.";
+			return;
+		}
+		this.pushErrorMsg = "";
+
+		this.list.push( this.pushData );
+		this.pushData = "";
+	}
+
+	private onPop(): void
+	{
+		this.removeTargets.remove( this.list.pop() );
+	}
+
+	private onRemove(): void
+	{
+		this.removeTargets.forEach( data =>
+		{
+			this.list.remove( data );
+		});
+		this.removeTargets.removeAll();
+	}
+}
 
 class Demo
 {
 	private nav = new Nav();
 	private demo1 = new Demo1();
 	private demo2 = new Demo2();
-	//private observableDemo: ObservableVariablesDemo;
-	//private observableArrayDemo: ObservableArrayDemo;
-
-	public constructor()
-	{
-		/*this.observableDemo = new ObservableVariablesDemo();
-		this.observableArrayDemo = new ObservableArrayDemo();
-		ko.applyBindings( this, document.body );*/
-		//ko.applyBindings( new Nav(), document.getElementById( "tab" ) );
-		//ko.applyBindings( new TrackDemo(), document.getElementById( "trackView" ) );
-		ko.applyBindings( this, document.getElementById( "main" ) );
-	}
+	private demo3 = new Demo3();
 }
 
-new Demo();
+ko.applyBindings( new Demo(), document.getElementById( "main" ) );

@@ -36,6 +36,9 @@
 #main .demo2 .view .ignoreCheck {
   margin-left: 30px; }
 
+#main .demo3 .error {
+  color: red; }
+
 #main dt {
   display: inline-block;
   width: 80px;

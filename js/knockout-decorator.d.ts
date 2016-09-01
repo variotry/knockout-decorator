@@ -8,7 +8,7 @@ declare namespace variotry.KnockoutDecorator {
      * You can easily access KnockoubObservableArray functions via intellisense
      * by converting a array property which is attached @observableArray to this.
      */
-    interface IObservableArray<T> extends Array<T> {
+    export interface IObservableArray<T> extends Array<T> {
         /** Execute KnockoutObservableArray.replace */
         replace(oldItem: T, newItem: T): void;
         /** Execute KnockoutObservableArray.remove */

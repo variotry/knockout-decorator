@@ -81,7 +81,7 @@
 					</aside>
 				</article>
 
-				<article class="demo2 invisible"  data-bind="if:nav.selectedIndex==1, css:{invisible:false}">
+				<article class="demo2 invisible" data-bind="if:nav.selectedIndex==1, css:{invisible:false}">
 					<h1>
 						demo2:@asNumber and @ignore demo
 					</h1>
@@ -115,7 +115,30 @@
 					</aside>
 				</article>
 
-			</article>
+				<article class="demo3 invisible" data-bind="if:nav.selectedIndex==2, css:{invisible:false}">
+					<h1>
+						demo3:observable array demo
+					</h1>
+					<article class="view" data-bind="with:demo3">
+						Push data <input type="text" data-bind="value:pushData" />
+						<button type="button" data-bind="click:onPush">Push</button>
+						<p class="error" data-bind="if:pushErrorMsg">
+							error : <!-- ko text:pushErrorMsg --><!-- /ko -->
+						</p>
+						List length is <!-- ko text:list.length --><!-- /ko -->.
+						<ul data-bind="foreach:list">
+							<li>
+								<label>
+									<input type="checkbox" data-bind="value:$data, checked:$parent.removeTargets" />
+									<span data-bind="text:$data"></span>
+								</label>
+							</li>
+						</ul>
+
+						<button type="button" data-bind="click:onPop">Pop</button>
+						<button type="button" data-bind="click:onRemove">Remove Checked Data</button>
+					</article>
+				</article>
 		</div>
 	</div>
 	<footer>
