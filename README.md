@@ -180,7 +180,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         }
     }
 
-### Use `observable` decorator
+### Use `@observable` decorator
 
 `@obserbable` decorator will convert to obserbable for individual properties.
 
@@ -201,7 +201,7 @@ Attach "@kd.observable" to a property as the following.
         }
     }
 
-### Use `observableArray`
+### Use `@observableArray` decorator
 
 `@obserbableArray` decorator will convert to obserbable array for individual array properties.
 
@@ -223,7 +223,7 @@ You can easily access KnockoubObservableArray functions via intellisense by conv
 
 See [demo3](https://variotry.github.io/knockout-decorator/#demo3)
 
-### Use `@pureComputed` or `@computed`
+### Use `@pureComputed` or `@computed` decorator
 
 `@pureComputed` and `@computed` decorator will convert to (pure) computed for individual accessors.
 
@@ -242,7 +242,7 @@ When firstName or lastName is change, fullName getter will be executed.
 
 In addition, you can use as writable computed if you define also setter.
 
-### Use extenders
+### Use `@extend` decorator
 
 Attach "@kd.extend" to a property or accessor which is attached observable decorator as the following.
 
@@ -257,8 +257,8 @@ Even though you declare as `x:number = 0`, the property type may become string t
 In a case like that, use "@kd.asNumber" as the following.
 
     @kd.observable
-	@kd.asNumber
-	public x:number = 0
+    @kd.asNumber
+    public x:number = 0
 
 Thus, the property keep number type if set a value other than number type.
 
