@@ -5,7 +5,7 @@ class Nav
 {
 	private items: string[];
 
-	@kd.observable
+    @kd.observable
 	private selectedIndex: number = 0;
 
 	public constructor()
@@ -15,7 +15,22 @@ class Nav
 		for ( let i = 1; i <= demoNum; ++i )
 		{
 			this.items.push( "demo" + i );
-		}
+        }
+
+        var hash = location.hash;
+        console.log( hash );
+        if ( hash )
+        {
+            let m = hash.match( /demo(\d)/ );
+            if ( m )
+            {
+                let demoIndex = parseInt( m[1] ) - 1;
+                if ( demoIndex < 0 ) demoIndex = 0;
+                if ( demoNum <= demoIndex ) demoIndex = demoNum - 1;
+                this.selectedIndex = demoIndex;
+            }
+        }
+
 	}
 
 	private onChange( index: number ): void
