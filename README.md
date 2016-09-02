@@ -14,7 +14,16 @@ Copy `.js` and `d.ts` inside dist directory in any directory and write as below 
 
 And define a shortName such as `let kd = variotry.KnockoutDecorator`.
 
-### Use `@track` decorator
+### Decorators
+
+* [`@track` and `@ignore`](#use-track-decorator)
+* [`@observable`](#use-observable-decorator)
+* [`@observableArray`](#use-observablearray-decorator)
+* [`@pureComputed or @computed`](#use-purecomputed-or-computed-decorator)
+* [`@extend`](#use-extend-decorator)
+* [`@asNumber`](#added-feature)
+
+#### Use `@track` decorator 
 
 `@track` decorator will convert all properties or accessors to observable.
 
@@ -180,7 +189,8 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         }
     }
 
-### Use `@observable` decorator
+
+#### Use `@observable` decorator
 
 `@observable` decorator will convert to observable for individual properties.
 
@@ -201,7 +211,7 @@ Attach "@kd.observable" to a property as the following.
         }
     }
 
-### Use `@observableArray` decorator
+#### Use `@observableArray` decorator
 
 `@observableArray` decorator will convert to observable array for individual array properties.
 
@@ -223,7 +233,7 @@ You can easily access KnockoubObservableArray functions via intellisense by conv
 
 See [demo3](https://variotry.github.io/knockout-decorator/#demo3)
 
-### Use `@pureComputed` or `@computed` decorator
+#### Use `@pureComputed` or `@computed` decorator
 
 `@pureComputed` and `@computed` decorator will convert to (pure) computed for individual accessors.
 
@@ -242,15 +252,15 @@ When firstName or lastName is change, fullName getter will be executed.
 
 In addition, you can use as writable computed if you define also setter.
 
-### Use `@extend` decorator
+#### Use `@extend` decorator
 
 Attach "@kd.extend" to a property or accessor which is attached observable decorator as the following.
 
     @kd.pureComputed
     @kd.extend( { rateLimit: 500 } )
     public get fullName() { return this.firstName + " " + this.lastName; }
-    
-### Added feature
+
+#### Added feature
 
 Even though you declare as `x:number = 0`, the property type may become string type such as value is changed via input elements on browser.
 
