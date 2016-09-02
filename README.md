@@ -16,7 +16,7 @@ And define a shortName such as `let kd = variotry.KnockoutDecorator`.
 
 ### Use `@track` decorator
 
-`@track` decorator will convert all properties or accessors to obserbable.
+`@track` decorator will convert all properties or accessors to observable.
 
 Attach `@track` to a class as the following.
 
@@ -57,9 +57,9 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
     @kd.track
     class Sample1
     {
-        private property1 : string = null;  // OK. property1 is recoginzed as obserbable.
-        private property2 : string;         // NG. property2 isn't recognized as obserbable because of it isn't initialized 
-        private property3 : string;         // OK. property3 is recoginzed as obserbable because of it is initiazlied in constructor.
+        private property1 : string = null;  // OK. property1 is recoginzed as observable.
+        private property2 : string;         // NG. property2 isn't recognized as observable because of it isn't initialized 
+        private property3 : string;         // OK. property3 is recoginzed as observable because of it is initiazlied in constructor.
 
         public constructor()
         {
@@ -72,8 +72,8 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
     @kd.track
     class Sample2
     {
-        private array1 : string[] = [];     // array1 is recoginzed as obserbableArray<string>.
-        private array2 : string[] = null;   // array2 is recognized as obserbable<string[]>.
+        private array1 : string[] = [];     // array1 is recoginzed as KnockoutObservableArray<string>.
+        private array2 : string[] = null;   // array2 is recognized as KnockoutObservable<string[]>.
     }
 
   3.Accessors will be converted to pure computed. If you want to use non pure computed, pass { pureComputed:false } to `@track` or attach `@computed` decorator to accessors.
@@ -146,7 +146,7 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
         private firstName = "Vario";
 
         @ignore
-        private lastName = "Try";  // lastName isn't recognized as obserbable.
+        private lastName = "Try";  // lastName isn't recognized as observable.
     }
 
   5.You can't get or use observable objects in a constructor.
@@ -162,48 +162,48 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
 
         public constructor()
         {
-            let rawObserbable = @kd.getObserbable<string>( this, "property" );
-            // rawObserbable will be null.
+            let rawObservable = @kd.getObservable<string>( this, "property" );
+            // rawObservable will be null.
 
-            // you must not execute Knockout Obserbable Array functions.
+            // you must not execute Knockout Observable Array functions.
             // this.array.remove( ... );
         }
 
         // init is exexuted after constructor finish.
         public init()
         {
-            let rawObserbable = @kd.getObserbable<string>( this, "property" );
-            // rawObserbable will set raw obserbable object.
+            let rawObservable = @kd.getObservable<string>( this, "property" );
+            // rawObservable will set raw observable object.
 
-            // you can execute Knockout Obserbable Array functions.
+            // you can execute Knockout Observable Array functions.
             this.array.remove( ... );
         }
     }
 
 ### Use `@observable` decorator
 
-`@obserbable` decorator will convert to obserbable for individual properties.
+`@observable` decorator will convert to observable for individual properties.
 
 Attach "@kd.observable" to a property as the following.
 
     class Sample
     {
         @kd.observable
-        public firstName = "Vario";    // firstName is recognized as obserbable.
+        public firstName = "Vario";    // firstName is recognized as observable.
 
-        public lastName = "Tray";      // lastName isn't recognized as obserbable.
+        public lastName = "Tray";      // lastName isn't recognized as observable.
 
         public constructor()
         {
-            let rawObserbable = @kd.getObserbable<string>( this, "firstName" );
-            // rawObserbable will set raw obserbable object.
-            // Unlike @track decorator, you can get or use obserbable object in constructor.
+            let rawObservable = @kd.getObservable<string>( this, "firstName" );
+            // rawObservable will set raw observable object.
+            // Unlike @track decorator, you can get or use observable object in constructor.
         }
     }
 
 ### Use `@observableArray` decorator
 
-`@obserbableArray` decorator will convert to obserbable array for individual array properties.
+`@observableArray` decorator will convert to observable array for individual array properties.
 
 Attach "@kd.observableArray" to an Array property as the following.
 
