@@ -1,33 +1,33 @@
 # knockout-decorator
 
-‚±‚Ìƒvƒ‰ƒOƒCƒ“‚Í knockout observable‚ğ—p‚¢‚½ƒR[ƒh‚Ì‹Lq‚ğŠy‚É‚µ‚Ü‚·B
+ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã¯ knockout observableã‚’ç”¨ã„ãŸã‚³ãƒ¼ãƒ‰ã®è¨˜è¿°ã‚’æ¥½ã«ã—ã¾ã™ã€‚
 
- [ƒfƒ‚](https://variotry.github.io/knockout-decorator/)‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B(ƒuƒ‰ƒEƒU‚Íes5‚ğƒTƒ|[ƒg‚µ‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·)
+ [ãƒ‡ãƒ¢](https://variotry.github.io/knockout-decorator/)ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚(ãƒ–ãƒ©ã‚¦ã‚¶ã¯es5ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™)
 
-## g‚¢•û
+## ä½¿ã„æ–¹
 
-dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚µ‚Ä‰º‚³‚¢B
+dist ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå†…ã® `js`, `d.ts` ã‚’ä»»æ„ã®å ´æ‰€ã«ã‚³ãƒ”ãƒ¼ã—ã€htmlã«ä»¥ä¸‹ã®æ§˜ã«è¨˜è¿°ã—ã¦ä¸‹ã•ã„ã€‚
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
-‚»‚µ‚Ä `let kd = variotry.KnockoutDecorator` ‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€‚ğ’è‹`‚µ‚Ü‚·B
+ãã—ã¦ `let kd = variotry.KnockoutDecorator` ã‚ˆã†ã«ã‚·ãƒ§ãƒ¼ãƒˆãƒãƒ¼ãƒ ã‚’å®šç¾©ã—ã¾ã™ã€‚
 
 ### Decorators
 
-* [`@track` and `@ignore`](#track-ƒfƒRƒŒ[ƒ^[‚Ì—˜—p)
-* [`@observable`](#observable-ƒfƒRƒŒ[ƒ^[‚Ì—˜—p)
-* [`@observableArray`](#observableArray-ƒfƒRƒŒ[ƒ^[‚Ì—˜—p)
-* [`@pureComputed or @computed`](#purecomputed-computed-ƒfƒRƒŒ[ƒ^[‚Ì—˜—p)
-* [`@extend`](#extend-ƒfƒRƒŒ[ƒ^[‚Ì—˜—p)
-* [`@asNumber`](#’Ç‰Á‹@”\)
+* [`@track` and `@ignore`](#track-ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨)
+* [`@observable`](#observable-ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨)
+* [`@observableArray`](#observablearray-ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨)
+* [`@pureComputed or @computed`](#purecomputedcomputed-ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨)
+* [`@extend`](#extend-ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨)
+* [`@asNumber`](#è¿½åŠ æ©Ÿèƒ½)
 
-#### `@track` ƒfƒRƒŒ[ƒ^[‚Ì—˜—p
+#### `@track` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨
 
-`@track` ƒfƒRƒŒ[ƒ^[‚Í‚·‚×‚Ä‚ÌƒvƒƒpƒeƒBEƒAƒNƒZƒbƒT[‚ğobservable‚É‚µ‚Ü‚·B
+`@track` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¯ã™ã¹ã¦ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ»ã‚¢ã‚¯ã‚»ãƒƒã‚µãƒ¼ã‚’observableã«ã—ã¾ã™ã€‚
 
-ˆÈ‰º‚Ì—l‚ÉƒNƒ‰ƒX‚É `@track` ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B
+ä»¥ä¸‹ã®æ§˜ã«ã‚¯ãƒ©ã‚¹ã« `@track` ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„ã€‚
 
     @kd.track
     class Sample
@@ -41,7 +41,7 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         }
     }
 
-‚±‚ÌƒR[ƒh‚ÍˆÈ‰º‚ÌƒR[ƒh‚Æ“¯—l‚Å‚·B
+ã“ã®ã‚³ãƒ¼ãƒ‰ã¯ä»¥ä¸‹ã®ã‚³ãƒ¼ãƒ‰ã¨åŒæ§˜ã§ã™ã€‚
 
     class Sample
     {
@@ -51,24 +51,24 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         private name = ko.computed( () => this.firstName() + " " + this.lastName() );
     }
 
-‚½‚¾AƒfƒRƒŒ[ƒ^[‚ÍƒR[ƒh‚ğŠÈ‘f‰»‚µ‚Ü‚·B
+ãŸã ã€ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¯ã‚³ãƒ¼ãƒ‰ã‚’ç°¡ç´ åŒ–ã—ã¾ã™ã€‚
 
-ƒvƒƒpƒeƒB‚É’l‚ğƒZƒbƒg‚·‚é‚Æi—á‚¦‚Î `this.firstName = "Bob"` jAƒrƒ…[‚ªXV‚³‚ê‚Ü‚·B‹t‚à‚µ‚©‚è‚Å‚·B
+ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«å€¤ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã¨ï¼ˆä¾‹ãˆã° `this.firstName = "Bob"` ï¼‰ã€ãƒ“ãƒ¥ãƒ¼ãŒæ›´æ–°ã•ã‚Œã¾ã™ã€‚é€†ã‚‚ã—ã‹ã‚Šã§ã™ã€‚
 
-‚Ü‚½AnameƒQƒbƒ^[‚àÀs‚³‚ê‚Ü‚·B
+ã¾ãŸã€nameã‚²ãƒƒã‚¿ãƒ¼ã‚‚å®Ÿè¡Œã•ã‚Œã¾ã™ã€‚
 
-[demo1](https://variotry.github.io/knockout-decorator/)‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+[demo1](https://variotry.github.io/knockout-decorator/)ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚
 
-`@track` ƒfƒRƒŒ[ƒ^[‚Í’ˆÓ–€‚ª‚ ‚è‚Ü‚·B
+`@track` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¯æ³¨æ„äº‹é …ãŒã‚ã‚Šã¾ã™ã€‚
 
-  1.observable‚Æ‚µ‚Ä”F¯‚³‚¹‚é‚½‚ß‚ÉAƒvƒƒpƒeƒB‚ÌéŒ¾A‚à‚µ‚­‚ÍƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Å•Ï”‚ğ‰Šú‰»‚·‚é•K—v‚ª‚ ‚è‚Ü‚·B(`null` ‚ğİ’è‚·‚é‚Ì‚Å‚à OK ‚Å‚·)
+  1.observableã¨ã—ã¦èªè­˜ã•ã›ã‚‹ãŸã‚ã«ã€ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®å®£è¨€æ™‚ã€ã‚‚ã—ãã¯ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§å¤‰æ•°ã‚’åˆæœŸåŒ–ã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚(`null` ã‚’è¨­å®šã™ã‚‹ã®ã§ã‚‚ OK ã§ã™)
 
     @kd.track
     class Sample1
     {
-        private property1 : string = null;  // OK. observable‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
-        private property2 : string;         // NG. ƒvƒƒpƒeƒB‚ª‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¢‚½‚ß observable‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚¹‚ñ
-        private property3 : string;         // OK. ƒRƒ“ƒXƒgƒ‰ƒNƒ^“à‚Å‰Šú‰»‚³‚ê‚Ä‚¢‚é‚Ì‚Å observable‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        private property1 : string = null;  // OK. observableã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
+        private property2 : string;         // NG. ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãŒåˆæœŸåŒ–ã•ã‚Œã¦ã„ãªã„ãŸã‚ observableã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã›ã‚“
+        private property3 : string;         // OK. ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å†…ã§åˆæœŸåŒ–ã•ã‚Œã¦ã„ã‚‹ã®ã§ observableã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
 
         public constructor()
         {
@@ -76,16 +76,16 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         }
     }
 
-  2.”z—ñƒvƒƒpƒeƒB‚ğobservable array‚Æ‚µ‚Ä”F¯‚³‚¹‚éˆ×‚É‚ÍA”z—ñ‚Å‰Šú‰»‚·‚é•K—v‚ª‚ ‚è‚Ü‚·Bnull ‚Å‰Šú‰»‚µ‚½ê‡‚Í KnockoutObservableArray&lt;T>‚Å‚Í‚È‚­A KnockoutObservable&lt;T[]>‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·B
+  2.é…åˆ—ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’observable arrayã¨ã—ã¦èªè­˜ã•ã›ã‚‹ç‚ºã«ã¯ã€é…åˆ—ã§åˆæœŸåŒ–ã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚null ã§åˆæœŸåŒ–ã—ãŸå ´åˆã¯ KnockoutObservableArray&lt;T>ã§ã¯ãªãã€ KnockoutObservable&lt;T[]>ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™ã€‚
 
     @kd.track
     class Sample2
     {
-        private array1 : string[] = [];     // KnockoutObservableArray<string> ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
-        private array2 : string[] = null;   // KnockoutObservable<string[]> ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        private array1 : string[] = [];     // KnockoutObservableArray<string> ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
+        private array2 : string[] = null;   // KnockoutObservable<string[]> ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
     }
 
-  3.ƒAƒNƒZƒbƒT[‚Í pure computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·B’Êí‚Ìi”ñpure‚Èj computed ‚ğg‚¢‚½‚¢ê‡‚Í, `@track`‚Ìˆø”‚É { pureComputed:false } ‚ğ“n‚·‚©A ƒAƒNƒZƒbƒT[‚É`@computed`‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B
+  3.ã‚¢ã‚¯ã‚»ãƒƒã‚µãƒ¼ã¯ pure computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™ã€‚é€šå¸¸ã®ï¼ˆépureãªï¼‰ computed ã‚’ä½¿ã„ãŸã„å ´åˆã¯, `@track`ã®å¼•æ•°ã« { pureComputed:false } ã‚’æ¸¡ã™ã‹ã€ ã‚¢ã‚¯ã‚»ãƒƒã‚µãƒ¼ã«`@computed`ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„ã€‚
 
     @kd.track
     class Sample3_1
@@ -93,13 +93,13 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         private firstName = "Vario";
         private lastName = "Try";
 
-        // pure computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        // pure computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
         private get name()
         {
             return this.firstName + " " + this.lastName;
         }
 
-        // pure computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        // pure computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
         private get name2()
         {
             return this.firstName + " " + this.lastName;
@@ -112,13 +112,13 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         private firstName = "Vario";
         private lastName = "Try";
 
-        // i”ñpure) computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        // ï¼ˆépure) computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
         private get name()
         {
             return this.firstName + " " + this.lastName;
         }
 
-        // i”ñpure) computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        // ï¼ˆépure) computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
         private get name2()
         {
             return this.firstName + " " + this.lastName;
@@ -131,14 +131,14 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         private firstName = "Vario";
         private lastName = "Try";
 
-        // i”ñpure) computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        // ï¼ˆépure) computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
         @computed
         private get name()
         {
             return this.firstName + " " + this.lastName;
         }
 
-        // pure computed ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·
+        // pure computed ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™
         private get name2()
         {
             return this.firstName + " " + this.lastName;
@@ -147,7 +147,7 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
 
 
 
-  4.ƒvƒƒpƒeƒB‚âƒAƒNƒZƒbƒT[‚ğobservable‚É‚µ‚½‚­‚È‚¢ê‡‚Í, `@ignore` ƒfƒRƒŒ[ƒ^[‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B [demo2](https://variotry.github.io/knockout-decorator/#demo2)‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+  4.ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚„ã‚¢ã‚¯ã‚»ãƒƒã‚µãƒ¼ã‚’observableã«ã—ãŸããªã„å ´åˆã¯, `@ignore` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„ã€‚ [demo2](https://variotry.github.io/knockout-decorator/#demo2)ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚
 
     @kd.track
     class Sample4
@@ -155,14 +155,14 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         private firstName = "Vario";
 
         @kd.ignore
-        private lastName = "Try";  // observable ‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚¹‚ñB
+        private lastName = "Try";  // observable ã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã›ã‚“ã€‚
     }
 
-  5.ƒRƒ“ƒXƒgƒ‰ƒNƒ^“à‚Å‚Í observable‚Ìæ“¾E—˜—p‚Í‚Å‚«‚Ü‚¹‚ñB
+  5.ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å†…ã§ã¯ observableã®å–å¾—ãƒ»åˆ©ç”¨ã¯ã§ãã¾ã›ã‚“ã€‚
 
     type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
 
-    // initializeMethod ƒIƒvƒVƒ‡ƒ“‚ÍAƒRƒ“ƒXƒgƒ‰ƒNƒ^I—¹Œã‚ÉÀs‚³‚ê‚éƒƒ\ƒbƒh–¼‚Æ‚È‚è‚Ü‚·B
+    // initializeMethod ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯ã€ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿çµ‚äº†å¾Œã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ¡ã‚½ãƒƒãƒ‰åã¨ãªã‚Šã¾ã™ã€‚
     @kd.track( {initializeMethod:"init"} )
     class Sample5
     {
@@ -172,70 +172,70 @@ dist ƒfƒBƒŒƒNƒgƒŠ“à‚Ì `js`, `d.ts` ‚ğ”CˆÓ‚ÌêŠ‚ÉƒRƒs[‚µAhtml‚ÉˆÈ‰º‚Ì—l‚É‹Lq‚
         public constructor()
         {
             let rawObservable = @kd.getObservable<string>( this, "property" );
-            // rawObservable ‚Ínull‚Æ‚È‚è‚Ü‚·
+            // rawObservable ã¯nullã¨ãªã‚Šã¾ã™
 
-            // Knockout Observable Array ‚ÌŠÖ”‚ÍŒÄ‚×‚Ü‚¹‚ñB
+            // Knockout Observable Array ã®é–¢æ•°ã¯å‘¼ã¹ã¾ã›ã‚“ã€‚
             // this.array.remove( ... );
         }
 
-        // init ‚ÍƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÌŒã‚ÉÀs‚³‚ê‚Ü‚·B
+        // init ã¯ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å¾Œã«å®Ÿè¡Œã•ã‚Œã¾ã™ã€‚
         public init()
         {
             let rawObservable = @kd.getObservable<string>( this, "property" );
-            // rawObservable ‚Í ¶‚Ìobservable object‚ªƒZƒbƒg‚³‚ê‚Ü‚·B
+            // rawObservable ã¯ ç”Ÿã®observable objectãŒã‚»ãƒƒãƒˆã•ã‚Œã¾ã™ã€‚
 
-            // Knockout Observable Array ‚ÌŠÖ”‚ğŒÄ‚Ô‚±‚Æ‚ª‚Å‚«‚Ü‚·B
+            // Knockout Observable Array ã®é–¢æ•°ã‚’å‘¼ã¶ã“ã¨ãŒã§ãã¾ã™ã€‚
             this.array.remove( ... );
         }
     }
 
-#### `@observable` ƒfƒRƒŒ[ƒ^[‚Ì—˜—p
+#### `@observable` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨
 
-`@observable` ƒfƒRƒŒ[ƒ^[‚ÍŒÂX‚ÌƒvƒƒpƒeƒB‚É‘Î‚µ‚Ä observable‚É•ÏŠ·‚µ‚Ü‚·B
+`@observable` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¯å€‹ã€…ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«å¯¾ã—ã¦ observableã«å¤‰æ›ã—ã¾ã™ã€‚
 
-ˆÈ‰º‚Ì—l‚ÉƒvƒƒpƒeƒB‚É `@kd.observable` ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‰º‚³‚¢B
+ä»¥ä¸‹ã®æ§˜ã«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã« `@kd.observable` ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ä¸‹ã•ã„ã€‚
 
     class Sample
     {
         @kd.observable
-        public firstName = "Vario";    // observable‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚·B
+        public firstName = "Vario";    // observableã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã™ã€‚
 
-        public lastName = "Try";      // observable‚Æ‚µ‚Ä”F¯‚³‚ê‚Ü‚¹‚ñB
+        public lastName = "Try";      // observableã¨ã—ã¦èªè­˜ã•ã‚Œã¾ã›ã‚“ã€‚
 
         public constructor()
         {
             let rawObservable = @kd.getObservable<string>( this, "firstName" );
-            // rawObservable ‚Í¶‚Ì observable ‚ªƒZƒbƒg‚³‚ê‚Ü‚·B
-            // @track ƒfƒRƒŒ[ƒ^[‚Æ‚ÍˆÙ‚È‚èA ƒRƒ“ƒXƒgƒ‰ƒNƒ^“à‚Å observable‚Ìæ“¾E—˜—p‚ª‰Â”\‚Å‚·B
+            // rawObservable ã¯ç”Ÿã® observable ãŒã‚»ãƒƒãƒˆã•ã‚Œã¾ã™ã€‚
+            // @track ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¨ã¯ç•°ãªã‚Šã€ ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å†…ã§ observableã®å–å¾—ãƒ»åˆ©ç”¨ãŒå¯èƒ½ã§ã™ã€‚
         }
     }
 
-### `@observableArray` ƒfƒRƒŒ[ƒ^[‚Ì—˜—p
+#### `@observableArray` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨
 
-`@observableArray` ƒfƒRƒŒ[ƒ^[‚ÍŒÂX‚ÌƒvƒƒpƒeƒB‚É‘Î‚µ‚Ä observable array ‚É•ÏŠ·‚µ‚Ü‚·B
+`@observableArray` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¯å€‹ã€…ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«å¯¾ã—ã¦ observable array ã«å¤‰æ›ã—ã¾ã™ã€‚
 
-ˆÈ‰º‚Ì—l‚É”z—ñŒ^‚ÌƒvƒƒpƒeƒB‚É "@kd.observableArray" ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B
+ä»¥ä¸‹ã®æ§˜ã«é…åˆ—å‹ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã« "@kd.observableArray" ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„ã€‚
 
     @kd.observableArray
     public list = [ "data1", "data2", "data3" ];
 
-ƒvƒƒpƒeƒB‚ÉV‚µ‚¢”z—ñƒf[ƒ^‚ğƒZƒbƒg( —áF `this.list = ["newData1", "newData2"]` )‚·‚é‚ÆAƒrƒ…[‚àXV‚³‚ê‚Ü‚·B
+ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«æ–°ã—ã„é…åˆ—ãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ( ä¾‹ï¼š `this.list = ["newData1", "newData2"]` )ã™ã‚‹ã¨ã€ãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°ã•ã‚Œã¾ã™ã€‚
 
-push, pop ‚Æ‚¢‚Á‚½ Array ŠÖ”‚ğŒÄ‚Ô‚Æ ( —áF `this.list.push("data4")`)Aƒrƒ…[‚àXV‚³‚ê‚Ü‚·B
+push, pop ã¨ã„ã£ãŸ Array é–¢æ•°ã‚’å‘¼ã¶ã¨ ( ä¾‹ï¼š `this.list.push("data4")`)ã€ãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°ã•ã‚Œã¾ã™ã€‚
 
 
-ˆÈ‰º‚É¦‚·‚æ‚¤ƒLƒƒƒXƒg‚ğs‚¤‚ÆAƒCƒ“ƒeƒŠƒZƒ“ƒX‚Ì“­‚«‚Å KnockoubObservableArray ‚ÌŠÖ”‚ÉŠÈ’P‚ÉƒAƒNƒZƒX‚Å‚«‚Ü‚·B
+ä»¥ä¸‹ã«ç¤ºã™ã‚ˆã†ã‚­ãƒ£ã‚¹ãƒˆã‚’è¡Œã†ã¨ã€ã‚¤ãƒ³ãƒ†ãƒªã‚»ãƒ³ã‚¹ã®åƒãã§ KnockoubObservableArray ã®é–¢æ•°ã«ç°¡å˜ã«ã‚¢ã‚¯ã‚»ã‚¹ã§ãã¾ã™ã€‚
 
     @kd.observableArray
     public list = [ "data1", "data2", "data3" ] as IObservableArray<string>;
     
-(IObservableArray&lt;T&gt; ‚Í `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` ‚Ì‚æ‚¤‚ÉƒVƒ‡[ƒgƒl[ƒ€’è‹`‚µ‚Ä‚¢‚Ü‚·j
+(IObservableArray&lt;T&gt; ã¯ `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` ã®ã‚ˆã†ã«ã‚·ãƒ§ãƒ¼ãƒˆãƒãƒ¼ãƒ å®šç¾©ã—ã¦ã„ã¾ã™ï¼‰
 
-### `@pureComputed`A`@computed` ƒfƒRƒŒ[ƒ^[‚Ì—˜—p
+#### `@pureComputed`ã€`@computed` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨
 
-`@pureComputed` ‚Æ `@computed` ƒfƒRƒŒ[ƒ^[‚ÍŒÂX‚ÌƒAƒNƒZƒbƒT[‚É‘Î‚µ‚Ä (pure) computed ‚É•ÏŠ·‚µ‚Ü‚·B
+`@pureComputed` ã¨ `@computed` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã¯å€‹ã€…ã®ã‚¢ã‚¯ã‚»ãƒƒã‚µãƒ¼ã«å¯¾ã—ã¦ (pure) computed ã«å¤‰æ›ã—ã¾ã™ã€‚
 
-ˆÈ‰º‚Ì—l‚ÉƒAƒNƒZƒbƒT‚É "@kd.pureComputed" ‚à‚µ‚­‚Í "@kd.computed" ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢B
+ä»¥ä¸‹ã®æ§˜ã«ã‚¢ã‚¯ã‚»ãƒƒã‚µã« "@kd.pureComputed" ã‚‚ã—ãã¯ "@kd.computed" ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„ã€‚
 
     @kd.observable
     public firstName = "Vario";
@@ -246,52 +246,52 @@ push, pop ‚Æ‚¢‚Á‚½ Array ŠÖ”‚ğŒÄ‚Ô‚Æ ( —áF `this.list.push("data4")`)Aƒrƒ…[‚
     @kd.pureComputed
     public get fullName() { return this.firstName + " " + this.lastName; }
 
-setter ‚à—pˆÓ‚·‚é‚±‚Æ‚Å‘‚«‚İ‰Â”\‚È computed ‚Æ‚µ‚Ä—˜—p‚Å‚«‚Ü‚·B
+setter ã‚‚ç”¨æ„ã™ã‚‹ã“ã¨ã§æ›¸ãè¾¼ã¿å¯èƒ½ãª computed ã¨ã—ã¦åˆ©ç”¨ã§ãã¾ã™ã€‚
 
-### `@extend` ƒfƒRƒŒ[ƒ^[‚Ì—˜—p
+#### `@extend` ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®åˆ©ç”¨
 
-ˆÈ‰º‚Ì—l‚É observable ƒfƒRƒŒ[ƒ^‚ğƒAƒ^ƒbƒ`‚µ‚½ƒvƒƒpƒeƒB‚É "@kd.extend" ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢
+ä»¥ä¸‹ã®æ§˜ã« observable ãƒ‡ã‚³ãƒ¬ãƒ¼ã‚¿ã‚’ã‚¢ã‚¿ãƒƒãƒã—ãŸãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã« "@kd.extend" ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„
 
     @kd.pureComputed
     @kd.extend( { rateLimit: 500 } )
     public get fullName() { return this.firstName + " " + this.lastName; }
 
-### ’Ç‰Á‹@”\
+#### è¿½åŠ æ©Ÿèƒ½
 
-`private x:number = 0` ‚Ì‚æ‚¤‚É’è‹`‚µ‚Ä‚àAƒuƒ‰ƒEƒUã‚Ìinput—v‘f‚ğ‰î‚µ‚Ä’l‚ğ•ÏX‚·‚é‚È‚Ç‚ÅƒvƒƒpƒeƒB‚ªstringŒ^‚É‚È‚éê‡‚ª‚ ‚è‚Ü‚·B
+`private x:number = 0` ã®ã‚ˆã†ã«å®šç¾©ã—ã¦ã‚‚ã€ãƒ–ãƒ©ã‚¦ã‚¶ä¸Šã®inputè¦ç´ ã‚’ä»‹ã—ã¦å€¤ã‚’å¤‰æ›´ã™ã‚‹ãªã©ã§ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãŒstringå‹ã«ãªã‚‹å ´åˆãŒã‚ã‚Šã¾ã™ã€‚
 
-‚»‚Ì‚æ‚¤‚Èê‡‚ÍˆÈ‰º‚Ì‚æ‚¤‚É "@kd.asNumber" ‚ğ—˜—p‚µ‚Ä‚­‚¾‚³‚¢B
+ãã®ã‚ˆã†ãªå ´åˆã¯ä»¥ä¸‹ã®ã‚ˆã†ã« "@kd.asNumber" ã‚’åˆ©ç”¨ã—ã¦ãã ã•ã„ã€‚
 
     @kd.observable
 	@kd.asNumber
 	private x:number = 0
 
-‚±‚¤‚·‚é‚±‚Æ‚ÅAnumberŒ^ˆÈŠO‚Ì’l‚ğƒZƒbƒg‚µ‚Ä‚àƒvƒƒpƒeƒB‚ÍnumberŒ^‚ğ•Û‚¿‚Ü‚·B
+ã“ã†ã™ã‚‹ã“ã¨ã§ã€numberå‹ä»¥å¤–ã®å€¤ã‚’ã‚»ãƒƒãƒˆã—ã¦ã‚‚ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã¯numberå‹ã‚’ä¿ã¡ã¾ã™ã€‚
 
-number‚Ö‚Ì•ÏŠ·‚ÅNaN‚É‚È‚éê‡‚Í0‚ªƒZƒbƒg‚³‚ê‚Ü‚·B
+numberã¸ã®å¤‰æ›ã§NaNã«ãªã‚‹å ´åˆã¯0ãŒã‚»ãƒƒãƒˆã•ã‚Œã¾ã™ã€‚
 
-### Œ³‚Æ‚È‚é knockout observable ƒIƒuƒWƒFƒNƒg‚Ìæ“¾
+### å…ƒã¨ãªã‚‹ knockout observable ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—
 
-ˆÈ‰º‚ÌŠÖ”‚ğg‚¤–‚ÅAknockout observable ƒIƒuƒWƒFƒNƒg‚ğæ“¾‚Å‚«‚Ü‚·B
+ä»¥ä¸‹ã®é–¢æ•°ã‚’ä½¿ã†äº‹ã§ã€knockout observable ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã§ãã¾ã™ã€‚
 
     getObservable<T>
     getObservableArray<T>
     getComputed<T>
 
-g—p—áF
+ä½¿ç”¨ä¾‹ï¼š
 
     kd.getObservable<string>( this, "firstName" ).subscribe( newValue =>
     {
         console.log( "firstName value is", newValue );
     });
 
-## •K{—vŒ
+## å¿…é ˆè¦ä»¶
 
 knockout(http://knockoutjs.com/) 
 
-tsConfig.json ‚Ì compilerOptions.experimentalDecorators ‚ğ true ‚ÉƒZƒbƒg
+tsConfig.json ã® compilerOptions.experimentalDecorators ã‚’ true ã«ã‚»ãƒƒãƒˆ
 
-es5 ƒTƒ|[ƒgƒuƒ‰ƒEƒU
+es5 ã‚µãƒãƒ¼ãƒˆãƒ–ãƒ©ã‚¦ã‚¶
 
 ## License
 
