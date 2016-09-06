@@ -9,7 +9,7 @@ namespace variotry.KnockoutDecorator
 	// #region declare interfaces.
 	/**
 	 * You can easily access KnockoubObservableArray functions via intellisense
-	 * by converting a array property which is attached @observableArray to this.
+	 * by converting a array property which is attaching @observableArray.
 	 */
 	export interface IObservableArray<T> extends Array<T>
 	{
@@ -65,14 +65,15 @@ namespace variotry.KnockoutDecorator
 		pureComputed?: boolean,
 
 		/**
-		 * Set name of method that you want to execute after a constructor.
-		 * You can get raw observable object using getObservable<T> and so on in the method.
+		 * Set name of method that you want to execute after a constructor finish.
+		 * You can get raw observable objects using getObservable<T>() in the method.
+		 * Attension; when you use `@track` decorator, you can't get raw observable in a constructor.
 		 */
 		initializeMethod?: string
 	}
 
 	/**
-	 * Just attach to a class as decorator.
+	 * Attach to a class as decorator.
 	 * This decorator converts all properties and accessors to observable.
 	 * Points to consider.
 	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
@@ -87,7 +88,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function track( constructor: Function );
 	/**
-	 * Just attach to a class as decorator.
+	 * Attach to a class as decorator.
 	 * This decorator converts all properties and accessors to observable.
 	 * Points to consider.
 	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
@@ -224,7 +225,7 @@ namespace variotry.KnockoutDecorator
 	const ignoresKey = "__vtKnockoutIgnoresKey__";
 
 	/**
-	 * Just attach to a property or accessor as decorator.
+	 * Attach to a property or a accessor as decorator.
 	 * This decorator prevents a property or a accessor from converting to observable in @track.
 	 */
 	export function ignore( _class: any, propertyName: string ): void
@@ -235,7 +236,7 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property as decorator.
+	 * Attach to a property as decorator.
 	 * If you change a property value, a view will also change. And vice versa.
 	 */
 	export function observable( _class: any, propertyName: string ): void
@@ -268,7 +269,7 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a array property as decorator.
+	 * Attach to a array property as decorator.
 	 * If you set a property to a new array data, a view will also change.
 	 * If you call a Array function such as push or pop, a view will also change.
 	 */
@@ -325,7 +326,6 @@ namespace variotry.KnockoutDecorator
 						mergeFunction( arrayValue, o );
 					}
 					getSetter( _class, propertyName, o )( arrayValue );
-					//o( arrayValue );
 				}
 			});
 		}
@@ -345,13 +345,13 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property accessor as decorator.
-	 * If a observable property value in the getter is changed, it will be called.
-	 * If you define also a setter, you can treat as writable computed.
+	 * Attach to a accessor as decorator.
+	 * If a observable property value in a getter is changed, the getter will be executed.
+	 * If you define also a setter, you can handle as writable computed.
 	 */
 	export function computed( _class: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	/**
-	 * Just attach to a property accessor as decorator.
+	 * Attach to a accessor as decorator.
 	 * @param options	Knockout computed options.
 	 * @see <a href="http://knockoutjs.com/documentation/computed-reference.html" target="_blank">Computed Observable Reference</a>
 	 */
@@ -366,7 +366,7 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property accessor as decorator.
+	 * Attach to a accessor as decorator.
 	 */
 	export function pureComputed( _class: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	{
@@ -374,7 +374,7 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property or property accessor.
+	 * Attach to a property or accessor.
 	 * @extend require attaching observable decorator.
 	 * @param options	Set parameter which define ko.extenders such as rateLimit.
 	 */
@@ -386,6 +386,7 @@ namespace variotry.KnockoutDecorator
 		};
 	}
 
+	//#region set filter decorators
 	/**
 	 * Attach to a property or accessor(setter).
 	 * When you set a value to a property or a setter, the value will be changed through filters.
@@ -401,7 +402,8 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Attach to a number type property or setter.
+	 * Attach to a number type property or a accessor(setter).
+	 * This decorator is a kind of `@setFilter`.
 	 * This decorator convert to number type if set a value other than number type such as value is changed via input element on a browser.
 	 * If a converted value is NaN, it handles as zero.
 	 * @extend require attaching observable decorator.
@@ -415,6 +417,8 @@ namespace variotry.KnockoutDecorator
 			return isNaN( v ) ? 0 : v;
 		});
 	}
+
+	//#endregion
 
 	/**
 	 * Get raw knockout observable object.
@@ -573,24 +577,6 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/** @private */
-	//const storeSubscribeKey = "__vtKnockoutSubscribes__";
-
-	/** @private */
-	/*function registerSubscribe( _class: any, propertyName: string, callback: ( newValue: any ) => void )
-	{
-		if ( !_class[storeSubscribeKey] ) _class[storeSubscribeKey] = {};
-		if ( !_class[storeSubscribeKey][propertyName] ) _class[storeSubscribeKey][propertyName] = [];
-		_class[storeSubscribeKey][propertyName].push( callback );
-	}*/
-
-	/** @private */
-	/*function getSubscribers( _class: any, propertyName: string ): ( ( newValue: any ) => void )[]
-	{
-		if ( !_class[storeSubscribeKey] ) return null;
-		return _class[storeSubscribeKey][propertyName];
-	}*/
-
-	/** @private */
 	const storeSetFilterKey = "__vtKnockoutSetFilters__";
 
 	/** @private */
@@ -625,14 +611,6 @@ namespace variotry.KnockoutDecorator
 		let o = getObservableObject( instancedObj, propertyName );
 		let ext = getExtend( _class, propertyName );
 		if ( ext ) o.extend( ext );
-		/*let subscribers = getSubscribers( _class, propertyName );
-		if ( subscribers )
-		{
-			for ( let i = 0; i < subscribers.length; ++i )
-			{
-				o.subscribe( subscribers[i], instancedObj );
-			}
-		}*/
 	}
 	
 	// #endregion
