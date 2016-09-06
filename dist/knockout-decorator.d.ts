@@ -132,11 +132,32 @@ declare namespace variotry.KnockoutDecorator {
     /**
      * Attach to a number type property or a accessor(setter).
      * This decorator is a kind of `@setFilter`.
-     * This decorator convert to number type if set a value other than number type such as value is changed via input element on a browser.
+     * This decorator converts to number type if set a value other than number type such as value is changed via input element on a browser.
      * If a converted value is NaN, it handles as zero.
      * @extend require attaching observable decorator.
      */
     function asNumber(_class: any, propertyName: string): void;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator keeps greater than or equal to minValue.
+     * @extend require attaching observable decorator.
+     */
+    function min(minValue: number): any;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator keeps less than or equal to maxValue.
+     * @extend require attaching observable decorator.
+     */
+    function max(maxValue: number): any;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator keeps between minValue and maxValue inclusive.
+     * @extend require attaching observable decorator.
+     */
+    function clamp(minValue: number, maxValue: number): any;
     /**
      * Get raw knockout observable object.
      * @param instancedObj	Instanced object.
