@@ -249,7 +249,7 @@ namespace variotry.KnockoutDecorator
 			assignExtendForInstancedObj( _class, instancedObj, propertyName );
 			Object.defineProperty( instancedObj, propertyName, {
 				get: o,
-				set: o
+				set: getSetter( _class, propertyName, o )
 			});
 		}
 
@@ -324,7 +324,8 @@ namespace variotry.KnockoutDecorator
 						replaceFunction( arrayValue, o );
 						mergeFunction( arrayValue, o );
 					}
-					o( arrayValue );
+					getSetter( _class, propertyName, o )( arrayValue );
+					//o( arrayValue );
 				}
 			});
 		}
@@ -386,25 +387,32 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a number type property.
-	 * This convert to number type if set a value other than number type such as value is changed via input element on a browser.
-	 * If the converted value is NaN, it treat as zero.
+	 * Attach to a property or accessor(setter).
+	 * When you set a value to a property or a setter, the value will be changed through filters.
+	 * If there is more than one filter, filters are executed in the order from bottom to top.
+	 * @param filterFunc function that return a processed value.
+	 */
+	export function setFilter( filterFunc: ( setValue: any ) => any ): any // PropertyDecorator | MethodDecorator
+	{
+		return ( _class: any, propertyName: string ) =>
+		{
+			registerSetFilter( _class, propertyName, filterFunc );
+		};
+	}
+
+	/**
+	 * Attach to a number type property or setter.
+	 * This decorator convert to number type if set a value other than number type such as value is changed via input element on a browser.
+	 * If a converted value is NaN, it handles as zero.
 	 * @extend require attaching observable decorator.
 	 */
 	export function asNumber( _class: any, propertyName: string ): void
 	{
-		registerSubscribe( _class, propertyName, function( newValue : any )
+		registerSetFilter( _class, propertyName, v =>
 		{
-			if ( typeof newValue !== "number" )
-			{
-				let o = getObservableObject( this, propertyName );
-				if ( !o )
-				{
-					throw  "@asNumber require @observable";
-				}
-				let v = parseFloat( newValue );
-				o( isNaN( v ) ? 0 : v );
-			}
+			if ( !v || typeof v === "number" ) return v;
+			v = parseFloat( v );
+			return isNaN( v ) ? 0 : v;
 		});
 	}
 
@@ -507,7 +515,7 @@ namespace variotry.KnockoutDecorator
 
 				Object.defineProperty( instancedObj, propertyName, {
 					get: c,
-					set: setter ? c : undefined
+					set: setter ? getSetter( _class, propertyName, c ) : undefined
 				} );
 
 			}
@@ -565,23 +573,51 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/** @private */
-	const storeSubscribeKey = "__vtKnockoutSubscribes__";
+	//const storeSubscribeKey = "__vtKnockoutSubscribes__";
 
 	/** @private */
-	function registerSubscribe( _class: any, propertyName: string, callback: ( newValue: any ) => void )
+	/*function registerSubscribe( _class: any, propertyName: string, callback: ( newValue: any ) => void )
 	{
 		if ( !_class[storeSubscribeKey] ) _class[storeSubscribeKey] = {};
 		if ( !_class[storeSubscribeKey][propertyName] ) _class[storeSubscribeKey][propertyName] = [];
 		_class[storeSubscribeKey][propertyName].push( callback );
-	}
+	}*/
 
 	/** @private */
-	function getSubscribers( _class: any, propertyName: string ): ( ( newValue: any ) => void )[]
+	/*function getSubscribers( _class: any, propertyName: string ): ( ( newValue: any ) => void )[]
 	{
 		if ( !_class[storeSubscribeKey] ) return null;
 		return _class[storeSubscribeKey][propertyName];
+	}*/
+
+	/** @private */
+	const storeSetFilterKey = "__vtKnockoutSetFilters__";
+
+	/** @private */
+	function registerSetFilter( _class: any, propertyName: string, filterFunc: ( setValue: any ) => any ): void
+	{
+		if ( !_class[storeSetFilterKey] ) _class[storeSetFilterKey] = {};
+		if ( !_class[storeSetFilterKey][propertyName] ) _class[storeSetFilterKey][propertyName] = [];
+		_class[storeSetFilterKey][propertyName].push( filterFunc );
 	}
 
+	/** @private */
+	function getSetter( _class: any, propertyName: string, observable: KnockoutObservable<any> ): any
+	{
+		if ( !_class[storeSetFilterKey] ) return observable;
+		let filters = _class[storeSetFilterKey][propertyName];
+		if ( !filters ) return observable;
+		let len = filters.length;
+		return v =>
+		{
+			let original = v;
+			for ( let i = 0; i < len; ++i )
+			{
+				v = filters[i]( v );
+			}
+			observable( v );
+		}
+	}
 
 	/** @private */
 	function assignExtendForInstancedObj( _class:any, instancedObj: any, propertyName: string ): void
@@ -589,14 +625,14 @@ namespace variotry.KnockoutDecorator
 		let o = getObservableObject( instancedObj, propertyName );
 		let ext = getExtend( _class, propertyName );
 		if ( ext ) o.extend( ext );
-		let subscribers = getSubscribers( _class, propertyName );
+		/*let subscribers = getSubscribers( _class, propertyName );
 		if ( subscribers )
 		{
 			for ( let i = 0; i < subscribers.length; ++i )
 			{
 				o.subscribe( subscribers[i], instancedObj );
 			}
-		}
+		}*/
 	}
 	
 	// #endregion

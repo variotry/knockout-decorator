@@ -122,9 +122,16 @@ declare namespace variotry.KnockoutDecorator {
         [key: string]: any;
     }): any;
     /**
-     * Just attach to a number type property.
-     * This convert to number type if set a value other than number type such as value is changed via input element on a browser.
-     * If the converted value is NaN, it treat as zero.
+     * Attach to a property or accessor(setter).
+     * When you set a value to a property or a setter, the value will be changed through filters.
+     * If there is more than one filter, filters are executed in the order from bottom to top.
+     * @param filterFunc function that return a processed value.
+     */
+    function setFilter(filterFunc: (setValue: any) => any): any;
+    /**
+     * Attach to a number type property or setter.
+     * This decorator convert to number type if set a value other than number type such as value is changed via input element on a browser.
+     * If a converted value is NaN, it handles as zero.
      * @extend require attaching observable decorator.
      */
     function asNumber(_class: any, propertyName: string): void;
