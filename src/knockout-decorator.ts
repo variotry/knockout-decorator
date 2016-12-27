@@ -133,7 +133,6 @@ namespace variotry.KnockoutDecorator
 					}
 				}
 			}
-			console.log( options );
 		}
 
 		function classFactory( constructor: Function )
@@ -145,8 +144,9 @@ namespace variotry.KnockoutDecorator
 				return constructor[ignoresKey].indexOf( properyName ) >= 0;
 			}
 
-			function trackConstructor( args )
+			function trackConstructor()
 			{
+				let args = arguments;
 				let c: any = function ()
 				{
 					return original.apply( this, args );
