@@ -137,64 +137,72 @@ namespace variotry.KnockoutDecorator
 
 		function classFactory( constructor: Function )
 		{
-			let original = constructor;
-			function isIgnore( properyName: string )
+			let isIgnore = ( propertyName: string ) =>
 			{
 				if ( !constructor[ignoresKey] ) return false;
-				return constructor[ignoresKey].indexOf( properyName ) >= 0;
+				//console.log( "ig check", propertyName );
+				return constructor[ignoresKey].indexOf( propertyName ) >= 0;
 			}
 
-			function trackConstructor()
+			let trackConstructor: any = function ()
 			{
-				let args = arguments;
-				let c: any = function ()
-				{
-					return original.apply( this, args );
-				}
-				c.prototype = original.prototype;
+				constructor.apply( this, arguments );
+				let o = this;
 
-				let functions = Object.keys( c.prototype );
-				let computedAccessors = [];
-				functions.forEach( f =>
-				{
-					if ( isRegisteredObserbable( c.prototype, f ) )
-					{
-						computedAccessors.push( f );
-						return;
-					}
-					if ( isIgnore( f ) ) return;
-					let d = Object.getOwnPropertyDescriptor( c.prototype, f );
-					if ( !d || !d.get ) return;
-					let factory = getComputedDecoratorFactory( {
-						pure: options.pureComputed
-					} );
-					factory( c.prototype, f, d );
-					Object.defineProperty( c.prototype, f, d );
-					computedAccessors.push( f );
-				});
-
-				let o = new c();
 				let properties = Object.keys( o );
-
 				properties.forEach( p =>
 				{
-					if ( isRegisteredObserbable( c.prototype, p ) ) return;
-					if ( p.match( /^__vtKnockout/ ) ) return;
+					//console.log( "p is", p );
+					if ( p === storeObservableKey ) return;
 					if ( isIgnore( p ) ) return;
+
+					//console.log( "assign observable", p );
 
 					let v = o[p];
 					delete o[p];
 					if ( Array.isArray( v ) )
 					{
-						observableArray( c.prototype, p );
+						observableArray( trackConstructor.prototype, p );
 					}
 					else
 					{
-						observable( c.prototype, p );
+						observable( trackConstructor.prototype, p );
 					}
 					o[p] = v;
 				});
 
+				let functions = Object.keys( constructor.prototype );
+				//console.log( functions );
+				let computedAccessors = [];
+				functions.forEach( f =>
+				{
+
+					//console.log( "f is", f );
+					let d = Object.getOwnPropertyDescriptor( constructor.prototype, f );
+					if ( !d || !d.get ) return;
+					if ( isIgnore( f ) ) return;
+					let dummy = o[f];
+					if ( getComputed( o, f ) ) return;
+
+					//console.log( "f is ", f, d.get );
+					//console.log( "f", f, f["name"] );
+					//return;
+					/*if ( isRegisteredObserbable( c.prototype, f ) )
+					{
+						computedAccessors.push( f );
+						return;
+					}*/
+					
+					let factory = getComputedDecoratorFactory( {
+						pure: options.pureComputed
+					} );
+					factory( trackConstructor.prototype, f, d );
+					Object.defineProperty( trackConstructor.prototype, f, d );
+					computedAccessors.push( f );
+					//co = getComputed( o, f );
+					//console.log( "f is 2 ", dummy, co );
+				});
+				
 				computedAccessors.forEach( a => o[a] );
 				computedAccessors = null;
 				functions = null;
@@ -203,8 +211,8 @@ namespace variotry.KnockoutDecorator
 				{
 					o[options.initializeMethod]();
 				}
-				return o;
 			}
+			trackConstructor["prototype"] = constructor["prototype"];
 			return trackConstructor;
 		}
 		
@@ -241,8 +249,8 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function observable( _class: any, propertyName: string ): void
 	{
-		if ( isRegisteredObserbable( _class, propertyName ) ) return;
-		setregisterObserbable( _class, propertyName );
+		//if ( isRegisteredObserbable( _class, propertyName ) ) return;
+		//setRegisterObserbable( _class, propertyName );
 		function registerProperty( instancedObj: any ): void
 		{
 			let o = ko.observable();
@@ -275,8 +283,8 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function observableArray( _class: any, propertyName: string ): void
 	{
-		if ( isRegisteredObserbable( _class, propertyName ) ) return;
-		setregisterObserbable( _class, propertyName );
+		//if ( isRegisteredObserbable( _class, propertyName ) ) return;
+		//setRegisterObserbable( _class, propertyName );
 		function replaceFunction( src: any[], o: KnockoutObservableArray<any> )
 		{
 			let originals: { [fn: string]: Function } = {};
@@ -483,8 +491,9 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function getObservableArray<T>( instancedObj: any, propertyName: string ): KnockoutObservableArray<T>
 	{
-		let o = getObservableObject( instancedObj, propertyName );
-		return ( ko.isObservable( o ) && o.indexOf !== undefined ) ? o : null;
+		let o = getObservableObject(instancedObj, propertyName);
+		let res = (ko.isObservable(o) && o.indexOf !== undefined) ? o : null;
+		return res as KnockoutObservableArray<T>;
 	}
 
 	/**
@@ -525,8 +534,8 @@ namespace variotry.KnockoutDecorator
 	{
 		return ( _class: Object, propertyName: string, descriptor: PropertyDescriptor ) =>
 		{
-			if ( isRegisteredObserbable( _class, propertyName ) ) return;
-			setregisterObserbable( _class, propertyName );
+			//if ( isRegisteredObserbable( _class, propertyName ) ) return;
+			//setRegisterObserbable( _class, propertyName );
 
 			let getter = descriptor.get;
 			if ( !getter )
@@ -537,6 +546,7 @@ namespace variotry.KnockoutDecorator
 
 			function registerProperty( instancedObj: any ): void
 			{
+				//console.log( "register property computed", instancedObj, propertyName );
 				let computedOptions: KnockoutComputedDefine<any> = {
 					read: getter,
 					write: setter,
@@ -565,7 +575,6 @@ namespace variotry.KnockoutDecorator
 					get: c,
 					set: setter ? getSetter( _class, propertyName, c ) : undefined
 				} );
-
 			}
 
 			descriptor.get = function()
@@ -584,23 +593,23 @@ namespace variotry.KnockoutDecorator
 		}
 	}
 	/** @private */
-	const registerObjserbablesKey = "__vtKnockoutRegisterObserbables__";
+	//const registerObjserbablesKey = "__vtKnockoutRegisterObserbables__";
 
 	/** @private */
-	function isRegisteredObserbable( _class: any, propertyName: string ): boolean
+	/*function isRegisteredObserbable( _class: any, propertyName: string ): boolean
 	{
 		return _class[registerObjserbablesKey] && _class[registerObjserbablesKey].indexOf( propertyName ) >= 0
-	}
+	}*/
 
 	/** @private */
-	function setregisterObserbable( _class: any, propertyName: string ): void
+	/*function setRegisterObserbable( _class: any, propertyName: string ): void
 	{
 		if ( !_class[registerObjserbablesKey] )
 		{
 			_class[registerObjserbablesKey] = [];
 		}
 		_class[registerObjserbablesKey].push( propertyName );
-	}
+	}*/
 
 	/** @private */
 	const storeExtendKey = "__vtKnockoutExtends__";
