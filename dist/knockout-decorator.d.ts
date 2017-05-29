@@ -6,7 +6,7 @@
 declare namespace variotry.KnockoutDecorator {
     /**
      * You can easily access KnockoubObservableArray functions via intellisense
-     * by converting a array property which is attached @observableArray to this.
+     * by converting a array property which is attaching @observableArray.
      */
     interface IObservableArray<T> extends Array<T> {
         /** Execute KnockoutObservableArray.replace */
@@ -46,13 +46,14 @@ declare namespace variotry.KnockoutDecorator {
          */
         pureComputed?: boolean;
         /**
-         * Set name of method that you want to execute after a constructor.
-         * You can get raw observable object using getObservable<T> and so on in the method.
+         * Set name of method that you want to execute after a constructor finish.
+         * You can get raw observable objects using getObservable<T>() in the method.
+         * Attension; when you use `@track` decorator, you can't get raw observable in a constructor.
          */
         initializeMethod?: string;
     }
     /**
-     * Just attach to a class as decorator.
+     * Attach to a class as decorator.
      * This decorator converts all properties and accessors to observable.
      * Points to consider.
      * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
@@ -67,7 +68,7 @@ declare namespace variotry.KnockoutDecorator {
      */
     function track(constructor: Function): any;
     /**
-     * Just attach to a class as decorator.
+     * Attach to a class as decorator.
      * This decorator converts all properties and accessors to observable.
      * Points to consider.
      * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
@@ -82,39 +83,39 @@ declare namespace variotry.KnockoutDecorator {
      */
     function track(options: ITrackOptions): any;
     /**
-     * Just attach to a property or accessor as decorator.
+     * Attach to a property or a accessor as decorator.
      * This decorator prevents a property or a accessor from converting to observable in @track.
      */
     function ignore(_class: any, propertyName: string): void;
     /**
-     * Just attach to a property as decorator.
+     * Attach to a property as decorator.
      * If you change a property value, a view will also change. And vice versa.
      */
     function observable(_class: any, propertyName: string): void;
     /**
-     * Just attach to a array property as decorator.
+     * Attach to a array property as decorator.
      * If you set a property to a new array data, a view will also change.
      * If you call a Array function such as push or pop, a view will also change.
      */
     function observableArray(_class: any, propertyName: string): void;
     /**
-     * Just attach to a property accessor as decorator.
-     * If a observable property value in the getter is changed, it will be called.
-     * If you define also a setter, you can treat as writable computed.
+     * Attach to a accessor as decorator.
+     * If a observable property value in a getter is changed, the getter will be executed.
+     * If you define also a setter, you can handle as writable computed.
      */
     function computed(_class: any, propertyName: string, descriptor: PropertyDescriptor): void;
     /**
-     * Just attach to a property accessor as decorator.
+     * Attach to a accessor as decorator.
      * @param options	Knockout computed options.
      * @see <a href="http://knockoutjs.com/documentation/computed-reference.html" target="_blank">Computed Observable Reference</a>
      */
     function computed(options: IComputedOptions): MethodDecorator;
     /**
-     * Just attach to a property accessor as decorator.
+     * Attach to a accessor as decorator.
      */
     function pureComputed(_class: any, propertyName: string, descriptor: PropertyDescriptor): void;
     /**
-     * Just attach to a property or property accessor.
+     * Attach to a property or accessor.
      * @extend require attaching observable decorator.
      * @param options	Set parameter which define ko.extenders such as rateLimit.
      */
@@ -122,12 +123,41 @@ declare namespace variotry.KnockoutDecorator {
         [key: string]: any;
     }): any;
     /**
-     * Just attach to a number type property.
-     * This convert to number type if set a value other than number type such as value is changed via input element on a browser.
-     * If the converted value is NaN, it treat as zero.
+     * Attach to a property or accessor(setter).
+     * When you set a value to a property or a setter, the value will be changed through filters.
+     * If there is more than one filter, filters are executed in the order from bottom to top.
+     * @param filterFunc function that return a processed value.
+     */
+    function setFilter(filterFunc: (setValue: any) => any): any;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator converts to number type if set a value other than number type such as value is changed via input element on a browser.
+     * If a converted value is NaN, it handles as zero.
      * @extend require attaching observable decorator.
      */
     function asNumber(_class: any, propertyName: string): void;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator keeps greater than or equal to minValue.
+     * @extend require attaching observable decorator.
+     */
+    function min(minValue: number): any;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator keeps less than or equal to maxValue.
+     * @extend require attaching observable decorator.
+     */
+    function max(maxValue: number): any;
+    /**
+     * Attach to a number type property or a accessor(setter).
+     * This decorator is a kind of `@setFilter`.
+     * This decorator keeps between minValue and maxValue inclusive.
+     * @extend require attaching observable decorator.
+     */
+    function clamp(minValue: number, maxValue: number): any;
     /**
      * Get raw knockout observable object.
      * @param instancedObj	Instanced object.

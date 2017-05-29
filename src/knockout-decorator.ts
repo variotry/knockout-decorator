@@ -9,7 +9,7 @@ namespace variotry.KnockoutDecorator
 	// #region declare interfaces.
 	/**
 	 * You can easily access KnockoubObservableArray functions via intellisense
-	 * by converting a array property which is attached @observableArray to this.
+	 * by converting a array property which is attaching @observableArray.
 	 */
 	export interface IObservableArray<T> extends Array<T>
 	{
@@ -65,14 +65,15 @@ namespace variotry.KnockoutDecorator
 		pureComputed?: boolean,
 
 		/**
-		 * Set name of method that you want to execute after a constructor.
-		 * You can get raw observable object using getObservable<T> and so on in the method.
+		 * Set name of method that you want to execute after a constructor finish.
+		 * You can get raw observable objects using getObservable<T>() in the method.
+		 * Attension; when you use `@track` decorator, you can't get raw observable in a constructor.
 		 */
 		initializeMethod?: string
 	}
 
 	/**
-	 * Just attach to a class as decorator.
+	 * Attach to a class as decorator.
 	 * This decorator converts all properties and accessors to observable.
 	 * Points to consider.
 	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
@@ -87,7 +88,7 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function track( constructor: Function );
 	/**
-	 * Just attach to a class as decorator.
+	 * Attach to a class as decorator.
 	 * This decorator converts all properties and accessors to observable.
 	 * Points to consider.
 	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
@@ -132,68 +133,76 @@ namespace variotry.KnockoutDecorator
 					}
 				}
 			}
-			console.log( options );
 		}
 
 		function classFactory( constructor: Function )
 		{
-			let original = constructor;
-			function isIgnore( properyName: string )
+			let isIgnore = ( propertyName: string ) =>
 			{
 				if ( !constructor[ignoresKey] ) return false;
-				return constructor[ignoresKey].indexOf( properyName ) >= 0;
+				//console.log( "ig check", propertyName );
+				return constructor[ignoresKey].indexOf( propertyName ) >= 0;
 			}
 
-			function trackConstructor( args )
+			let trackConstructor: any = function ()
 			{
-				let c: any = function ()
-				{
-					return original.apply( this, args );
-				}
-				c.prototype = original.prototype;
+				constructor.apply( this, arguments );
+				let o = this;
 
-				let functions = Object.keys( c.prototype );
-				let computedAccessors = [];
-				functions.forEach( f =>
-				{
-					if ( isRegisteredObserbable( c.prototype, f ) )
-					{
-						computedAccessors.push( f );
-						return;
-					}
-					if ( isIgnore( f ) ) return;
-					let d = Object.getOwnPropertyDescriptor( c.prototype, f );
-					if ( !d || !d.get ) return;
-					let factory = getComputedDecoratorFactory( {
-						pure: options.pureComputed
-					} );
-					factory( c.prototype, f, d );
-					Object.defineProperty( c.prototype, f, d );
-					computedAccessors.push( f );
-				});
-
-				let o = new c();
 				let properties = Object.keys( o );
-
 				properties.forEach( p =>
 				{
-					if ( isRegisteredObserbable( c.prototype, p ) ) return;
-					if ( p.match( /^__vtKnockout/ ) ) return;
+					//console.log( "p is", p );
+					if ( p === storeObservableKey ) return;
 					if ( isIgnore( p ) ) return;
+
+					//console.log( "assign observable", p );
 
 					let v = o[p];
 					delete o[p];
 					if ( Array.isArray( v ) )
 					{
-						observableArray( c.prototype, p );
+						observableArray( trackConstructor.prototype, p );
 					}
 					else
 					{
-						observable( c.prototype, p );
+						observable( trackConstructor.prototype, p );
 					}
 					o[p] = v;
 				});
 
+				let functions = Object.keys( constructor.prototype );
+				//console.log( functions );
+				let computedAccessors = [];
+				functions.forEach( f =>
+				{
+
+					//console.log( "f is", f );
+					let d = Object.getOwnPropertyDescriptor( constructor.prototype, f );
+					if ( !d || !d.get ) return;
+					if ( isIgnore( f ) ) return;
+					let dummy = o[f];
+					if ( getComputed( o, f ) ) return;
+
+					//console.log( "f is ", f, d.get );
+					//console.log( "f", f, f["name"] );
+					//return;
+					/*if ( isRegisteredObserbable( c.prototype, f ) )
+					{
+						computedAccessors.push( f );
+						return;
+					}*/
+					
+					let factory = getComputedDecoratorFactory( {
+						pure: options.pureComputed
+					} );
+					factory( trackConstructor.prototype, f, d );
+					Object.defineProperty( trackConstructor.prototype, f, d );
+					computedAccessors.push( f );
+					//co = getComputed( o, f );
+					//console.log( "f is 2 ", dummy, co );
+				});
+				
 				computedAccessors.forEach( a => o[a] );
 				computedAccessors = null;
 				functions = null;
@@ -202,8 +211,8 @@ namespace variotry.KnockoutDecorator
 				{
 					o[options.initializeMethod]();
 				}
-				return o;
 			}
+			trackConstructor["prototype"] = constructor["prototype"];
 			return trackConstructor;
 		}
 		
@@ -224,7 +233,7 @@ namespace variotry.KnockoutDecorator
 	const ignoresKey = "__vtKnockoutIgnoresKey__";
 
 	/**
-	 * Just attach to a property or accessor as decorator.
+	 * Attach to a property or a accessor as decorator.
 	 * This decorator prevents a property or a accessor from converting to observable in @track.
 	 */
 	export function ignore( _class: any, propertyName: string ): void
@@ -235,13 +244,13 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property as decorator.
+	 * Attach to a property as decorator.
 	 * If you change a property value, a view will also change. And vice versa.
 	 */
 	export function observable( _class: any, propertyName: string ): void
 	{
-		if ( isRegisteredObserbable( _class, propertyName ) ) return;
-		setregisterObserbable( _class, propertyName );
+		//if ( isRegisteredObserbable( _class, propertyName ) ) return;
+		//setRegisterObserbable( _class, propertyName );
 		function registerProperty( instancedObj: any ): void
 		{
 			let o = ko.observable();
@@ -249,7 +258,7 @@ namespace variotry.KnockoutDecorator
 			assignExtendForInstancedObj( _class, instancedObj, propertyName );
 			Object.defineProperty( instancedObj, propertyName, {
 				get: o,
-				set: o
+				set: getSetter( _class, propertyName, o )
 			});
 		}
 
@@ -268,14 +277,14 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a array property as decorator.
+	 * Attach to a array property as decorator.
 	 * If you set a property to a new array data, a view will also change.
 	 * If you call a Array function such as push or pop, a view will also change.
 	 */
 	export function observableArray( _class: any, propertyName: string ): void
 	{
-		if ( isRegisteredObserbable( _class, propertyName ) ) return;
-		setregisterObserbable( _class, propertyName );
+		//if ( isRegisteredObserbable( _class, propertyName ) ) return;
+		//setRegisterObserbable( _class, propertyName );
 		function replaceFunction( src: any[], o: KnockoutObservableArray<any> )
 		{
 			let originals: { [fn: string]: Function } = {};
@@ -324,7 +333,7 @@ namespace variotry.KnockoutDecorator
 						replaceFunction( arrayValue, o );
 						mergeFunction( arrayValue, o );
 					}
-					o( arrayValue );
+					getSetter( _class, propertyName, o )( arrayValue );
 				}
 			});
 		}
@@ -344,13 +353,13 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property accessor as decorator.
-	 * If a observable property value in the getter is changed, it will be called.
-	 * If you define also a setter, you can treat as writable computed.
+	 * Attach to a accessor as decorator.
+	 * If a observable property value in a getter is changed, the getter will be executed.
+	 * If you define also a setter, you can handle as writable computed.
 	 */
 	export function computed( _class: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	/**
-	 * Just attach to a property accessor as decorator.
+	 * Attach to a accessor as decorator.
 	 * @param options	Knockout computed options.
 	 * @see <a href="http://knockoutjs.com/documentation/computed-reference.html" target="_blank">Computed Observable Reference</a>
 	 */
@@ -365,7 +374,7 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property accessor as decorator.
+	 * Attach to a accessor as decorator.
 	 */
 	export function pureComputed( _class: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	{
@@ -373,7 +382,7 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/**
-	 * Just attach to a property or property accessor.
+	 * Attach to a property or accessor.
 	 * @extend require attaching observable decorator.
 	 * @param options	Set parameter which define ko.extenders such as rateLimit.
 	 */
@@ -385,28 +394,83 @@ namespace variotry.KnockoutDecorator
 		};
 	}
 
+	//#region set filter decorators
 	/**
-	 * Just attach to a number type property.
-	 * This convert to number type if set a value other than number type such as value is changed via input element on a browser.
-	 * If the converted value is NaN, it treat as zero.
+	 * Attach to a property or accessor(setter).
+	 * When you set a value to a property or a setter, the value will be changed through filters.
+	 * If there is more than one filter, filters are executed in the order from bottom to top.
+	 * @param filterFunc function that return a processed value.
+	 */
+	export function setFilter( filterFunc: ( setValue: any ) => any ): any // PropertyDecorator | MethodDecorator
+	{
+		return ( _class: any, propertyName: string ) =>
+		{
+			registerSetFilter( _class, propertyName, filterFunc );
+		};
+	}
+
+	/**
+	 * Attach to a number type property or a accessor(setter).
+	 * This decorator is a kind of `@setFilter`.
+	 * This decorator converts to number type if set a value other than number type such as value is changed via input element on a browser.
+	 * If a converted value is NaN, it handles as zero.
 	 * @extend require attaching observable decorator.
 	 */
-	export function asNumber( _class: any, propertyName: string ): void
+	export function asNumber( _class: any, propertyName: string ):void
 	{
-		registerSubscribe( _class, propertyName, function( newValue : any )
+		registerSetFilter( _class, propertyName, v =>
 		{
-			if ( typeof newValue !== "number" )
-			{
-				let o = getObservableObject( this, propertyName );
-				if ( !o )
-				{
-					throw  "@asNumber require @observable";
-				}
-				let v = parseFloat( newValue );
-				o( isNaN( v ) ? 0 : v );
-			}
+			if ( !v || typeof v === "number" ) return v;
+			v = parseFloat( v );
+			return isNaN( v ) ? 0 : v;
 		});
 	}
+
+	/**
+	 * Attach to a number type property or a accessor(setter).
+	 * This decorator is a kind of `@setFilter`.
+	 * This decorator keeps greater than or equal to minValue.
+	 * @extend require attaching observable decorator.
+	 */
+	export function min( minValue: number ): any // PropertyDecorator | MethodDecorator
+	{
+		return setFilter( v => v < minValue ? minValue : v );
+	}
+
+	/**
+	 * Attach to a number type property or a accessor(setter).
+	 * This decorator is a kind of `@setFilter`.
+	 * This decorator keeps less than or equal to maxValue.
+	 * @extend require attaching observable decorator.
+	 */
+	export function max( maxValue: number ): any // PropertyDecorator | MethodDecorator
+	{
+		return setFilter( v => v > maxValue ? maxValue : v );
+	}
+
+	/**
+	 * Attach to a number type property or a accessor(setter).
+	 * This decorator is a kind of `@setFilter`.
+	 * This decorator keeps between minValue and maxValue inclusive.
+	 * @extend require attaching observable decorator.
+	 */
+	export function clamp( minValue:number, maxValue: number ): any // PropertyDecorator | MethodDecorator
+	{
+		if ( minValue > maxValue )
+		{
+			let tmp = minValue;
+			minValue = maxValue;
+			maxValue = tmp;
+		}
+		return setFilter( v =>
+		{
+			if ( v < minValue ) v = minValue;
+			else if ( v > maxValue ) v = maxValue;
+			return v;
+		});
+	}
+
+	//#endregion
 
 	/**
 	 * Get raw knockout observable object.
@@ -427,8 +491,9 @@ namespace variotry.KnockoutDecorator
 	 */
 	export function getObservableArray<T>( instancedObj: any, propertyName: string ): KnockoutObservableArray<T>
 	{
-		let o = getObservableObject( instancedObj, propertyName );
-		return ( ko.isObservable( o ) && o.indexOf !== undefined ) ? o : null;
+		let o = getObservableObject(instancedObj, propertyName);
+		let res = (ko.isObservable(o) && o.indexOf !== undefined) ? o : null;
+		return res as KnockoutObservableArray<T>;
 	}
 
 	/**
@@ -469,8 +534,8 @@ namespace variotry.KnockoutDecorator
 	{
 		return ( _class: Object, propertyName: string, descriptor: PropertyDescriptor ) =>
 		{
-			if ( isRegisteredObserbable( _class, propertyName ) ) return;
-			setregisterObserbable( _class, propertyName );
+			//if ( isRegisteredObserbable( _class, propertyName ) ) return;
+			//setRegisterObserbable( _class, propertyName );
 
 			let getter = descriptor.get;
 			if ( !getter )
@@ -481,6 +546,7 @@ namespace variotry.KnockoutDecorator
 
 			function registerProperty( instancedObj: any ): void
 			{
+				//console.log( "register property computed", instancedObj, propertyName );
 				let computedOptions: KnockoutComputedDefine<any> = {
 					read: getter,
 					write: setter,
@@ -507,9 +573,8 @@ namespace variotry.KnockoutDecorator
 
 				Object.defineProperty( instancedObj, propertyName, {
 					get: c,
-					set: setter ? c : undefined
+					set: setter ? getSetter( _class, propertyName, c ) : undefined
 				} );
-
 			}
 
 			descriptor.get = function()
@@ -528,23 +593,23 @@ namespace variotry.KnockoutDecorator
 		}
 	}
 	/** @private */
-	const registerObjserbablesKey = "__vtKnockoutRegisterObserbables__";
+	//const registerObjserbablesKey = "__vtKnockoutRegisterObserbables__";
 
 	/** @private */
-	function isRegisteredObserbable( _class: any, propertyName: string ): boolean
+	/*function isRegisteredObserbable( _class: any, propertyName: string ): boolean
 	{
 		return _class[registerObjserbablesKey] && _class[registerObjserbablesKey].indexOf( propertyName ) >= 0
-	}
+	}*/
 
 	/** @private */
-	function setregisterObserbable( _class: any, propertyName: string ): void
+	/*function setRegisterObserbable( _class: any, propertyName: string ): void
 	{
 		if ( !_class[registerObjserbablesKey] )
 		{
 			_class[registerObjserbablesKey] = [];
 		}
 		_class[registerObjserbablesKey].push( propertyName );
-	}
+	}*/
 
 	/** @private */
 	const storeExtendKey = "__vtKnockoutExtends__";
@@ -565,23 +630,33 @@ namespace variotry.KnockoutDecorator
 	}
 
 	/** @private */
-	const storeSubscribeKey = "__vtKnockoutSubscribes__";
+	const storeSetFilterKey = "__vtKnockoutSetFilters__";
 
 	/** @private */
-	function registerSubscribe( _class: any, propertyName: string, callback: ( newValue: any ) => void )
+	function registerSetFilter( _class: any, propertyName: string, filterFunc: ( setValue: any ) => any ): void
 	{
-		if ( !_class[storeSubscribeKey] ) _class[storeSubscribeKey] = {};
-		if ( !_class[storeSubscribeKey][propertyName] ) _class[storeSubscribeKey][propertyName] = [];
-		_class[storeSubscribeKey][propertyName].push( callback );
+		if ( !_class[storeSetFilterKey] ) _class[storeSetFilterKey] = {};
+		if ( !_class[storeSetFilterKey][propertyName] ) _class[storeSetFilterKey][propertyName] = [];
+		_class[storeSetFilterKey][propertyName].push( filterFunc );
 	}
 
 	/** @private */
-	function getSubscribers( _class: any, propertyName: string ): ( ( newValue: any ) => void )[]
+	function getSetter( _class: any, propertyName: string, observable: KnockoutObservable<any> ): any
 	{
-		if ( !_class[storeSubscribeKey] ) return null;
-		return _class[storeSubscribeKey][propertyName];
+		if ( !_class[storeSetFilterKey] ) return observable;
+		let filters = _class[storeSetFilterKey][propertyName];
+		if ( !filters ) return observable;
+		let len = filters.length;
+		return v =>
+		{
+			let original = v;
+			for ( let i = 0; i < len; ++i )
+			{
+				v = filters[i]( v );
+			}
+			observable( v );
+		}
 	}
-
 
 	/** @private */
 	function assignExtendForInstancedObj( _class:any, instancedObj: any, propertyName: string ): void
@@ -589,14 +664,6 @@ namespace variotry.KnockoutDecorator
 		let o = getObservableObject( instancedObj, propertyName );
 		let ext = getExtend( _class, propertyName );
 		if ( ext ) o.extend( ext );
-		let subscribers = getSubscribers( _class, propertyName );
-		if ( subscribers )
-		{
-			for ( let i = 0; i < subscribers.length; ++i )
-			{
-				o.subscribe( subscribers[i], instancedObj );
-			}
-		}
 	}
 	
 	// #endregion
