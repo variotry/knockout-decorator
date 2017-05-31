@@ -8,8 +8,4 @@
 /node_modules
 /bower_components
 *.csproj.user
-/typings
-/docs
-/demo/css
-/demo/js
-/demo/sourcemaps
+/doc

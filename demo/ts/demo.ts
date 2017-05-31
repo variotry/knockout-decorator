@@ -1,5 +1,17 @@
-﻿let kd = variotry.KnockoutDecorator;
-type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
+﻿// use webpack etc.
+// Write to 'import kd from "knockout-decorator"' in your projects.
+import kd from "../../";	// <-- import knockout-decorator module.
+
+// knockout-decorator require global 'ko' variable.
+// If you bundle knockoutjs to a one js using webpack, write as follows.
+import * as ko from "knockout";
+( <any>window ).ko = ko;
+
+// use as global.
+/*
+///<reference path="../../dist-globalDefinition/knockout-decorator.d.ts" />
+import kd = KnockoutDecorator;	// alias
+*/
 
 ko.bindingHandlers["disableBinding"] =
 {
@@ -35,7 +47,7 @@ class ObservableVariablesDemo
 class ObservableArrayDemo
 {
 	@kd.observableArray
-	private list = ["data1", "data2", "data3"] as IObservableArray<string>;
+	private list = ["data1", "data2", "data3"] as kd.IObservableArray<string>;
 
 	@kd.observable
 	private pushData = "";
@@ -44,7 +56,7 @@ class ObservableArrayDemo
 	public pushErrorMsg = "";
 
 	@kd.observableArray
-	private removeTargets = [] as IObservableArray<string>;
+	private removeTargets = [] as kd.IObservableArray<string>;
 
 	private onPush(): void
 	{
