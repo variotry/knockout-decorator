@@ -5,16 +5,16 @@
     <meta charset="utf-8" />
     <title>TypeScript HTML App</title>
 
-	<link rel="stylesheet" href="js/SyntaxHighlighter/styles/shCore.css" />
-	<link rel="stylesheet" href="js/SyntaxHighlighter/styles/shThemeRDark.css" />
+	<link rel="stylesheet" href="SyntaxHighlighter/styles/shCore.css" />
+	<link rel="stylesheet" href="SyntaxHighlighter/styles/shThemeRDark.css" />
 
 	<link rel="stylesheet" href="css/demo.css" type="text/css" />	
 
-	<script src="js/SyntaxHighlighter/scripts/XRegExp.js"></script>
-	<script src="js/SyntaxHighlighter/scripts/shCore.js"></script>
-	<script src="js/SyntaxHighlighter/scripts/shAutoloader.js"></script>
-	<script src="js/SyntaxHighlighter/scripts/shBrushJScript.js"></script>
-	<script src="js/SyntaxHighlighter/scripts/shBrushXml.js"></script>
+	<script src="SyntaxHighlighter/scripts/XRegExp.js"></script>
+	<script src="SyntaxHighlighter/scripts/shCore.js"></script>
+	<script src="SyntaxHighlighter/scripts/shAutoloader.js"></script>
+	<script src="SyntaxHighlighter/scripts/shBrushJScript.js"></script>
+	<script src="SyntaxHighlighter/scripts/shBrushXml.js"></script>
 	<script>SyntaxHighlighter.all();</script>
 </head>
 <body class="invisible" data-bind="css:{invisible:false}">
@@ -212,9 +212,15 @@ class ObservableArrayDemo
 		</article>
 
 	</article>
+	<!-- use as global
+		<script src="js/knockout.js"></script>
+		<script src="js/knockout-decorator.min.js"></script>
+	-->
 
-	<script src="js/knockout.js"></script>
-	<script src="js/knockout-decorator.min.js"></script>
-	<script src="js/demo.min.js"></script>
+	<!-- use webpack etc -->
+	<script src="js/commons.js"></script>
+
+	<script src="js/demo.js"></script>
+	
 </body>
 </html>

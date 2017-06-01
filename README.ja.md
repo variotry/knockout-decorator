@@ -6,13 +6,13 @@
 
 ## 使い方
 
-dist ディレクトリ内の `js`, `d.ts` を任意の場所にコピーし、htmlに以下の様に記述して下さい。
+`dist/knockout-decorator.min.js`、 `dist-globalDefinition/knockout-decorator.d.ts` を任意の場所にコピーし、htmlに以下の様に記述して下さい。
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
-そして `let kd = variotry.KnockoutDecorator` ようにショートネームを定義します。
+そして `import kd = KnockoutDecorator` ようにショートネームを定義します。
 
 ### Decorators
 
@@ -160,14 +160,12 @@ dist ディレクトリ内の `js`, `d.ts` を任意の場所にコピーし、h
 
   5.コンストラクタ内では observableの取得・利用はできません。
 
-    type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
-
     // initializeMethod オプションは、コンストラクタ終了後に実行されるメソッド名となります。
     @kd.track( {initializeMethod:"init"} )
     class Sample5
     {
         private property = "";
-        private array = [] as IObservableArray<string>;
+        private array = [] as kd.IObservableArray<string>;
 
         public constructor()
         {
@@ -227,9 +225,7 @@ push, pop といった Array 関数を呼ぶと ( 例： `this.list.push("data4"
 以下に示すようキャストを行うと、インテリセンスの働きで KnockoubObservableArray の関数に簡単にアクセスできます。
 
     @kd.observableArray
-    public list = [ "data1", "data2", "data3" ] as IObservableArray<string>;
-    
-(IObservableArray&lt;T&gt; は `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` のようにショートネーム定義しています）
+    public list = [ "data1", "data2", "data3" ] as kd.IObservableArray<string>;
 
 #### `@pureComputed`、`@computed` デコレーターの利用
 

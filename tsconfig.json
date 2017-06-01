@@ -1,17 +1,15 @@
 {
 	"compilerOptions": {
-		"noImplicitAny": false,
-		"noEmitOnError": true,
-		"removeComments": false,
-		"sourceMap": false,
-		"target": "es5",
-		"experimentalDecorators": true,
 		"allowUnreachableCode": true,
-		"declaration": true
+		"experimentalDecorators": true,
+		"noEmitOnError": true,
+		"noImplicitAny": true,
+		"sourceMap": false,
+		"target": "es5"
 	},
 	"exclude": [
 		"node_modules",
 		"dist",
-		"typings/globals"
+		"dist-globalDefinition"
 	]
 }

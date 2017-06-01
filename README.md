@@ -6,13 +6,13 @@ See [demo](https://variotry.github.io/knockout-decorator/).(Require es5 support 
 
 ## Usage
 
-Copy `.js` and `d.ts` inside dist directory in any directory and write on a html as follows.
+Copy `dist/knockout-decorator.min.js` and `dist-globalDefinition/knockout-decorator.d.ts` in any directory and write on a html as follows.
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.min.js"></script>
 	<script src="yourScript.js"></script>
 
-And define a shortName such as `let kd = variotry.KnockoutDecorator`.
+And define a shortName such as `import kd = KnockoutDecorator`.
 
 ### Decorators
 
@@ -160,14 +160,12 @@ see [demo1](https://variotry.github.io/knockout-decorator/)
 
   5.You can't get or use observable objects in a constructor.
 
-    type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;
-
     // initializeMethod option is name of executed method after constructor finish.
     @kd.track( {initializeMethod:"init"} )
     class Sample5
     {
         private property = "";
-        private array = [] as IObservableArray<string>;
+        private array = [] as kd.IObservableArray<string>;
 
         public constructor()
         {
@@ -227,9 +225,7 @@ If you call Array function such as push or pop  ( e.g. `this.list.push("data4")`
 You can easily access KnockoubObservableArray functions via intellisense by converting as follows.
 
     @kd.observableArray
-    public list = [ "data1", "data2", "data3" ] as IObservableArray<string>;
-    
-(Define IObservableArray&lt;T&gt; as `type IObservableArray<T> = variotry.KnockoutDecorator.IObservableArray<T>;` )
+    public list = [ "data1", "data2", "data3" ] as kd.IObservableArray<string>;
 
 See [demo3](https://variotry.github.io/knockout-decorator/#demo3)
 

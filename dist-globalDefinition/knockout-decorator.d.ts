@@ -181,4 +181,5 @@ declare module KnockoutDecorator {
      */
     function getComputed<T>(instancedObj: any, propertyName: string): KnockoutComputed<T>;
 }
-export default KnockoutDecorator;
+export = KnockoutDecorator;
+export as namespace KnockoutDecorator
