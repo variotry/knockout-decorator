@@ -11,6 +11,10 @@ module.exports = {
 			{
 				test: /\.ts$/,
 				loader: "awesome-typescript-loader",
+			},
+			{
+				test: /\.js$/,
+				loader: "source-map-loader"
 			}
 		]
 	},
@@ -22,7 +26,6 @@ module.exports = {
 			name: 'commons',
 			filename: 'commons.js',
 			minChunks: 2
-		} ),
-		new webpack.optimize.UglifyJsPlugin()
+		} )
 	]
 };

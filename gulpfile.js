@@ -18,8 +18,8 @@ const gulp = require( "gulp" ),
 //#region build src typescript
 gulp.task( "build:srcTs", () =>
 {
-	let isSourcemap = false;
-	let isMinify = false;
+	let isSourcemap = true;
+	let isMinify = true;
 	let config = require( "./tsconfig.src.json" );
 
 	gulp.task( "_build1", () =>
@@ -90,7 +90,16 @@ gulp.task( "watch:ts", ["build:srcTs"], () =>
 //#region demo
 gulp.task( "build:demo", () =>
 {
+	let isSourcemap = false;
 	let config = require( "./webpack.config.demo.js" );
+	if ( isSourcemap )
+	{
+		config.devtool = "source-map";
+	}
+	config.plugins.push( new webpack.optimize.UglifyJsPlugin( {
+		sourceMap: isSourcemap
+	} ) );
+	
 	gulp.src( "dummy" )
 		.pipe( plumber() )
 		.pipe( webpackStream( config, webpack ) )
@@ -98,7 +107,9 @@ gulp.task( "build:demo", () =>
 
 	return gulp.src( "demo/sass/demo.scss" )
 		.pipe( plumber() )
+		.pipe( isSourcemap ? sourcemaps.init() : gutil.noop() )
 		.pipe( sass() )
+		.pipe( isSourcemap ? sourcemaps.write( "." ) : gutil.noop() )
 		.pipe( gulp.dest( "demo/css" ) );
 } );
 

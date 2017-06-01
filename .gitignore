@@ -9,3 +9,4 @@
 /bower_components
 *.csproj.user
 /doc
+/demo/**/*.map
