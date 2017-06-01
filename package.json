@@ -1,9 +1,9 @@
 {
-	"name": "knockout-decorator",
-	"version": "0.9.2",
+	"name": "vt-knockout-decorator",
+	"version": "0.9.3",
 	"author": "vario <variotries@gmail.com>",
 	"license": "MIT",
-	"description": "a simple description for the package",
+	"description": "Typescript Decorator that assist knockoutjs",
 	"main": "dist/knockout-decorator.min.js",
 	"types": "dist/knockout-decorator.d.ts",
 	"files": [
@@ -13,7 +13,10 @@
 		"README.md",
 		"README.ja.md"
 	],
-
+	"keywords": [
+		"knockout",
+		"typescript"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/variotry/knockout-decorator"
