@@ -6,7 +6,7 @@ See [demo](https://variotry.github.io/knockout-decorator/).(Require es5 support 
 
 ## Usage
 
-Copy `dist/knockout-decorator.min.js` and `dist-globalDefinition/knockout-decorator.d.ts` inside dist directory in any directory and write on a html as follows.
+Copy `dist/knockout-decorator.min.js` and `dist-globalDefinition/knockout-decorator.d.ts` in any directory and write on a html as follows.
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.min.js"></script>
