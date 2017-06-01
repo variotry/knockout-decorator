@@ -6,7 +6,7 @@
 
 ## 使い方
 
-dist ディレクトリ内の `js`, `d.ts` を任意の場所にコピーし、htmlに以下の様に記述して下さい。
+`dist/knockout-decorator.min.js`、 `dist-globalDefinition/knockout-decorator.d.ts` を任意の場所にコピーし、htmlに以下の様に記述して下さい。
 
     <script src="path/knockout.js"></script>
     <script src="path/knockout-decorator.min.js"></script>
