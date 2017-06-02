@@ -7,7 +7,7 @@
 declare module KnockoutDecorator {
     /**
      * You can easily access KnockoubObservableArray functions via intellisense
-     * by converting a array property which is attaching @observableArray.
+     * by casting a array property which is attaching @observableArray.
      */
     interface IObservableArray<T> extends Array<T> {
         /** Execute KnockoutObservableArray.replace */
@@ -33,153 +33,161 @@ declare module KnockoutDecorator {
      * @computed argument options.
      */
     interface IComputedOptions {
-        pure?: boolean;
-        deferEvaluation?: boolean;
-        disposeWhen?(): boolean;
         disposeWhenNodeIsRemoved?: Node;
+        disposeWhen?(): boolean;
+        deferEvaluation?: boolean;
+        pure?: boolean;
     }
     /**
      * Argument of @track decorator.
      */
     interface ITrackOptions {
         /**
-         * Convert to pure computed if true or undefined, non pure computed otherwise.
+         * Make accessors pure koComputed if true or undefined, else non pure koComputed.
          */
         pureComputed?: boolean;
         /**
-         * Set name of method that you want to execute after a constructor finish.
-         * You can get raw observable objects using getObservable<T>() in the method.
-         * Attension; when you use `@track` decorator, you can't get raw observable in a constructor.
+         * Deprecated. Use init instead.
+         * If value set, perform obj[initializeMethod]() immediate after executed constructor.
          */
         initializeMethod?: string;
+        /**
+         * If value set, perform obj[init]() immediate after executed constructor.
+         * In order to use raw koObservable if you use track decorator,
+         * it is necessary to be not inside constructor but after executed constructor.
+         */
+        init?: string;
         [key: string]: any;
     }
     /**
-     * Attach to a class as decorator.
-     * This decorator converts all properties and accessors to observable.
+     * Class decorator.
+     * Make all properties/accessors to koObservable/koComputed.
      * Points to consider.
-     * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
-     * 2. Have to set array value for array properties to be recognized as oservable array.
-     *    If you first set null to a array property, the property will recognize as KnockoutObservable&lt;T[]>, not KnockoutObservableArray&lt;T>.
-     * 3. Accessors will be converted to pure computed.
-     *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
-     *    or attach `@computed` decorator to accessors.
-     * 4. If you want to prevent properties or accessors from converting to observable,
-     *    attach `@ignore` decorator to them.
-     * 5. You can't get raw observable objects in a constructor.
+     * 1. Properties that are not initialized at declare or in constructor don't become koObservable.
+     * 2. In order to recognize a array property as koObservableArray, it is necessary to set a array value first(e.g set [] ).
+     * 3. Accessors become pure koComputed.
+     * 4. A property/accessor with `@ignore` don't become koObservable.
+     * 5. In order to use raw koObservable, it is necessary to be not inside constructor but after executed constructor.
      */
     function track(constructor: Function): any;
     /**
-     * Attach to a class as decorator.
-     * This decorator converts all properties and accessors to observable.
+     * Class decorator.
+     * Make all properties/accessors to koObservable/koComputed.
      * Points to consider.
-     * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
-     * 2. Have to set array value for array properties to be recognized as oservable array.
-     *    If you first set null to a array property, the property will recognize as KnockoutObservable<T[]>, not KnockoutObservableArray<T>.
-     * 3. Accessors will be converted to pure computed.
-     *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
-     *    or attach `@computed` decorator to accessors.
-     * 4. If you want to prevent properties or accessors from converting to observable,
-     *    attach `@ignore` decorator to them.
-     * 5. You can't get raw observable objects in a constructor.
+     * 1. Properties that are not initialized at declare or in constructor don't become koObservable.
+     * 2. In order to recognize a array property as koObservableArray, it is necessary to set a array value first(e.g set [] ).
+     * 3. Accessors become pure koComputed.
+     * 4. A property/accessor with `@ignore` don't become koObservable.
+     * 5. In order to use raw koObservable, it is necessary to be not inside constructor but after executed constructor.
      */
     function track(options: ITrackOptions): any;
     /**
-     * Attach to a property or a accessor as decorator.
-     * This decorator prevents a property or a accessor from converting to observable in @track.
+     * Property/Accessor decorator.
+     * Prevent a property/accessor from making koObservable in @trak.
      */
-    function ignore(_class: any, propertyName: string): void;
+    function ignore(target: any, property: string): void;
     /**
-     * Attach to a property as decorator.
-     * If you change a property value, a view will also change. And vice versa.
+     * Property decorator.
+     * Make a property koObservable.
      */
-    function observable(_class: any, propertyName: string): void;
+    function observable(prototype: Object, property: string): void;
     /**
-     * Attach to a array property as decorator.
-     * If you set a property to a new array data, a view will also change.
-     * If you call a Array function such as push or pop, a view will also change.
+     * Property decorator.
+     * Make a property koObservableArray.
      */
-    function observableArray(_class: any, propertyName: string): void;
+    function observableArray(prototype: any, property: string): void;
     /**
-     * Attach to a accessor as decorator.
-     * If a observable property value in a getter is changed, the getter will be executed.
-     * If you define also a setter, you can handle as writable computed.
+     * Accessor decorator.
+     * At least require getter.
+     * Make a accessor koComputed. If setter is defined, make it writable computed.
      */
-    function computed(_class: any, propertyName: string, descriptor: PropertyDescriptor): void;
+    function computed(prototype: any, propertyName: string, descriptor: PropertyDescriptor): void;
     /**
-     * Attach to a accessor as decorator.
+     * Accessor decorator.
+     * At least require getter.
+     * Make a accessor koComputed. If setter is defined, make it writable computed.
      * @param options	Knockout computed options.
      * @see <a href="http://knockoutjs.com/documentation/computed-reference.html" target="_blank">Computed Observable Reference</a>
      */
     function computed(options: IComputedOptions): MethodDecorator;
     /**
-     * Attach to a accessor as decorator.
+     * Accessor decorator.
+     * At least require getter.
+     * Make a accessor koPureComputed. If setter is defined, make it writable computed.
      */
-    function pureComputed(_class: any, propertyName: string, descriptor: PropertyDescriptor): void;
+    function pureComputed(prototype: any, propertyName: string, descriptor: PropertyDescriptor): void;
     /**
-     * Attach to a property or accessor.
-     * @extend require attaching observable decorator.
-     * @param options	Set parameter which define ko.extenders such as rateLimit.
+     * Property/Accessor decorator.
+     * @param options	Set options which is defined ko.extenders such as rateLimit.
      */
     function extend(options: {
         [key: string]: any;
     }): any;
     /**
-     * Attach to a property or accessor(setter).
-     * When you set a value to a property or a setter, the value will be changed through filters.
-     * If there is more than one filter, filters are executed in the order from bottom to top.
+     * Property/Setter decorator.
+     * A value set to a property becom return value of filter.
+     * If there is multiple set filter decorators for a property, there are executed in the order from bottom to top.
      * @param filterFunc function that return a processed value.
      */
     function setFilter(filterFunc: (setValue: any) => any): any;
     /**
-     * Attach to a number type property or a accessor(setter).
-     * This decorator is a kind of `@setFilter`.
-     * This decorator converts to number type if set a value other than number type such as value is changed via input element on a browser.
-     * If a converted value is NaN, it handles as zero.
-     * @extend require attaching observable decorator.
+     * Set filter decorator.
+     * Variable keeps numerical type.
+     * If set value is NaN, it become zero.
      */
-    function asNumber(_class: any, propertyName: string): void;
+    function asNumber(prototype: any, property: string): any;
     /**
-     * Attach to a number type property or a accessor(setter).
-     * This decorator is a kind of `@setFilter`.
-     * This decorator keeps greater than or equal to minValue.
-     * @extend require attaching observable decorator.
+     * Set filter decorator.
+     * Variable keeps greater than or equal to minValue.
      */
     function min(minValue: number): any;
     /**
-     * Attach to a number type property or a accessor(setter).
-     * This decorator is a kind of `@setFilter`.
-     * This decorator keeps less than or equal to maxValue.
+     * Set filter decorator.
+     * Variable keeps less than or equal to maxValue.
      * @extend require attaching observable decorator.
      */
     function max(maxValue: number): any;
     /**
-     * Attach to a number type property or a accessor(setter).
-     * This decorator is a kind of `@setFilter`.
-     * This decorator keeps between minValue and maxValue inclusive.
-     * @extend require attaching observable decorator.
+     * Set filter decorator.
+     * Variable keeps between minValue and maxValue inclusive.
      */
     function clamp(minValue: number, maxValue: number): any;
     /**
      * Get raw knockout observable object.
-     * @param instancedObj	Instanced object.
-     * @param propertyName		Name of a property which is attached the @observable.
+     * @param target	Target object.
+     * @param property	Name of a property which is attached the @observable.
      * @return If found then KnockoutObservable object, else null.
      */
-    function getObservable<T>(instancedObj: any, propertyName: string): KnockoutObservable<T>;
+    function getObservable<T>(target: any, property: string): KnockoutObservable<T>;
+    /**
+     * Get raw knockout observable object.
+     * @param propertyAccess	execute propety access. e.g. "() => this.property".
+     */
+    function getObservable<T>(propertyAccess: () => T): KnockoutObservable<T>;
     /**
      * Get row knockout observable array object.
-     * @param instancedObj	Instanced object.
-     * @param propertyName		Name of a property which is attached the @observableArray.
+     * @param target	Target object.
+     * @param property	Name of a property which is attached the @observableArray.
      */
-    function getObservableArray<T>(instancedObj: any, propertyName: string): KnockoutObservableArray<T>;
+    function getObservableArray<T>(target: any, property: string): KnockoutObservableArray<T>;
+    /**
+     * Get row knockout observable array object.
+     * @param propertyAccess	execute propety access. e.g. "() => this.property".
+     */
+    function getObservableArray<T>(propertyAccess: () => T[]): KnockoutObservableArray<T>;
     /**
      * Get raw knockout computed object.
-     * @param instancedObj	Instanced object.
-     * @param propertyName		Name of a property which is attached the @computed.
+     * @param target	Target object.
+     * @param property	Name of a accessor which is attached the @computed.
      * @return If found then KnockoutComputed object, else null.
      */
-    function getComputed<T>(instancedObj: any, propertyName: string): KnockoutComputed<T>;
+    function getComputed<T>(target: any, accessor: string): KnockoutComputed<T>;
+    /**
+     * Get raw knockout computed object.
+     * @param getterAccess	execute getter. e.g. "() => this.getter".
+     * @return If found then KnockoutComputed object, else null.
+     */
+    function getComputed<T>(getterAccess: () => T): KnockoutComputed<T>;
 }
 export = KnockoutDecorator;
 export as namespace KnockoutDecorator

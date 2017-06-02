@@ -118,6 +118,10 @@ gulp.task( "watch:demo", ["build:demo"], () =>
 	gulp.watch( ["dist/knockout-decorator.min.js", "demo/ts/demo.ts", "demo/sass/sass.scss"], "build:demo" );
 } );
 
+gulp.task( "build:all", () =>
+{
+	sequence( "build:srcTs", "build:demo" );
+} );
 
 /*gulp.task( "build:demo_global", () =>
 {

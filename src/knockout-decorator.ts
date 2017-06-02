@@ -10,7 +10,7 @@ module KnockoutDecorator
 	// #region declare interfaces.
 	/**
 	 * You can easily access KnockoubObservableArray functions via intellisense
-	 * by converting a array property which is attaching @observableArray.
+	 * by casting a array property which is attaching @observableArray.
 	 */
 	export interface IObservableArray<T> extends Array<T>
 	{
@@ -47,10 +47,10 @@ module KnockoutDecorator
 	 */
 	export interface IComputedOptions
 	{
-		pure?: boolean;
-		deferEvaluation?: boolean;
-		disposeWhen?(): boolean;
 		disposeWhenNodeIsRemoved?: Node;
+		disposeWhen?(): boolean;
+		deferEvaluation?: boolean;
+		pure?: boolean;
 	}
 
 	// #endregion
@@ -61,51 +61,48 @@ module KnockoutDecorator
 	export interface ITrackOptions
 	{
 		/**
-		 * Convert to pure computed if true or undefined, non pure computed otherwise.
+		 * Make accessors pure koComputed if true or undefined, else non pure koComputed.
 		 */
 		pureComputed?: boolean,
 
 		/**
-		 * Set name of method that you want to execute after a constructor finish.
-		 * You can get raw observable objects using getObservable<T>() in the method.
-		 * Attension; when you use `@track` decorator, you can't get raw observable in a constructor.
+		 * Deprecated. Use init instead.
+		 * If value set, perform obj[initializeMethod]() immediate after executed constructor.
 		 */
 		initializeMethod?: string,
 
+		/**
+		 * If value set, perform obj[init]() immediate after executed constructor.
+		 * In order to use raw koObservable if you use track decorator,
+		 * it is necessary to be not inside constructor but after executed constructor.
+		 */
+		init?: string;
 
 		[key: string]: any
 	}
 	/**
-	 * Attach to a class as decorator.
-	 * This decorator converts all properties and accessors to observable.
+	 * Class decorator.
+	 * Make all properties/accessors to koObservable/koComputed.
 	 * Points to consider.
-	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
-	 * 2. Have to set array value for array properties to be recognized as oservable array.
-	 *    If you first set null to a array property, the property will recognize as KnockoutObservable&lt;T[]>, not KnockoutObservableArray&lt;T>.
-	 * 3. Accessors will be converted to pure computed.
-	 *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
-	 *    or attach `@computed` decorator to accessors.
-	 * 4. If you want to prevent properties or accessors from converting to observable,
-	 *    attach `@ignore` decorator to them.
-	 * 5. You can't get raw observable objects in a constructor.
+	 * 1. Properties that are not initialized at declare or in constructor don't become koObservable.
+	 * 2. In order to recognize a array property as koObservableArray, it is necessary to set a array value first(e.g set [] ).
+	 * 3. Accessors become pure koComputed.
+	 * 4. A property/accessor with `@ignore` don't become koObservable.
+	 * 5. In order to use raw koObservable, it is necessary to be not inside constructor but after executed constructor.
 	 */
 	export function track( constructor: Function ): any;
 	/**
-	 * Attach to a class as decorator.
-	 * This decorator converts all properties and accessors to observable.
+	 * Class decorator.
+	 * Make all properties/accessors to koObservable/koComputed.
 	 * Points to consider.
-	 * 1. Have to initialize properties at place of declaration or in constructor to be recognized as observable.(set `null` is OK also)
-	 * 2. Have to set array value for array properties to be recognized as oservable array.
-	 *    If you first set null to a array property, the property will recognize as KnockoutObservable<T[]>, not KnockoutObservableArray<T>.
-	 * 3. Accessors will be converted to pure computed.
-	 *    If you want to use non pure computed, pass { pureComputed:true } to `@track`
-	 *    or attach `@computed` decorator to accessors.
-	 * 4. If you want to prevent properties or accessors from converting to observable,
-	 *    attach `@ignore` decorator to them.
-	 * 5. You can't get raw observable objects in a constructor.
+	 * 1. Properties that are not initialized at declare or in constructor don't become koObservable.
+	 * 2. In order to recognize a array property as koObservableArray, it is necessary to set a array value first(e.g set [] ).
+	 * 3. Accessors become pure koComputed.
+	 * 4. A property/accessor with `@ignore` don't become koObservable.
+	 * 5. In order to use raw koObservable, it is necessary to be not inside constructor but after executed constructor.
 	 */
 	export function track( options: ITrackOptions ): any;
-	export function track( arg:any ) : any
+	export function track( arg: any ): any
 	{
 		let options: ITrackOptions;
 		if ( typeof arg === "function" )
@@ -120,7 +117,8 @@ module KnockoutDecorator
 			options = arg;
 			let defaults = {
 				pureComputed: true,
-				initializeMethod: null
+				initializeMethod: null,
+				init: null
 			} as ITrackOptions;
 			if ( !options )
 			{
@@ -140,22 +138,24 @@ module KnockoutDecorator
 
 		function classFactory( constructor: Function )
 		{
-			let isIgnore = ( propertyName: string ) =>
-			{
-				if ( !(<any>constructor)[ignoresKey] ) return false;
-				return (<any>constructor)[ignoresKey].indexOf( propertyName ) >= 0;
-			}
-
+			let kd = KnockoutDecoratorClassInfo.Get( constructor );
 			let trackConstructor: any = function ()
 			{
 				constructor.apply( this, arguments );
 				let o = this;
 
 				let properties = Object.keys( o );
-				properties.forEach( p =>
+				let len = properties.length;
+				for ( var i = 0; i < len; ++i )
 				{
-					if ( p === storeObservableKey ) return;
-					if ( isIgnore( p ) ) return;
+					let p = properties[i];
+					if ( p === KnockoutDecoratorObjInfo.Key ||
+						kd.isIgnoreProperty( p ) ||
+						getObservable( o, p ) ||
+						getObservableArray( o, p ) )
+					{
+						continue;
+					}
 
 					let v = o[p];
 					delete o[p];
@@ -168,31 +168,40 @@ module KnockoutDecorator
 						observable( trackConstructor.prototype, p );
 					}
 					o[p] = v;
-				});
+				}
 
 				let functions = Object.keys( constructor.prototype );
-
-				let computedAccessors : any[] = [];
-				functions.forEach( f =>
+				let computedAccessors: any[] = [];
+				len = functions.length;
+				for ( let i = 0; i < len; ++i )
 				{
+					let f = functions[i];
 					let d = Object.getOwnPropertyDescriptor( constructor.prototype, f );
-					if ( !d || !d.get ) return;
-					if ( isIgnore( f ) ) return;
+					if ( !d || !d.get ) continue;
+					if ( kd.isIgnoreProperty( f ) ) continue;
+
+					// If be Overrided descriptor already, accessor become koComputed by executing the following;
 					let dummy = o[f];
-					if ( getComputed( o, f ) ) return;
-					
+					if ( getComputed( o, f ) ) continue;
+
 					let factory = getComputedDecoratorFactory( {
 						pure: options.pureComputed
 					} );
 					factory( trackConstructor.prototype, f, d );
 					Object.defineProperty( trackConstructor.prototype, f, d );
 					computedAccessors.push( f );
-				});
+				}
+				// In order to make koComputed, call getter.
+				len = computedAccessors.length;
+				for ( let i = 0; i < len; ++i )
+				{
+					o[computedAccessors[i]];
+				}
 				
-				computedAccessors.forEach( a => o[a] );
-				computedAccessors = null;
-				functions = null;
-				properties = null;
+				if ( options.init && typeof o[options.init] === "function" )
+				{
+					o[options.init]();
+				}
 				if ( options.initializeMethod && typeof o[options.initializeMethod] === "function" )
 				{
 					o[options.initializeMethod]();
@@ -201,7 +210,7 @@ module KnockoutDecorator
 			trackConstructor["prototype"] = constructor["prototype"];
 			return trackConstructor;
 		}
-		
+
 		if ( typeof arg === "function" )
 		{
 			return classFactory( arg );
@@ -215,137 +224,65 @@ module KnockoutDecorator
 		}
 	}
 
-	/** @private */
-	const ignoresKey = "__vtKnockoutIgnoresKey__";
-
 	/**
-	 * Attach to a property or a accessor as decorator.
-	 * This decorator prevents a property or a accessor from converting to observable in @track.
+	 * Property/Accessor decorator.
+	 * Prevent a property/accessor from making koObservable in @trak.
 	 */
-	export function ignore( _class: any, propertyName: string ): void
+	export function ignore( target: any, property: string ): void
 	{
-		let constructor = _class.constructor;
-		if ( !constructor[ignoresKey] ) constructor[ignoresKey] = [];
-		constructor[ignoresKey].push( propertyName );
+		KnockoutDecoratorClassInfo.Get( target ).pushIgnoreProperty( property );
 	}
 
 	/**
-	 * Attach to a property as decorator.
-	 * If you change a property value, a view will also change. And vice versa.
+	 * Property decorator.
+	 * Make a property koObservable.
 	 */
-	export function observable( _class: any, propertyName: string ): void
+	export function observable( prototype: Object, property: string ): void
 	{
-		//if ( isRegisteredObserbable( _class, propertyName ) ) return;
-		//setRegisterObserbable( _class, propertyName );
-		function registerProperty( instancedObj: any ): void
-		{
-			let o = ko.observable();
-			setObservableObjet( instancedObj, propertyName, o );
-			assignExtendForInstancedObj( _class, instancedObj, propertyName );
-			Object.defineProperty( instancedObj, propertyName, {
-				get: o,
-				set: getSetter( _class, propertyName, o )
-			});
-		}
-
-		Object.defineProperty( _class, propertyName, {
+		Object.defineProperty( prototype, property, {
 			get: function (): any
 			{
-				registerProperty( this );
-				return this[propertyName];
+				KnockoutDecoratorObjInfo.Get( this ).makeObservable( property );
+				return this[property];
 			},
 			set: function ( value: any ): void
 			{
-				registerProperty( this );
-				this[propertyName] = value;
+				KnockoutDecoratorObjInfo.Get( this ).makeObservable( property );
+				this[property] = value;
 			}
-		});
+		} );
 	}
 
 	/**
-	 * Attach to a array property as decorator.
-	 * If you set a property to a new array data, a view will also change.
-	 * If you call a Array function such as push or pop, a view will also change.
+	 * Property decorator.
+	 * Make a property koObservableArray.
 	 */
-	export function observableArray( _class: any, propertyName: string ): void
+	export function observableArray( prototype: any, property: string ): void
 	{
-		//if ( isRegisteredObserbable( _class, propertyName ) ) return;
-		//setRegisterObserbable( _class, propertyName );
-		function replaceFunction( src: any[], o: KnockoutObservableArray<any> )
-		{
-			let originals: { [fn: string]: Function } = {};
-			["splice", "pop", "push", "shift", "unshift", "reverse", "sort"].forEach( fnName =>
-			{
-				originals[fnName] = (<any>src)[fnName];
-				let mimicry = function ()
-				{
-					// restore the original function for call it inside ObservableArray.
-					(<any>src)[fnName] = originals[fnName];
-
-					// call ObservableArray function
-					let res = ( o[fnName] as Function ).apply( o, arguments );
-
-					// rewrite the original function again.
-					(<any>src)[fnName] = mimicry;
-
-					return res;
-				};
-
-				// rewrite the original function
-				(<any>src)[fnName] = mimicry;
-			});
-		}
-		function mergeFunction( src: any[], o: KnockoutObservableArray<any>  )
-		{
-			["replace", "remove", "removeAll", "destroy", "destroyAll"].forEach( fnName =>
-			{
-				(<any>src)[fnName] = function ()
-				{
-					return ( o[fnName] as Function ).apply( o, arguments );
-				};
-			});
-		}
-		function registerProperty( instancedObj: any ): void
-		{
-			let o = ko.observableArray();
-			setObservableObjet( instancedObj, propertyName, o );
-			assignExtendForInstancedObj( _class, instancedObj, propertyName );
-			Object.defineProperty( instancedObj, propertyName, {
-				get: o,
-				set: function ( arrayValue: any[] )
-				{
-					if ( arrayValue )
-					{
-						replaceFunction( arrayValue, o );
-						mergeFunction( arrayValue, o );
-					}
-					getSetter( _class, propertyName, o )( arrayValue );
-				}
-			});
-		}
-
-		Object.defineProperty( _class, propertyName, {
+		Object.defineProperty( prototype, property, {
 			get: function (): any[]
 			{
-				registerProperty( this );
-				return this[propertyName];
+				KnockoutDecoratorObjInfo.Get( this ).makeObservableArray( property );
+				return this[property];
 			},
 			set: function ( arrayValue: any ): void
 			{
-				registerProperty( this );
-				this[propertyName] = arrayValue;
+				KnockoutDecoratorObjInfo.Get( this ).makeObservableArray( property );
+				this[property] = arrayValue;
 			}
-		});
+		} );
 	}
 
 	/**
-	 * Attach to a accessor as decorator.
-	 * If a observable property value in a getter is changed, the getter will be executed.
-	 * If you define also a setter, you can handle as writable computed.
+	 * Accessor decorator.
+	 * At least require getter.
+	 * Make a accessor koComputed. If setter is defined, make it writable computed.
 	 */
-	export function computed( _class: any, propertyName: string, descriptor: PropertyDescriptor ): void
+	export function computed( prototype: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	/**
-	 * Attach to a accessor as decorator.
+	 * Accessor decorator.
+	 * At least require getter.
+	 * Make a accessor koComputed. If setter is defined, make it writable computed.
 	 * @param options	Knockout computed options.
 	 * @see <a href="http://knockoutjs.com/documentation/computed-reference.html" target="_blank">Computed Observable Reference</a>
 	 */
@@ -360,63 +297,60 @@ module KnockoutDecorator
 	}
 
 	/**
-	 * Attach to a accessor as decorator.
+	 * Accessor decorator.
+	 * At least require getter.
+	 * Make a accessor koPureComputed. If setter is defined, make it writable computed.
 	 */
-	export function pureComputed( _class: any, propertyName: string, descriptor: PropertyDescriptor ): void
+	export function pureComputed( prototype: any, propertyName: string, descriptor: PropertyDescriptor ): void
 	{
-		getComputedDecoratorFactory( { pure: true } )( _class, propertyName, descriptor );
+		getComputedDecoratorFactory( { pure: true } )( prototype, propertyName, descriptor );
 	}
 
 	/**
-	 * Attach to a property or accessor.
-	 * @extend require attaching observable decorator.
-	 * @param options	Set parameter which define ko.extenders such as rateLimit.
+	 * Property/Accessor decorator.
+	 * @param options	Set options which is defined ko.extenders such as rateLimit.
 	 */
-	export function extend( options: { [key: string]: any }): any// PropertyDecorator | MethodDecorator
+	export function extend( options: { [key: string]: any } ): any
 	{
-		return ( _class: any, propertyName: string, descriptor?: PropertyDescriptor ) =>
+		return ( prototype: any, name: string, descriptor?: PropertyDescriptor ) =>
 		{
-			registerExtend( _class, propertyName, options );
+			KnockoutDecoratorClassInfo.Get( prototype ).pushKoExtend( name, options );
 		};
 	}
 
 	//#region set filter decorators
 	/**
-	 * Attach to a property or accessor(setter).
-	 * When you set a value to a property or a setter, the value will be changed through filters.
-	 * If there is more than one filter, filters are executed in the order from bottom to top.
+	 * Property/Setter decorator.
+	 * A value set to a property becom return value of filter.
+	 * If there is multiple set filter decorators for a property, there are executed in the order from bottom to top.
 	 * @param filterFunc function that return a processed value.
 	 */
 	export function setFilter( filterFunc: ( setValue: any ) => any ): any // PropertyDecorator | MethodDecorator
 	{
-		return ( _class: any, propertyName: string ) =>
+		return ( prototype: any, property: string ) =>
 		{
-			registerSetFilter( _class, propertyName, filterFunc );
+			KnockoutDecoratorClassInfo.Get( prototype ).pushSetFilter( property, filterFunc );
 		};
 	}
 
 	/**
-	 * Attach to a number type property or a accessor(setter).
-	 * This decorator is a kind of `@setFilter`.
-	 * This decorator converts to number type if set a value other than number type such as value is changed via input element on a browser.
-	 * If a converted value is NaN, it handles as zero.
-	 * @extend require attaching observable decorator.
+	 * Set filter decorator.
+	 * Variable keeps numerical type.
+	 * If set value is NaN, it become zero.
 	 */
-	export function asNumber( _class: any, propertyName: string ):void
+	export function asNumber( prototype: any, property: string ): any
 	{
-		registerSetFilter( _class, propertyName, v =>
+		KnockoutDecoratorClassInfo.Get( prototype ).pushSetFilter( property, v =>
 		{
 			if ( !v || typeof v === "number" ) return v;
 			v = parseFloat( v );
 			return isNaN( v ) ? 0 : v;
-		});
+		} );
 	}
 
 	/**
-	 * Attach to a number type property or a accessor(setter).
-	 * This decorator is a kind of `@setFilter`.
-	 * This decorator keeps greater than or equal to minValue.
-	 * @extend require attaching observable decorator.
+	 * Set filter decorator.
+	 * Variable keeps greater than or equal to minValue.
 	 */
 	export function min( minValue: number ): any // PropertyDecorator | MethodDecorator
 	{
@@ -424,9 +358,8 @@ module KnockoutDecorator
 	}
 
 	/**
-	 * Attach to a number type property or a accessor(setter).
-	 * This decorator is a kind of `@setFilter`.
-	 * This decorator keeps less than or equal to maxValue.
+	 * Set filter decorator.
+	 * Variable keeps less than or equal to maxValue.
 	 * @extend require attaching observable decorator.
 	 */
 	export function max( maxValue: number ): any // PropertyDecorator | MethodDecorator
@@ -435,12 +368,10 @@ module KnockoutDecorator
 	}
 
 	/**
-	 * Attach to a number type property or a accessor(setter).
-	 * This decorator is a kind of `@setFilter`.
-	 * This decorator keeps between minValue and maxValue inclusive.
-	 * @extend require attaching observable decorator.
+	 * Set filter decorator.
+	 * Variable keeps between minValue and maxValue inclusive.
 	 */
-	export function clamp( minValue:number, maxValue: number ): any // PropertyDecorator | MethodDecorator
+	export function clamp( minValue: number, maxValue: number ): any // PropertyDecorator | MethodDecorator
 	{
 		if ( minValue > maxValue )
 		{
@@ -453,75 +384,108 @@ module KnockoutDecorator
 			if ( v < minValue ) v = minValue;
 			else if ( v > maxValue ) v = maxValue;
 			return v;
-		});
+		} );
 	}
-
 	//#endregion
 
 	/**
 	 * Get raw knockout observable object.
-	 * @param instancedObj	Instanced object.
-	 * @param propertyName		Name of a property which is attached the @observable.
+	 * @param target	Target object.
+	 * @param property	Name of a property which is attached the @observable.
 	 * @return If found then KnockoutObservable object, else null.
 	 */
-	export function getObservable<T>( instancedObj: any, propertyName: string ): KnockoutObservable<T>
+	export function getObservable<T>( target: any, property: string ): KnockoutObservable<T>;
+	/**
+	 * Get raw knockout observable object.
+	 * @param propertyAccess	execute propety access. e.g. "() => this.property".
+	 */
+	export function getObservable<T>( propertyAccess: () => T ): KnockoutObservable<T>;
+	export function getObservable<T>(): KnockoutObservable<T>
 	{
-		let o = getObservableObject( instancedObj, propertyName );
-		return ( ko.isObservable( o ) && o.indexOf === undefined ) ? o : null;
+		if ( typeof arguments[0] === "function" )
+		{
+			lastGetKoObservable = null;	// reset
+			arguments[0]();
+			let res = lastGetKoObservable;
+			lastGetKoObservable = null;
+			return res;
+		}
+		else
+		{
+			let target = arguments[0];
+			let property = arguments[1];
+			return KnockoutDecoratorObjInfo.Get( target ).getObservable<T>( property );
+		}
 	}
-
+	
 	/**
 	 * Get row knockout observable array object.
-	 * @param instancedObj	Instanced object.
-	 * @param propertyName		Name of a property which is attached the @observableArray.
+	 * @param target	Target object.
+	 * @param property	Name of a property which is attached the @observableArray.
 	 */
-	export function getObservableArray<T>( instancedObj: any, propertyName: string ): KnockoutObservableArray<T>
+	export function getObservableArray<T>( target: any, property: string ): KnockoutObservableArray<T>;
+	/**
+	 * Get row knockout observable array object.
+	 * @param propertyAccess	execute propety access. e.g. "() => this.property".
+	 */
+	export function getObservableArray<T>( propertyAccess: () => T[] ): KnockoutObservableArray<T>;
+	export function getObservableArray<T>(): KnockoutObservableArray<T>
 	{
-		let o = getObservableObject(instancedObj, propertyName);
-		let res = (ko.isObservable(o) && o.indexOf !== undefined) ? o : null;
-		return res as KnockoutObservableArray<T>;
+		if ( typeof arguments[0] === "function" )
+		{
+			lastGetKoObservableArray = null;	// reset
+			arguments[0]();
+			let res = lastGetKoObservableArray;
+			lastGetKoObservable = null;
+			return res;
+		}
+		else
+		{
+			let target = arguments[0];
+			let property = arguments[1];
+			return KnockoutDecoratorObjInfo.Get( target ).getObservableArray<T>( property );
+		}
 	}
 
 	/**
 	 * Get raw knockout computed object.
-	 * @param instancedObj	Instanced object.
-	 * @param propertyName		Name of a property which is attached the @computed.
+	 * @param target	Target object.
+	 * @param property	Name of a accessor which is attached the @computed.
 	 * @return If found then KnockoutComputed object, else null.
 	 */
-	export function getComputed<T>( instancedObj: any, propertyName: string ): KnockoutComputed<T>
+	export function getComputed<T>( target: any, accessor: string ): KnockoutComputed<T>;
+	/**
+	 * Get raw knockout computed object.
+	 * @param getterAccess	execute getter. e.g. "() => this.getter".
+	 * @return If found then KnockoutComputed object, else null.
+	 */
+	export function getComputed<T>( getterAccess:()=>T ): KnockoutComputed<T>;
+	export function getComputed<T>(): KnockoutComputed<T>
 	{
-		let c = getObservableObject( instancedObj, propertyName );
-		return ko.isComputed( c ) ? c : null;
+		if ( typeof arguments[0] === "function" )
+		{
+			lastGetKoComputed = null;	// reset
+			arguments[0]();
+			let res = lastGetKoComputed;
+			lastGetKoComputed = null;
+			return res;
+		}
+		else
+		{
+			let target = arguments[0];
+			let accessor = arguments[1];
+			return KnockoutDecoratorObjInfo.Get( target ).getComputed<T>( accessor );
+		}
+		
 	}
 
 	// #region no export
 
 	/** @private */
-	const storeObservableKey = "__vtKnockoutObservables__";
-
-	/** @private */
-	function setObservableObjet( instancedObj: any, propertyName: string, o: KnockoutObservable<any> | KnockoutObservableArray<any> | KnockoutComputed<any> )
-	{
-		if ( !instancedObj[storeObservableKey] ) instancedObj[storeObservableKey] = {};
-		instancedObj[storeObservableKey][propertyName] = o;
-	}
-
-	/** @private */
-	function getObservableObject( instancedObj: any, propertyName: string ): any
-	{
-		let store = instancedObj[storeObservableKey];
-		if ( !store ) return null;
-		return store[propertyName];
-	}
-
-
-	/** @private */
 	function getComputedDecoratorFactory( options: IComputedOptions ): MethodDecorator
 	{
-		return ( _class: Object, propertyName: string, descriptor: PropertyDescriptor ) =>
+		return ( prototype: Object, accessor: string, descriptor: PropertyDescriptor ) =>
 		{
-			//if ( isRegisteredObserbable( _class, propertyName ) ) return;
-			//setRegisterObserbable( _class, propertyName );
 			let getter = descriptor.get;
 			if ( !getter )
 			{
@@ -529,116 +493,260 @@ module KnockoutDecorator
 			}
 			let setter = descriptor.set;
 
-			function registerProperty( instancedObj: any ): void
+			descriptor.get = function ()
 			{
-				let computedOptions: KnockoutComputedDefine<any> = {
-					read: getter,
-					write: setter,
-					owner: instancedObj
-				};
-				if ( options )
-				{
-					for ( let key in options )
-					{
-						if ( typeof (<any>options)[key] === "function" )
-						{
-							let fn = (<any>options)[key];
-							(<any>options)[key] = function ()
-							{
-								fn.apply( instancedObj, arguments );
-							}
-						}
-						(<any>computedOptions)[key] = (<any>options)[key];
-					}
-				}
-				let c = ko.computed( computedOptions );
-				setObservableObjet( instancedObj, propertyName, c );
-				assignExtendForInstancedObj( _class, instancedObj, propertyName );
-
-				Object.defineProperty( instancedObj, propertyName, {
-					get: c,
-					set: setter ? getSetter( _class, propertyName, c ) : undefined
-				} );
-			}
-
-			descriptor.get = function()
-			{
-				registerProperty( this );
-				return this[propertyName];
+				KnockoutDecoratorObjInfo.Get( this ).makeComputed( accessor, getter, setter, options );
+				return this[accessor];
 			}
 			if ( setter )
 			{
 				descriptor.set = function ( value )
 				{
-					registerProperty( this );
-					this[propertyName] = value;
+					KnockoutDecoratorObjInfo.Get( this ).makeComputed( accessor, getter, setter, options );
+					this[accessor] = value;
 				}
 			}
 		}
 	}
 
-	/** @private */
-	const storeExtendKey = "__vtKnockoutExtends__";
+	let lastGetKoObservable: KnockoutObservable<any> = null;
+	let lastGetKoObservableArray: KnockoutObservableArray<any> = null;
+	let lastGetKoComputed: KnockoutComputed<any> = null;
 
-	/** @private */
-	function registerExtend( _class: any, propertyName: string, extendOptions: any )
+	// Information that class should have.
+	class KnockoutDecoratorClassInfo
 	{
-		if ( !_class[storeExtendKey] ) _class[storeExtendKey] = {};
-		_class[storeExtendKey][propertyName] = extendOptions;
-	}
-
-	/** @private */
-	function getExtend( _class: any, propertyName: string ): any
-	{
-		let store = _class[storeExtendKey];
-		if ( !store ) return null;
-		return store[propertyName];
-	}
-
-	/** @private */
-	const storeSetFilterKey = "__vtKnockoutSetFilters__";
-
-	/** @private */
-	function registerSetFilter( _class: any, propertyName: string, filterFunc: ( setValue: any ) => any ): void
-	{
-		if ( !_class[storeSetFilterKey] ) _class[storeSetFilterKey] = {};
-		if ( !_class[storeSetFilterKey][propertyName] ) _class[storeSetFilterKey][propertyName] = [];
-		_class[storeSetFilterKey][propertyName].push( filterFunc );
-	}
-
-	/** @private */
-	function getSetter( _class: any, propertyName: string, observable: KnockoutObservable<any> ): any
-	{
-		if ( !_class[storeSetFilterKey] ) return observable;
-		let filters = _class[storeSetFilterKey][propertyName];
-		if ( !filters ) return observable;
-		let len = filters.length;
-		return (v:any) =>
+		public static Get( constructor: Function ): KnockoutDecoratorClassInfo;
+		public static Get( prototype: Object ): KnockoutDecoratorClassInfo;
+		public static Get( target: any ): KnockoutDecoratorClassInfo
 		{
-			let original = v;
+			target = ( typeof target == "function" ) ? target.prototype : target;
+			if ( !target[KnockoutDecoratorClassInfo.Key] )
+			{
+				target[KnockoutDecoratorClassInfo.Key] = new this();
+			}
+			return target[KnockoutDecoratorClassInfo.Key];
+		}
+
+		public pushIgnoreProperty( property: string ): void
+		{
+			if ( !this.ignoreProperties ) this.ignoreProperties = [];
+			this.ignoreProperties.push( property );
+		}
+		public isIgnoreProperty( property: string ): boolean
+		{
+			return this.ignoreProperties &&
+				this.ignoreProperties.indexOf( property ) != -1;
+		}
+
+		public pushKoExtend( name: string, extendOptions: any ): void
+		{
+			if ( !this.extendsHash ) this.extendsHash = {};
+			if ( !this.extendsHash[name] ) this.extendsHash[name] = [];
+			this.extendsHash[name].push( extendOptions );
+		}
+
+		public applyKoExtend( target: string, o: KnockoutObservable<any> ): void
+		{
+			if ( !this.extendsHash ) return;
+			let extendArr = this.extendsHash[target];
+			if ( !extendArr ) return;
+			let len = extendArr.length;
 			for ( let i = 0; i < len; ++i )
 			{
-				v = filters[i]( v );
+				o.extend( extendArr[i] );
 			}
-			observable( v );
 		}
+
+		public pushSetFilter( property: string, filterFunc: ( v: any ) => any )
+		{
+			if ( !this.setFiltersHash ) this.setFiltersHash = {};
+			let filters = this.setFiltersHash[property]
+			if ( !filters )
+			{
+				filters = this.setFiltersHash[property] = [];
+			}
+			filters.push( filterFunc );
+		}
+
+		public getSetter( target: string, o: KnockoutObservable<any> ): any
+		{
+			if ( !this.setFiltersHash ) return o;
+			let filters = this.setFiltersHash[target];
+			if ( !filters ) return o;
+			let len = filters.length;
+			return ( v: any ) =>
+			{
+				for ( let i = 0; i < len; ++i )
+				{
+					v = filters[i]( v );
+				}
+				o( v );
+			}
+		}
+
+		public static readonly Key = "__vtKnockoutDecoratorClassInfo__";
+		private ignoreProperties: string[];
+		private extendsHash: { [property: string]: any[] };
+		private setFiltersHash: { [property: string]: ( ( v: any ) => any )[] }
+
+		private constructor() { }
 	}
 
-	/** @private */
-	function assignExtendForInstancedObj( _class:any, instancedObj: any, propertyName: string ): void
+	// Information that instanced object should have.
+	class KnockoutDecoratorObjInfo
 	{
-		let o = getObservableObject( instancedObj, propertyName );
-		let ext = getExtend( _class, propertyName );
-		if ( ext ) o.extend( ext );
+		public static Get( target: any ): KnockoutDecoratorObjInfo
+		{
+			if ( !target[KnockoutDecoratorObjInfo.Key] )
+			{
+				target[KnockoutDecoratorObjInfo.Key] = new this( target );
+			}
+			return target[KnockoutDecoratorObjInfo.Key];
+		}
+
+		public makeObservable( property: string ): void
+		{
+			let o = ko.observable<any>();
+			this.koObservableHash[property] = o;
+			let prototype = Object.getPrototypeOf( this.target )
+			let classInfo = KnockoutDecoratorClassInfo.Get( prototype );
+			classInfo.applyKoExtend( property, o ); KnockoutDecoratorClassInfo.Get( prototype )
+			Object.defineProperty( this.target, property, {
+				get: () =>
+				{
+					lastGetKoObservable = o;
+					return o();
+				},
+				set: classInfo.getSetter( property, o )
+			} );
+		}
+
+		public makeObservableArray( property: string ): void
+		{
+			function replaceFunction( src: any[], o: KnockoutObservableArray<any> )
+			{
+				let originals: { [fn: string]: Function } = {};
+				["splice", "pop", "push", "shift", "unshift", "reverse", "sort"].forEach( fnName =>
+				{
+					originals[fnName] = ( <any>src )[fnName];
+					let mimicry = function ()
+					{
+						// restore the original function for call it inside ObservableArray.
+						( <any>src )[fnName] = originals[fnName];
+
+						// call ObservableArray function
+						let res = ( o[fnName] as Function ).apply( o, arguments );
+
+						// rewrite the original function again.
+						( <any>src )[fnName] = mimicry;
+
+						return res;
+					};
+
+					// rewrite the original function
+					( <any>src )[fnName] = mimicry;
+				} );
+			}
+			function mergeFunction( src: any[], o: KnockoutObservableArray<any> )
+			{
+				["replace", "remove", "removeAll", "destroy", "destroyAll"].forEach( fnName =>
+				{
+					( <any>src )[fnName] = function ()
+					{
+						return ( o[fnName] as Function ).apply( o, arguments );
+					};
+				} );
+			}
+
+			let o = ko.observableArray<any>();
+			this.koObservableArrayHash[property] = o;
+			let prototype = Object.getPrototypeOf( this.target )
+			let classInfo = KnockoutDecoratorClassInfo.Get( prototype );
+			classInfo.applyKoExtend( property, o ); KnockoutDecoratorClassInfo.Get( prototype )
+
+			Object.defineProperty( this.target, property, {
+				get: () =>
+				{
+					lastGetKoObservableArray = o;
+					return o();
+				},
+				set: function ( arrayValue: any[] )
+				{
+					if ( arrayValue )
+					{
+						replaceFunction( arrayValue, o );
+						mergeFunction( arrayValue, o );
+					}
+					classInfo.getSetter( property, o )( arrayValue );
+				}
+			} );
+
+		}
+
+		public makeComputed( accessor: string, getter: () => any, setter: ( v: any ) => void, options: IComputedOptions ): void
+		{
+			let computedOptions: KnockoutComputedDefine<any> = {
+				read: getter,
+				write: setter,
+				owner: this.target
+			};
+			if ( options )
+			{
+				for ( let key in options )
+				{
+					( <any>computedOptions )[key] = ( <any>options )[key];
+				}
+			}
+			let c = ko.computed( computedOptions );
+			this.koComputedHash[accessor] = c;
+			let prototype = Object.getPrototypeOf( this.target )
+			let classInfo = KnockoutDecoratorClassInfo.Get( prototype );
+			classInfo.applyKoExtend( accessor, c );
+			Object.defineProperty( this.target, accessor, {
+				get:() =>
+				{
+					lastGetKoComputed = c;
+					return c();
+				},
+				set: setter ? classInfo.getSetter( accessor, c ) : undefined
+			} );
+		}
+
+		public getObservable<T>( property: string ): KnockoutObservable<T>
+		{
+			return this.koObservableHash[property];
+		}
+
+		public getObservableArray<T>( property: string ): KnockoutObservableArray<T>
+		{
+			return this.koObservableArrayHash[property];
+		}
+
+		public getComputed<T>( accessor: string ): KnockoutComputed<T>
+		{
+			return this.koComputedHash[accessor];
+		}
+
+		public static readonly Key = "__vtKnockoutDecoratorObjInfo__";
+		private target: any;
+		private koObservableHash: { [property: string]: KnockoutObservable<any> } = {};
+		private koObservableArrayHash: { [property: string]: KnockoutObservableArray<any> } = {};
+		private koComputedHash: { [accessor: string]: KnockoutComputed<any> } = {};
+
+		private constructor( target: any )
+		{
+			this.target = target;
+		}
 	}
 	// #endregion
 
+	// export default module
 	if ( typeof exports !== typeof undefined )
 	{
 		module.exports = KnockoutDecorator;
 		module.exports["default"] = KnockoutDecorator;
 	}
-	
 }
 
 export = KnockoutDecorator;
