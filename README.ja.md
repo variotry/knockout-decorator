@@ -10,7 +10,7 @@
 ```
 2. TypeScriptコードでモジュールをインポート
 ```typescript
-    import kd from "vt-knockout-decorator;
+    import kd from "vt-knockout-decorator";
 ```
 
 3. html側でknockout.jsを読み込むよう記述

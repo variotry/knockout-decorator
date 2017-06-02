@@ -10,7 +10,7 @@ This plug-in will assist you write code using [knockoutjs](https://github.com/kn
 ```
 2. Import module in a TypeScript code.
 ```typescript
-    import kd from "vt-knockout-decorator;
+    import kd from "vt-knockout-decorator";
 ```
 
 3. Write in as follows into a html.
