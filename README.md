@@ -194,7 +194,7 @@ In the case of `@kd.max(v)`, set a property to equal or less than v.
 In the case of `@kd.clamp(v)`, set a property to within min and max range.
 
 ### @asNumber
-Input value keep numerical type.(No argument)
+Input value keep numerical type.(No argument)  
 It is useful if type of a property value is converted "string type" by input via view by binding input text such as `<input type="value" data-bind="value:x" />`.
 
 ## Get raw koObservable
