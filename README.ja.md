@@ -1,23 +1,8 @@
 # knockout-decorator について
 
 [knockoutjs](https://github.com/knockout/knockout) を用いるプログラム作成を支援します。  
- [デモ](https://variotry.github.io/knockout-decorator/)を参照してください。(ブラウザはes5をサポートしている必要があります)
 
 # 導入
-## ライブラリをグローバルに置く場合
-1. `dist/knockout-decorator.min.js`, `dist-globalDefinition/knockout-decorator.d.ts` をプロジェクトディレクトリにコピー  
-2. TypeScriptコードに記述
-```typescript
-///<reference path="path/knockout-decorator.d.ts" />
-import kd = KnockoutDecorator;  // alias設定
-```
-3. htmlに記述
-```html
-<script src="path/knockout.js"></script>
-<script src="path/knockout-decorator.min.js"></script>
-<script src="yourScript.js"></script>
-```
-
 ## モジュールとしてインポートする
 1. npm install でパッケージをインストール
 ```npm
@@ -40,6 +25,20 @@ import * as ko from "knockout";
 (<any>window).ko = ko;
 ```
 のように、グローバル変数 ko を設定してください。 
+
+## ライブラリをグローバルに置く場合
+1. `dist/knockout-decorator.min.js`, `dist-globalDefinition/knockout-decorator.d.ts` をプロジェクトディレクトリにコピー  
+2. TypeScriptコードに記述
+```typescript
+///<reference path="path/knockout-decorator.d.ts" />
+import kd = KnockoutDecorator;  // モジュールのインポートではなくaliasとして設定
+```
+3. htmlに記述
+```html
+<script src="path/knockout.js"></script>
+<script src="path/knockout-decorator.min.js"></script>
+<script src="yourScript.js"></script>
+```
 
 # リファレンス
 
@@ -125,7 +124,7 @@ class Sample
     list = [1,2,3] as kd.IObservableArray<number>;
 }
 ```
-配列プロパティを `kd.IObservableArray<T>`にキャストすると、KnockoutObservableArray の関数（例えば removeやreplace）を呼ぶことができます。
+配列プロパティを `kd.IObservableArray<T>`にキャストすると、KnockoutObservableArray の関数（例えば removeやreplace）を直接呼ぶことができます。
 
 ## アクセッサデコレータ @pureComputed
 アクセッサを pure computed にします。
@@ -168,7 +167,7 @@ class Sample
 }
 ```
 
-## 値設定フィルタ
+## 値設定フィルタについて
 プロパティもしくはセッターに設定できます。(@observable等が適用されている必要があります)
 ```typescript
 class Sample
@@ -224,6 +223,10 @@ class Sample
         // get raw koObservable of firstName .
         let rawObservable = kd.getObservable( ()=> this.firstName );
         // You can get raw koObservable by kd.getObservable( this, "firstName" ) also.;
+        rawObservable.subscribe( v =>
+		{
+			console.log( "value changed" );
+		} );
 
         let rawObservableArray = kd.getObservableArray( ()=> this.list );
         let rawComputed = kd.getComputed( ()=> this.name );

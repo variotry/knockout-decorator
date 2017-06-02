@@ -61,13 +61,13 @@ module KnockoutDecorator
 	export interface ITrackOptions
 	{
 		/**
-		 * Make accessors pure koComputed if true or undefined, else non pure koComputed.
+		 * Make accessors pure computed if true or undefined, else non pure computed.
 		 */
 		pureComputed?: boolean,
 
 		/**
 		 * Deprecated. Use init instead.
-		 * If value set, perform obj[initializeMethod]() immediate after executed constructor.
+		 * If value set, execute obj[init]() immediate after executed constructor.
 		 */
 		initializeMethod?: string,
 
@@ -82,23 +82,23 @@ module KnockoutDecorator
 	}
 	/**
 	 * Class decorator.
-	 * Make all properties/accessors to koObservable/koComputed.
+	 * Make all properties/accessors observable/computed.
 	 * Points to consider.
-	 * 1. Properties that are not initialized at declare or in constructor don't become koObservable.
-	 * 2. In order to recognize a array property as koObservableArray, it is necessary to set a array value first(e.g set [] ).
-	 * 3. Accessors become pure koComputed.
-	 * 4. A property/accessor with `@ignore` don't become koObservable.
+	 * 1. Properties that are not initialized at declare or in constructor don't make observable.
+	 * 2. In order to recognize a array property as ObservableArray, it is necessary to set a array value first(e.g set [] ).
+	 * 3. Accessors make pure computed.
+	 * 4. A property/accessor with `@ignore` don't make observable.
 	 * 5. In order to use raw koObservable, it is necessary to be not inside constructor but after executed constructor.
 	 */
 	export function track( constructor: Function ): any;
 	/**
 	 * Class decorator.
-	 * Make all properties/accessors to koObservable/koComputed.
+	 * Make all properties/accessors to observable/computed.
 	 * Points to consider.
-	 * 1. Properties that are not initialized at declare or in constructor don't become koObservable.
-	 * 2. In order to recognize a array property as koObservableArray, it is necessary to set a array value first(e.g set [] ).
-	 * 3. Accessors become pure koComputed.
-	 * 4. A property/accessor with `@ignore` don't become koObservable.
+	 * 1. Properties that are not initialized at declare or in constructor don't make observable.
+	 * 2. In order to recognize a array property as ObservableArray, it is necessary to set a array value first(e.g set [] ).
+	 * 3. Accessors make pure computed.
+	 * 4. A property/accessor with `@ignore` don't make observable.
 	 * 5. In order to use raw koObservable, it is necessary to be not inside constructor but after executed constructor.
 	 */
 	export function track( options: ITrackOptions ): any;
@@ -180,7 +180,7 @@ module KnockoutDecorator
 					if ( !d || !d.get ) continue;
 					if ( kd.isIgnoreProperty( f ) ) continue;
 
-					// If be Overrided descriptor already, accessor become koComputed by executing the following;
+					// If be Overrided descriptor already, accessor make computed by executing the following;
 					let dummy = o[f];
 					if ( getComputed( o, f ) ) continue;
 
@@ -226,7 +226,7 @@ module KnockoutDecorator
 
 	/**
 	 * Property/Accessor decorator.
-	 * Prevent a property/accessor from making koObservable in @trak.
+	 * Prevent a property/accessor from making observable in @track class.
 	 */
 	export function ignore( target: any, property: string ): void
 	{
@@ -321,7 +321,7 @@ module KnockoutDecorator
 	//#region set filter decorators
 	/**
 	 * Property/Setter decorator.
-	 * A value set to a property becom return value of filter.
+	 * A value set to a property become return value of filter.
 	 * If there is multiple set filter decorators for a property, there are executed in the order from bottom to top.
 	 * @param filterFunc function that return a processed value.
 	 */
