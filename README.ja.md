@@ -1,298 +1,246 @@
-# knockout-decorator
+# knockout-decorator について
 
-このプラグインは knockout observableを用いたコードの記述を楽にします。
+[knockoutjs](https://github.com/knockout/knockout) を用いるプログラム作成を支援します。  
 
- [デモ](https://variotry.github.io/knockout-decorator/)を参照してください。(ブラウザはes5をサポートしている必要があります)
+# 導入
+## モジュールとしてインポートする
+1. npm install でパッケージをインストール
+```npm
+    npm install knockout @types/knockout vt-knockout-decorator --dev-save
+```
+2. TypeScriptコードでモジュールをインポート
+```typescript
+    import kd from "vt-knockout-decorator";
+```
 
-## 使い方
+3. html側でknockout.jsを読み込むよう記述
+```html
+<script src="path/knockout.js"></script>
+<script src="path/bundle.js"></script>
+<script src="yourScript.js"></script>
+```
+bundle.js に knockoutjs を含める場合は
+```typescript
+import * as ko from "knockout";
+(<any>window).ko = ko;
+```
+のように、グローバル変数 ko を設定してください。 
 
-`dist/knockout-decorator.min.js`、 `dist-globalDefinition/knockout-decorator.d.ts` を任意の場所にコピーし、htmlに以下の様に記述して下さい。
+## ライブラリをグローバルに置く場合
+1. `dist/knockout-decorator.min.js`, `dist-globalDefinition/knockout-decorator.d.ts` をプロジェクトディレクトリにコピー  
+2. TypeScriptコードに記述
+```typescript
+///<reference path="path/knockout-decorator.d.ts" />
+import kd = KnockoutDecorator;  // モジュールのインポートではなくaliasとして設定
+```
+3. htmlに記述
+```html
+<script src="path/knockout.js"></script>
+<script src="path/knockout-decorator.min.js"></script>
+<script src="yourScript.js"></script>
+```
 
-    <script src="path/knockout.js"></script>
-    <script src="path/knockout-decorator.min.js"></script>
-	<script src="yourScript.js"></script>
+# リファレンス
 
-そして `import kd = KnockoutDecorator` ようにショートネームを定義します。
+ここでの説明では、エイリアス `kd` を通してデコレーター等にアクセスします。
 
-### Decorators
+## デコレータ
+### クラス デコレータ
+* [@track](#クラスデコレータ-track)
+### プロパティ/アクセッサ デコレータ
+* [@ignore](#プロパティ・アクセッサデコレータ-ignore)
+* [@observable](#プロパティデコレータ-observable)
+* [@observableArray](#プロパティデコレータ-observablearray)
+* [@pureComputed](#アクセッサデコレータ-purecomputed)
+* [@computed](#アクセッサデコレータ-computed)
+* [@extend](#プロパティ・アクセッサデコレータ-extend)
+### 値設定フィルタ
+* [@setFilter](#setfilter)
+* [@min](#min)
+* [@max](#max)
+* [@clamp](#clamp)
+* [@asNumber](#asnumber)
+## koObservableの取得関数
+* [getObservable](#koobservable-の取得)
+* [getObservableArray](#koobservable-の取得)
+* [getComputed](#koobservable-の取得)
 
-* [`@track` and `@ignore`](#track-デコレーターの利用)
-* [`@observable`](#observable-デコレーターの利用)
-* [`@observableArray`](#observablearray-デコレーターの利用)
-* [`@pureComputed or @computed`](#purecomputedcomputed-デコレーターの利用)
-* [`@extend`](#extend-デコレーターの利用)
-* [`@asNumber`](#追加機能)
-
-#### `@track` デコレーターの利用
-
-`@track` デコレーターはすべてのプロパティ・アクセッサーをobservableにします。
-
-以下の様にクラスに `@track` をアタッチしてください。
-
-    @kd.track
-    class Sample
-    {
-        private firstName = "Vario";
-        private lastName = "Try";
+## クラスデコレータ @track
+`@track` は全てのプロパティ・アクセッサを observable/computed にします。
+```typescript
+@kd.track
+class Sample
+{
+    firstName = "Vario";
+    lastName = "Try";
         
-        private get name()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-    }
-
-このコードは以下のコードと同様です。
-
-    class Sample
+    get name()
     {
-        private firstName = ko.observable("Vario");
-        private lastName = ko.observable("Try");
-
-        private name = ko.computed( () => this.firstName() + " " + this.lastName() );
+        return this.firstName + " " + this.lastName;
     }
+}
+```
+`@track`を使うにあたり注意点があります。  
+1. 宣言もしくはコンストラクタ内で初期化されていないプロパティは observable になりません。  
+2. 配列型プロパティをobservable arrayとして利用したい場合は、配列値で初期化して下さい。（例えば '[]' ）
+nullで初期化すると、KnockoutObservableArray<T> ではなく、KnockoutObservable<T[]> となります。
+3. アクセッサは pure computed となります。
+4. `@ignore`のあるプロパティ/アクセッサは observable/computed になりません。
+5. コンストラクタの実行が完了するまでは koObservable は利用できません。  
+(例えば、kd.getObservable による koObservableの取得や、 ko.applyBindings を コンストラクタ内で実行しても期待通りに動きません)
 
-ただ、デコレーターはコードを簡素化します。
-
-プロパティに値をセットすると（例えば `this.firstName = "Bob"` ）、ビューが更新されます。逆もしかりです。
-
-また、nameゲッターも実行されます。
-
-[demo1](https://variotry.github.io/knockout-decorator/)を参照してください。
-
-`@track` デコレーターは注意事項があります。
-
-  1.observableとして認識させるために、プロパティの宣言時、もしくはコンストラクタで変数を初期化する必要があります。(`null` を設定するのでも OK です)
-
-    @kd.track
-    class Sample1
+`@track`は オプション kd.ITrackOptions を渡せます。
+```typescript
+    interface ITrackOptions
     {
-        private property1 : string = null;  // OK. observableとして認識されます
-        private property2 : string;         // NG. プロパティが初期化されていないため observableとして認識されません
-        private property3 : string;         // OK. コンストラクタ内で初期化されているので observableとして認識されます
-
-        public constructor()
-        {
-            this.property3 = "value";
-        }
+        // アクセッサを pure computed にするかどうか(デフォルトtrue)
+        pureComputed?:boolean,
+        // コンストラクタ実行直後に実行するメソッド名
+        init?: string;
     }
+```
+ITrackOptions.init で実行されるメソッド内では、 koObservable が利用できます。  
+(kd.getObservable による koObservableの取得や、 ko.applyBindings が期待通りに動作します)
 
-  2.配列プロパティをobservable arrayとして認識させる為には、配列で初期化する必要があります。null で初期化した場合は KnockoutObservableArray&lt;T>ではなく、 KnockoutObservable&lt;T[]>として認識されます。
+## プロパティ・アクセッサデコレータ @ignore
+`@track`による observable/computed にするのを無視します。
 
-    @kd.track
-    class Sample2
-    {
-        private array1 : string[] = [];     // KnockoutObservableArray<string> として認識されます
-        private array2 : string[] = null;   // KnockoutObservable<string[]> として認識されます
-    }
+## プロパティデコレータ @observable
+プロパティを observableにします。
+```typescript
+class Sample
+{
+    @kd.observable
+    name = "Vario";
+}
+```
 
-  3.アクセッサーは pure computed として認識されます。通常の（非pureな） computed を使いたい場合は, `@track`の引数に { pureComputed:false } を渡すか、 アクセッサーに`@computed`をアタッチしてください。
-
-    @kd.track
-    class Sample3_1
-    {
-        private firstName = "Vario";
-        private lastName = "Try";
-
-        // pure computed として認識されます
-        private get name()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-
-        // pure computed として認識されます
-        private get name2()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-    }
-
-    @kd.track({pureComputed:false})
-    class Sample3_2
-    {
-        private firstName = "Vario";
-        private lastName = "Try";
-
-        // （非pure) computed として認識されます
-        private get name()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-
-        // （非pure) computed として認識されます
-        private get name2()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-    }
-
-    @kd.track
-    class Sample3_2
-    {
-        private firstName = "Vario";
-        private lastName = "Try";
-
-        // （非pure) computed として認識されます
-        @computed
-        private get name()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-
-        // pure computed として認識されます
-        private get name2()
-        {
-            return this.firstName + " " + this.lastName;
-        }
-    }
-
-
-
-  4.プロパティやアクセッサーをobservableにしたくない場合は, `@ignore` デコレーターをアタッチしてください。 [demo2](https://variotry.github.io/knockout-decorator/#demo2)を参照してください。
-
-    @kd.track
-    class Sample4
-    {
-        private firstName = "Vario";
-
-        @kd.ignore
-        private lastName = "Try";  // observable として認識されません。
-    }
-
-  5.コンストラクタ内では observableの取得・利用はできません。
-
-    // initializeMethod オプションは、コンストラクタ終了後に実行されるメソッド名となります。
-    @kd.track( {initializeMethod:"init"} )
-    class Sample5
-    {
-        private property = "";
-        private array = [] as kd.IObservableArray<string>;
-
-        public constructor()
-        {
-            let rawObservable = @kd.getObservable<string>( this, "property" );
-            // rawObservable はnullとなります
-
-            // Knockout Observable Array の関数は呼べません。
-            // this.array.remove( ... );
-        }
-
-        // init はコンストラクタの後に実行されます。
-        public init()
-        {
-            let rawObservable = @kd.getObservable<string>( this, "property" );
-            // rawObservable は 生のobservable objectがセットされます。
-
-            // Knockout Observable Array の関数を呼ぶことができます。
-            this.array.remove( ... );
-        }
-    }
-
-#### `@observable` デコレーターの利用
-
-`@observable` デコレーターは個々のプロパティに対して observableに変換します。
-
-以下の様にプロパティに `@kd.observable` をアタッチして下さい。
-
-    class Sample
-    {
-        @kd.observable
-        public firstName = "Vario";    // observableとして認識されます。
-
-        public lastName = "Try";      // observableとして認識されません。
-
-        public constructor()
-        {
-            let rawObservable = @kd.getObservable<string>( this, "firstName" );
-            // rawObservable は生の observable がセットされます。
-            // @track デコレーターとは異なり、 コンストラクタ内で observableの取得・利用が可能です。
-        }
-    }
-
-#### `@observableArray` デコレーターの利用
-
-`@observableArray` デコレーターは個々のプロパティに対して observable array に変換します。
-
-以下の様に配列型のプロパティに "@kd.observableArray" をアタッチしてください。
-
+## プロパティデコレータ @observableArray
+プロパティを observable arrayにします。
+```typescript
+class Sample
+{
     @kd.observableArray
-    public list = [ "data1", "data2", "data3" ];
+    list = [1,2,3] as kd.IObservableArray<number>;
+}
+```
+配列プロパティを `kd.IObservableArray<T>`にキャストすると、KnockoutObservableArray の関数（例えば removeやreplace）を直接呼ぶことができます。
 
-プロパティに新しい配列データをセット( 例： `this.list = ["newData1", "newData2"]` )すると、ビューも更新されます。
-
-push, pop といった Array 関数を呼ぶと ( 例： `this.list.push("data4")`)、ビューも更新されます。
-
-
-以下に示すようキャストを行うと、インテリセンスの働きで KnockoubObservableArray の関数に簡単にアクセスできます。
-
-    @kd.observableArray
-    public list = [ "data1", "data2", "data3" ] as kd.IObservableArray<string>;
-
-#### `@pureComputed`、`@computed` デコレーターの利用
-
-`@pureComputed` と `@computed` デコレーターは個々のアクセッサーに対して (pure) computed に変換します。
-
-以下の様にアクセッサに "@kd.pureComputed" もしくは "@kd.computed" をアタッチしてください。
-
+## アクセッサデコレータ @pureComputed
+アクセッサを pure computed にします。
+```typescript
+class Sample
+{
     @kd.observable
-    public firstName = "Vario";
-    
+    firstName = "Vario";
     @kd.observable
-    public lastName = "Try";
-    
+    lastName = "Try";
+        
     @kd.pureComputed
-    public get fullName() { return this.firstName + " " + this.lastName; }
-
-setter も用意することで書き込み可能な computed として利用できます。
-
-#### `@extend` デコレーターの利用
-
-以下の様に observable デコレータをアタッチしたプロパティに "@kd.extend" をアタッチしてください
-
-    @kd.pureComputed
-    @kd.extend( { rateLimit: 500 } )
-    public get fullName() { return this.firstName + " " + this.lastName; }
-
-#### 追加機能
-
-`private x:number = 0` のように定義しても、ブラウザ上のinput要素を介して値を変更するなどでプロパティがstring型になる場合があります。
-
-そのような場合は以下のように "@kd.asNumber" を利用してください。
-
-    @kd.observable
-	@kd.asNumber
-	private x:number = 0
-
-こうすることで、number型以外の値をセットしてもプロパティはnumber型を保ちます。
-
-numberへの変換でNaNになる場合は0がセットされます。
-
-### 元となる knockout observable オブジェクトの取得
-
-以下の関数を使う事で、knockout observable オブジェクトを取得できます。
-
-    getObservable<T>
-    getObservableArray<T>
-    getComputed<T>
-
-使用例：
-
-    kd.getObservable<string>( this, "firstName" ).subscribe( newValue =>
+    get name()
     {
-        console.log( "firstName value is", newValue );
-    });
+        return this.firstName + " " + this.lastName;
+    }
+}
+```
+setterもある場合は、書き込み可能な computed となります。
+
+## アクセッサデコレータ @computed
+アクセッサを non pure computed にします。
+
+## プロパティ・アクセッサデコレータ @extend
+rateLimit のような ko.extenders を設定します。
+```typescript
+class Sample
+{
+    @kd.observable
+    firstName = "Vario";
+    @kd.observable
+    lastName = "Try";
+        
+    @kd.pureComputed
+    @kd.extend( { rateLimit: 10 } )
+    get name()
+    {
+        return this.firstName + " " + this.lastName;
+    }
+}
+```
+
+## 値設定フィルタについて
+プロパティもしくはセッターに設定できます。(@observable等が適用されている必要があります)
+```typescript
+class Sample
+{
+    @kd.observable
+    @kd.setFilter( v => v > 100 ? 100 : v ) // equal @kd.max( 100 )
+    @kd.setFilter( v => v < 0 ? 0 : v ) // equal @kd.min( 0 )
+    x = 10;
+}
+```
+設定フィルタデコレータが複数ある場合は、下から上の順序で実行されます。
+
+### @setFilter
+引数に ( setValue: any ) => any となる関数を渡します。  
+setValueは外部からプロパティに設定される値が渡り、戻り値がプロパティに設定される値となります。  
+`@kd.setFilter( v => v < 0 ? 0 : v )` の場合 0未満の値が代入されると、0の値がプロパティに設定されます。
+
+### @min
+`@kd.min(v)` で v以上となるよう値が設定されます。
+
+### @max
+`@kd.max(v)` で v以下の値となるよう設定されます。
+
+### @clamp
+`@kd.clamp(min,max)` で min以上、max以下となるよう値が設定されます。
+
+### @asNumber
+入力された値を数値型にします。  
+`<input type="value" data-bind="value:x" />` など、ブラウザからの入力で文字列になる場合に役立ちます。
+
+## koObservable の取得
+以下の取得関数を使って、Knockout Observable のオブジェクトを取得できます。
+* getObservable
+* getObservableArray
+* getComputed
+
+取得例
+```typescript
+@kd.track( { init: 'init' } )
+class Sample
+{
+    firstName = "Vario";
+    lastName = "Try";
+    list = [1,2,3];
+        
+    get name()
+    {
+        return this.firstName + " " + this.lastName;
+    }
+
+    init()
+    {
+        // get raw koObservable of firstName .
+        let rawObservable = kd.getObservable( ()=> this.firstName );
+        // You can get raw koObservable by kd.getObservable( this, "firstName" ) also.;
+        rawObservable.subscribe( v =>
+		{
+			console.log( "value changed" );
+		} );
+
+        let rawObservableArray = kd.getObservableArray( ()=> this.list );
+        let rawComputed = kd.getComputed( ()=> this.name );
+    }
+}
+```
 
 ## 必須要件
-
-knockout(http://knockoutjs.com/) 
-
-tsConfig.json の compilerOptions.experimentalDecorators を true にセット
-
-es5 サポートブラウザ
+* knockout(http://knockoutjs.com/) 
+* tsConfig.json の compilerOptions.experimentalDecorators を true にセット
+* es5 サポートブラウザ
 
 ## License
-
 MIT (http://www.opensource.org/licenses/mit-license.php)
 
 ## Author
-
 [vario](https://github.com/variotry/)
