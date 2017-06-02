@@ -59,9 +59,9 @@ We access decorators etc via alias `kd` in this section.
 * [@clamp](#clamp)
 * [@asNumber](#asnumber)
 ##  get raw koObservable methods
-* [getObservable](#koobservable-の取得)
-* [getObservableArray](#koobservable-の取得)
-* [getComputed](#koobservable-の取得)
+* [getObservable](#get-raw-koobservable)
+* [getObservableArray](#get-raw-koobservable)
+* [getComputed](#get-raw-koobservable)
 
 ## class decorator @track
 `@track` make all properties/accessors observable/computed.
