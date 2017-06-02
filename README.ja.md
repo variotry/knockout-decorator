@@ -6,7 +6,7 @@
 ## モジュールとしてインポートする
 1. npm install でパッケージをインストール
 ```npm
-    npm install knockout @types/knockout vt-knockout-decorator --dev-save
+    npm install knockout @types/knockout vt-knockout-decorator --save-dev
 ```
 2. TypeScriptコードでモジュールをインポート
 ```typescript

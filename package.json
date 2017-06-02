@@ -1,6 +1,6 @@
 {
 	"name": "vt-knockout-decorator",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"author": "vario <variotries@gmail.com>",
 	"license": "MIT",
 	"description": "Typescript Decorator that assist knockoutjs",

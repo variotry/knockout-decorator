@@ -6,7 +6,7 @@ This plug-in will assist you write code using [knockoutjs](https://github.com/kn
 ## For use as import of module.
 1. Install package by using npm.
 ```npm
-    npm install knockout @types/knockout vt-knockout-decorator --dev-save
+    npm install knockout @types/knockout vt-knockout-decorator --save-dev
 ```
 2. Import module in a TypeScript code.
 ```typescript
