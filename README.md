@@ -3,44 +3,74 @@
 This plug-in will assist you write code using [knockoutjs](https://github.com/knockout/knockout).  
 
 # Introduction
-## For use as import of module.
-1. Install package by using npm.
-```npm
-    npm install knockout @types/knockout vt-knockout-decorator --save-dev
+1. Require follow packages.
+```json
+{
+  "devDependencies": {
+    "typescript": "^3.7.2",
+    "knockout": "^3.7.2",
+    "@types/knockout": "^3.4.72",
+    "vt-knockout-decorator": "2.0.0"
+  }
+}
 ```
-2. Import module in a TypeScript code.
-```typescript
-    import kd from "vt-knockout-decorator";
+2. tsconfig.json  
+experimentalDecorators must be true to use decorator.  
+And, useDefineForClassFields is not compatible with decorator, so it recommend set to false. 
+```json
+{
+  "compilerOptions": {
+    "useDefineForClassFields": false,
+    "experimentalDecorators": true
+  }
+}
 ```
 
-3. Write in as follows into a html.
-```html
-<script src="path/knockout.js"></script>
-<script src="path/bundle.js"></script>
-<script src="yourScript.js"></script>
-```
-If you bundle knockoutjs into a js, define global variable `ko` as follows.
+3. Sample Code
 ```typescript
+import { KnockoutDecorator as kd } from "vt-knockout-decorator";
 import * as ko from "knockout";
-(<any>window).ko = ko;
+( <any>window ).ko = ko;
+
+class Sample
+{
+    @kd.observable
+    private inputText: string;
+
+    public constructor()
+    {
+        ko.applyBindings( this, document.body );
+    }
+
+    public getText(): string
+    {
+        return this.inputText;
+    }
+
+    public changeText( s: string ): void
+    {
+        this.inputText = s;
+    }
+}
+
+let sample = new Sample();
+sample.changeText( 'hoge' );
+```
+```html
+<!-- html view -->
+<body>
+    <input type="text" data-bind="value:inputText">
+</body>
 ```
 
-## For use in global scope.
-1. Copy `dist/knockout-decorator.min.js` and `dist-globalDefinition/knockout-decorator.d.ts` in a your project directory.
-2. Write a TypeScript code.
-```typescript
-///<reference path="path/knockout-decorator.d.ts" />
-import kd = KnockoutDecorator;  // not module import but set as alias
-```
-3. Write a html.
-```html
-<script src="path/knockout.js"></script>
-<script src="path/knockout-decorator.min.js"></script>
-<script src="yourScript.js"></script>
-```
+Getting/Setting of simple inputText property behaves like KnockoutJs.
 
 # Reference
-We access decorators etc via alias `kd` in this section.
+```typescript
+import { KnockoutDecorator as kd } from "vt-knockout-decorator";
+```
+set alias as short name `kd`.
+
 
 ## Decorators
 ### Class decorator
@@ -63,48 +93,53 @@ We access decorators etc via alias `kd` in this section.
 * [getObservableArray](#get-raw-koobservable)
 * [getComputed](#get-raw-koobservable)
 
-## class decorator @track
-`@track` make all properties/accessors observable/computed.
+# Each decorators
+## @track
+class decorator  
+`@track` become all properties/accessors Observable/Computed.
 ```typescript
 @kd.track
 class Sample
 {
-    firstName = "Vario";
-    lastName = "Try";
-        
-    get name()
+    firstName : string = "Vario";    // observable
+    lastName : string = "Try";       // observable
+
+    arr :kd.IObservableArray<string> = [] as any;   // observable array
+
+    @kd.ignore
+    ignoreVal : number; // no observable
+
+    get name()  // computed
     {
         return this.firstName + " " + this.lastName;
     }
 }
 ```
-Points to consider when using @`track`.
-1. Properties that are not initialized at declare or in constructor don't make observable.
-2. In order to recognize a array property as observable array, it is necessary to set a array value first(e.g set [] ).  
-If you set null as initial value, the property make not KnockoutObservableArray<T> but KnockoutObservable<T[]>.
-3. Accessors make pure computed.
-4. Properties/Accessors with `@ignore` don't make observable.
-5. In order to use raw koObservable, it is necessary to be completion of a constructor execution.  
-(For example, you can't get raw koObservable by using kd.getObservable and ko.applyBindings does not work as expected in constructor.)
+Points to consider.
+1. In order to use an array property as ObservableArray, it is necessary to set an array value(e.g. []) when declare the property or inside constructor.
+2. Accessors become (Pure) Computed.
+3. A property/accessor with `@ignore` decorator don't become Observable.
+4. It is impossible to access Raw koObservables until the constructor has completed.
 
-You can passed kd.ITracOptions to `@track`.
+You can pass kd.ITracOptions to `@track`.
 ```typescript
     interface ITrackOptions
     {
-        // Make accessors pure computed if true or undefined, else non pure computed.
+        // Become accessors pure computed if true or undefined, else non-pure computed.
         pureComputed?:boolean,
-        // If value set, execute obj[init]() immediate after executed constructor.
+        // If value set, perform obj[init]() immediate after constructor.
+        // It is possible to access raw koObservables using getObservable() etc.
         init?: string;
     }
 ```
-Within the method specified in ITrackOptions.init you can get raw koObservable.  
-(You can get raw koObservable by using kd.getObservable and ko.applyBindings works as expected.)
 
-## Property/Accessor decorator @ignore
-Prevent a property/accessor from making observable in `@track` class.
+## @ignore
+Property/Accessor decorator  
+Prevent a property/accessor from becoming observable in `@track` class.
 
-## Property decorator @observable
-Make a property observable.
+## @observable
+Property decorator  
+A property become koObservable.
 ```typescript
 class Sample
 {
@@ -113,19 +148,22 @@ class Sample
 }
 ```
 
-## Property decorator @observableArray
-Make a property observable array.
+## @observableArray
+Property decorator  
+A property become koObservableArray.
 ```typescript
 class Sample
 {
     @kd.observableArray
-    list = [1,2,3] as kd.IObservableArray<number>;
+    list : kd.IObservableArray<number> = [1,2,3] as any;
 }
 ```
-If you cast Array to `kd.IObservableArray<T>`, you can direct execute functions of KnockoutObservableArray(e.g. remove or replace).
+If you specify `kd.IObservableArray<T>` type for a property, you can easily access methods (e.g. remove, replace etc.) defined on Knockout ObservableArray.
 
-## Accessor decorator @pureComputed
-Make a accessor pure computed.
+## @pureComputed
+Accessor decorator  
+At least require getter. (Not allow setter only)  
+An accessor become koPureComputed. If setter is defined, make it writable computed.
 ```typescript
 class Sample
 {
@@ -141,13 +179,14 @@ class Sample
     }
 }
 ```
-If setter is defined, make it writable computed.
 
-## Accessor decorator @computed
-Make a accessor non pure computed.
+## @computed
+Accessor decorator  
+Make a accessor non-pure computed.
 
-## Property/Accessor decorator @extend
-Set ko.extenders for observable.( e.g. `rateLimit`)
+## @extend
+Property/Accessor decorator  
+Set ko.extend for a observable.( e.g. `rateLimit`)
 ```typescript
 class Sample
 {
@@ -171,16 +210,20 @@ Value set filter decorators can be set to Properties/Setters.(`@observable` etc 
 class Sample
 {
     @kd.observable
-    @kd.setFilter( v => v > 100 ? 100 : v ) // equal to @kd.max( 100 )
-    @kd.setFilter( v => v < 0 ? 0 : v ) // equal to @kd.min( 0 )
-    x = 10;
+    @kd.setFilter( v => v > 100 ? 100 : v ) // equal @kd.max( 100 )
+    @kd.setFilter( v => v < 0 ? 0 : v ) // equal @kd.min( 0 )
+    x;
 }
+let s = new Sample();
+s.x = 10;       // <- x is 10
+s.x = 150;      // <- x is 100
+s.x = -100;     // <- x is 0
 ```
-If set multiple filter decorators, there are executed in the order from bottom to top.
+If set multiple filter decorators, they are executed in the order from bottom to top.
 
 ### @setFilter
 Passing "( setValue: any ) => any" function.  
-`setValue` of argument is value passed from outside or value of other filter result.
+`setValue` is value passed from outside or value of other set filter result.
 Finally, set a property to last filter result value.  
 For example, In the case of `@kd.setFilter( v => v < 0 ? 0 : v )`, set a property to zero if substitute less than zero for it.
 
@@ -195,7 +238,7 @@ In the case of `@kd.clamp(v)`, set a property to within min and max range.
 
 ### @asNumber
 Input value keep numerical type.(No argument)  
-It is useful if type of a property value is converted "string type" by input via view by binding input text such as `<input type="value" data-bind="value:x" />`.
+It is enabled to prevent convert to string type from via view such as `<input type="value" data-bind="value:x" />`
 
 ## Get raw koObservable
 You can get raw koObservable object by using follows methods.
@@ -210,33 +253,34 @@ class Sample
 {
     firstName = "Vario";
     lastName = "Try";
-    list = [1,2,3];
-        
+    list = [ 1, 2, 3 ];
+
     get name()
     {
         return this.firstName + " " + this.lastName;
     }
 
+    constructor()
+    {
+        // Note.
+        // It is impossible to access raw koObservable inside constructor of @track class 
+    }
+
     init()
     {
         // get raw koObservable of firstName .
-        let rawObservable = kd.getObservable( ()=> this.firstName );
+        let rawObservable = kd.getObservable( () => this.firstName );
         // You can get raw koObservable by kd.getObservable( this, "firstName" ) also.;
-        rawObservable.subscribe( v =>
-		{
-			console.log( "value changed" );
-		} );
+        rawObservable.subscribe( v => {
+            console.log( "value changed" );
+        } );
 
-        let rawObservableArray = kd.getObservableArray( ()=> this.list );
-        let rawComputed = kd.getComputed( ()=> this.name );
+        let rawObservableArray = kd.getObservableArray( () => this.list );
+        let rawComputed = kd.getComputed( () => this.name );
     }
 }
 ```
 
-## Requirement
-knockout(http://knockoutjs.com/)  
-tsConfig.json compilerOptions.experimentalDecorators set true  
-es5 support browser
 
 ## License
 MIT (http://www.opensource.org/licenses/mit-license.php)
