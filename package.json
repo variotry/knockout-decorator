@@ -27,7 +27,7 @@
 		"preview": "vite preview"
 	},
 	"peerDepenencies": {
-		"typescript": "^4.9.4",
+		"typescript": "^3.7.2",
 		"knockout": "^3.7.2",
 		"@types/knockout": "^3.4.72"
 	},
