@@ -4,8 +4,8 @@
 
 # 導入
 1. 以下のパッケージを要求しています。
-```npm
-"devDepenencies": {
+```json
+"devDependencies": {
 	"typescript": "^3.7.2",
 	"knockout": "^3.7.2",
 	"@types/knockout": "^3.4.72",
