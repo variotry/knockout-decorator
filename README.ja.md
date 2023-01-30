@@ -1,48 +1,74 @@
 # knockout-decorator について
 
-[knockoutjs](https://github.com/knockout/knockout) を用いるプログラム作成を支援します。  
+[knockoutjs](https://github.com/knockout/knockout) を用いたプログラム作成を支援します。  
 
 # 導入
-## モジュールとしてインポートする
-1. npm install でパッケージをインストール
+1. 以下のパッケージを要求しています。
 ```npm
-    npm install knockout @types/knockout vt-knockout-decorator --save-dev
-```
-2. TypeScriptコードでモジュールをインポート
-```typescript
-    import kd from "vt-knockout-decorator";
+"devDepenencies": {
+	"typescript": "^3.7.2",
+	"knockout": "^3.7.2",
+	"@types/knockout": "^3.4.72",
+	"vt-knockout-decorator" : "2.0.0"
+},
 ```
 
-3. html側でknockout.jsを読み込むよう記述
-```html
-<script src="path/knockout.js"></script>
-<script src="path/bundle.js"></script>
-<script src="yourScript.js"></script>
+2. tsconfig.json  
+デコレータの利用には experimentalDecorators を true にする必要があります。    
+また、useDefineForClassFields はデコレータとの相性が良くないので false を推奨します。
+```json
+{
+  "compilerOptions": {
+    "useDefineForClassFields": false,
+    "experimentalDecorators": true
+  }
+}
 ```
-bundle.js に knockoutjs を含める場合は
+
+3. サンプルコード
 ```typescript
+import { KnockoutDecorator as kd } from "vt-knockout-decorator";
 import * as ko from "knockout";
-(<any>window).ko = ko;
-```
-のように、グローバル変数 ko を設定してください。 
+( <any>window ).ko = ko;
 
-## ライブラリをグローバルに置く場合
-1. `dist/knockout-decorator.min.js`, `dist-globalDefinition/knockout-decorator.d.ts` をプロジェクトディレクトリにコピー  
-2. TypeScriptコードに記述
-```typescript
-///<reference path="path/knockout-decorator.d.ts" />
-import kd = KnockoutDecorator;  // モジュールのインポートではなくaliasとして設定
+class Sample
+{
+    @kd.observable
+    private inputText: string;
+
+    public constructor()
+    {
+        ko.applyBindings( this, document.body );
+    }
+
+    public getText(): string
+    {
+        return this.inputText;
+    }
+
+    public changeText( s: string ): void
+    {
+        this.inputText = s;
+    }
+}
+
+let sample = new Sample();
+sample.changeText( 'hoge' );
 ```
-3. htmlに記述
 ```html
-<script src="path/knockout.js"></script>
-<script src="path/knockout-decorator.min.js"></script>
-<script src="yourScript.js"></script>
+<!-- html view -->
+<body>
+    <input type="text" data-bind="value:inputText">
+</body>
 ```
+
+単純なinputTextプロパティの取得・設定がKnockoutJsと同様の挙動となります。
 
 # リファレンス
-
-ここでの説明では、エイリアス `kd` を通してデコレーター等にアクセスします。
+```typescript
+import { KnockoutDecorator as kd } from "vt-knockout-decorator";
+```
+と ショートネーム `kd` としてエイリアス設定しています。
 
 ## デコレータ
 ### クラス デコレータ
@@ -65,47 +91,56 @@ import kd = KnockoutDecorator;  // モジュールのインポートではなく
 * [getObservableArray](#koobservable-の取得)
 * [getComputed](#koobservable-の取得)
 
-## クラスデコレータ @track
+# 各デコレータ
+## @track
+クラスデコレータ  
 `@track` は全てのプロパティ・アクセッサを observable/computed にします。
 ```typescript
 @kd.track
 class Sample
 {
-    firstName = "Vario";
-    lastName = "Try";
+    firstName : string = "Vario";    // observable
+    lastName : string = "Try";       // observable
+    
+    arr :kd.IObservableArray<string> = [] as any;   // observable array
+    
+    @kd.ignore
+    ignoreVal : number; // no observable
         
-    get name()
+    get name()  // computed
     {
         return this.firstName + " " + this.lastName;
     }
 }
 ```
 `@track`を使うにあたり注意点があります。  
-1. 宣言もしくはコンストラクタ内で初期化されていないプロパティは observable になりません。  
-2. 配列型プロパティをobservable arrayとして利用したい場合は、配列値で初期化して下さい。（例えば '[]' ）
-nullで初期化すると、KnockoutObservableArray<T> ではなく、KnockoutObservable<T[]> となります。
-3. アクセッサは pure computed となります。
-4. `@ignore`のあるプロパティ/アクセッサは observable/computed になりません。
-5. コンストラクタの実行が完了するまでは koObservable は利用できません。  
+1. 配列型プロパティをobservable arrayとして利用したい場合は、配列値で初期化して下さい。（例えば '[]' ）  
+null | undefined で初期化されると、KnockoutObservableArray<T> ではなく、KnockoutObservable<T[]> 扱いとなります。
+2. アクセッサは (pure) computed となります。
+3. `@ignore`のあるプロパティ/アクセッサは observable/computed になりません。
+4. コンストラクタが完了するまでは koObservable へのアクセスはできません。  
 (例えば、kd.getObservable による koObservableの取得や、 ko.applyBindings を コンストラクタ内で実行しても期待通りに動きません)
 
 `@track`は オプション kd.ITrackOptions を渡せます。
 ```typescript
     interface ITrackOptions
     {
-        // アクセッサを pure computed にするかどうか(デフォルトtrue)
+        // アクセッサを pure computed にするかどうか(デフォルトtrue扱い)
         pureComputed?:boolean,
         // コンストラクタ実行直後に実行するメソッド名
         init?: string;
     }
 ```
+init に関数名を指定すると、obj[init()] がコンストラクタ直後によばれます。  
 ITrackOptions.init で実行されるメソッド内では、 koObservable が利用できます。  
-(kd.getObservable による koObservableの取得や、 ko.applyBindings が期待通りに動作します)
+その関数内では kd.getObservable()などを利用して 生のkoObservableにアクセスできます。
 
-## プロパティ・アクセッサデコレータ @ignore
-`@track`による observable/computed にするのを無視します。
+## @ignore
+プロパティ・アクセッサデコレータ  
+`@track`による observable/computed にするのを防ぎます。
 
-## プロパティデコレータ @observable
+## @observable
+プロパティデコレータ  
 プロパティを observableにします。
 ```typescript
 class Sample
@@ -115,18 +150,20 @@ class Sample
 }
 ```
 
-## プロパティデコレータ @observableArray
+## @observableArray
+プロパティデコレータ  
 プロパティを observable arrayにします。
 ```typescript
 class Sample
 {
     @kd.observableArray
-    list = [1,2,3] as kd.IObservableArray<number>;
+    list : kd.IObservableArray<number> = [1,2,3] as any;
 }
 ```
-配列プロパティを `kd.IObservableArray<T>`にキャストすると、KnockoutObservableArray の関数（例えば removeやreplace）を直接呼ぶことができます。
+プロパティを `kd.IObservableArray<T>`として宣言すると、KnockoutObservableArray の関数（例えば removeやreplace）にアクセス可能です。
 
-## アクセッサデコレータ @pureComputed
+## @pureComputed
+アクセッサデコレータ  
 アクセッサを pure computed にします。
 ```typescript
 class Sample
@@ -145,11 +182,13 @@ class Sample
 ```
 setterもある場合は、書き込み可能な computed となります。
 
-## アクセッサデコレータ @computed
+## @computed
+アクセッサデコレータ  
 アクセッサを non pure computed にします。
 
-## プロパティ・アクセッサデコレータ @extend
-rateLimit のような ko.extenders を設定します。
+## @extend
+プロパティ・アクセッサデコレータ  
+rateLimit のような ko.extend を設定します。
 ```typescript
 class Sample
 {
@@ -168,15 +207,19 @@ class Sample
 ```
 
 ## 値設定フィルタについて
-プロパティもしくはセッターに設定できます。(@observable等が適用されている必要があります)
+プロパティもしくはセッターに設定できます。(@kd.observable等と併用する必要があります)
 ```typescript
 class Sample
 {
     @kd.observable
     @kd.setFilter( v => v > 100 ? 100 : v ) // equal @kd.max( 100 )
     @kd.setFilter( v => v < 0 ? 0 : v ) // equal @kd.min( 0 )
-    x = 10;
+    x;
 }
+let s = new Sample();
+s.x = 10;       // <- x is 10
+s.x = 150;      // <- x is 100
+s.x = -100;     // <- x is 0
 ```
 設定フィルタデコレータが複数ある場合は、下から上の順序で実行されます。
 
@@ -205,39 +248,40 @@ setValueは外部からプロパティに設定される値が渡り、戻り値
 * getComputed
 
 取得例
+
 ```typescript
 @kd.track( { init: 'init' } )
 class Sample
 {
     firstName = "Vario";
     lastName = "Try";
-    list = [1,2,3];
-        
+    list = [ 1, 2, 3 ];
+
     get name()
     {
         return this.firstName + " " + this.lastName;
     }
 
+    constructor()
+    {
+        // Note.
+        // It is impossible to access raw koObservable inside constructor of @track class 
+    }
+
     init()
     {
         // get raw koObservable of firstName .
-        let rawObservable = kd.getObservable( ()=> this.firstName );
+        let rawObservable = kd.getObservable( () => this.firstName );
         // You can get raw koObservable by kd.getObservable( this, "firstName" ) also.;
-        rawObservable.subscribe( v =>
-		{
-			console.log( "value changed" );
-		} );
+        rawObservable.subscribe( v => {
+            console.log( "value changed" );
+        } );
 
-        let rawObservableArray = kd.getObservableArray( ()=> this.list );
-        let rawComputed = kd.getComputed( ()=> this.name );
+        let rawObservableArray = kd.getObservableArray( () => this.list );
+        let rawComputed = kd.getComputed( () => this.name );
     }
 }
 ```
-
-## 必須要件
-* knockout(http://knockoutjs.com/) 
-* tsConfig.json の compilerOptions.experimentalDecorators を true にセット
-* es5 サポートブラウザ
 
 ## License
 MIT (http://www.opensource.org/licenses/mit-license.php)
