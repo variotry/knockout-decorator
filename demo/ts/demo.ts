@@ -28,7 +28,7 @@ class ObservableVariablesDemo
 
 	@kd.pureComputed
 	@kd.extend( { rateLimit: 1 } )
-	private get fullName(): string
+	public get fullName(): string
 	{
 		return this.firstName + " " + this.lastName;
 	}
