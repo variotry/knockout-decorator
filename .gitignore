@@ -10,3 +10,4 @@
 *.csproj.user
 /doc
 /demo/**/*.map
+package-lock.json

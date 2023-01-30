@@ -8,19 +8,19 @@
 	<link rel="stylesheet" href="SyntaxHighlighter/styles/shCore.css" />
 	<link rel="stylesheet" href="SyntaxHighlighter/styles/shThemeRDark.css" />
 
-	<link rel="stylesheet" href="css/demo.css" type="text/css" />	
+	<link rel="stylesheet" href="sass/demo.scss" type="text/css" />
 
 	<script src="SyntaxHighlighter/scripts/XRegExp.js"></script>
 	<script src="SyntaxHighlighter/scripts/shCore.js"></script>
 	<script src="SyntaxHighlighter/scripts/shAutoloader.js"></script>
 	<script src="SyntaxHighlighter/scripts/shBrushJScript.js"></script>
 	<script src="SyntaxHighlighter/scripts/shBrushXml.js"></script>
-	<script>SyntaxHighlighter.all();</script>
+	<script>SyntaxHighlighter.all( null );</script>
 </head>
 <body class="invisible" data-bind="css:{invisible:false}">
 	<h1>Knockout Decorator Demo</h1>
 	<p>
-		This plug-in makes it easier for you to write a code with knockout observable.
+		This plug-in makes it easier for you to write a code used Knockout.js.
 	</p>
 
 	<nav id="tab" data-bind="with:nav">
@@ -36,13 +36,21 @@
 			<h1>input sample</h1>
 			<div>
 				<dl>
-					<dt>First name</dt>
+					<dt>
+						<label for="firstName">
+							First name
+						</label>
+					</dt>
 					<dd>
-						<input type="text" data-bind="textInput:firstName" />
+						<input id="firstName" type="text" data-bind="textInput:firstName" />
 					</dd>
-					<dt>Last name</dt>
+					<dt>
+						<label for="lastName">
+							Last name
+						</label>
+					</dt>
 					<dd>
-						<input type="text" data-bind="textInput:lastName" />
+						<input id="lastName" type="text" data-bind="textInput:lastName" />
 					</dd>
 					<dt>I'm</dt>
 					<dd>
@@ -58,23 +66,23 @@
 				<dt>HTML</dt>
 				<dd>
 					<pre class="brush: html" data-bind="disableBinding:true">
-<dl>
-	<dt>First name</dt>
-	<dd>
-		<input type="text" data-bind="textInput:firstName" />
-	</dd>
-	<dt>Last name</dt>
-	<dd>
-		<input type="text" data-bind="textInput:lastName" />
-	</dd>
-	<dt>I'm</dt>
-	<dd>
-		"<!-- ko text:fullName --><!-- /ko -->".
-	</dd>
-</dl>
-<button type="button" data-bind="click:onReset">
+&lt;dl&gt;
+	&lt;dt&gt;First name&lt;/dt&gt;
+	&lt;dd&gt;
+		&lt;input type="text" data-bind="textInput:firstName" /&gt;
+	&lt;/dd&gt;
+	&lt;dt&gt;Last name&lt;/dt&gt;
+	&lt;dd&gt;
+		&lt;input type="text" data-bind="textInput:lastName" /&gt;
+	&lt;/dd&gt;
+	&lt;dt&gt;I'm&lt;/dt&gt;
+	&lt;dd&gt;
+		"&lt;!-- ko text:fullName --&gt;&lt;!-- /ko --&gt;".
+	&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;button type="button" data-bind="click:onReset"&gt;
 	Reset Name
-</button>
+&lt;/button&gt;
 					</pre>
 				</dd>
 			</dl>
@@ -113,7 +121,9 @@ class DemoWithDecorator
 	<article id="ObservableArray" class="View" data-bind="css:{invisible:nav.uid!=='observableArray'}">
 		<article class="ListSample" data-bind="with:observableArrayDemo">
 			<h1>array sample</h1>
-			Push data <input type="text" data-bind="value:pushData" />
+			<label>
+				Push data <input type="text" data-bind="value:pushData" />
+			</label>
 			<button type="button" data-bind="click:onPush">Push</button>
 			<p class="error" data-bind="if:pushErrorMsg">
 				<!-- ko text:pushErrorMsg --><!-- /ko -->
@@ -137,26 +147,26 @@ class DemoWithDecorator
 				<dt>HTML</dt>
 				<dd>
 					<pre class="brush: html" data-bind="disableBinding:true">
-<article class="ListSample">
-	<h1>array sample</h1>
-	Push data <input type="text" data-bind="value:pushData" />
-	<button type="button" data-bind="click:onPush">Push</button>
-	<p class="error" data-bind="if:pushErrorMsg">
-		<!-- ko text:pushErrorMsg --><!-- /ko -->
-	</p>
-	List length is <!-- ko text:list.length --><!-- /ko -->.
-	<ul data-bind="foreach:list">
-		<li>
-			<label>
-				<input type="checkbox" data-bind="value:$data, checked:$parent.removeTargets" />
-				<span data-bind="text:$data"></span>
-			</label>
-		</li>
-	</ul>
+&lt;article class="ListSample"&gt;
+	&lt;h1&gt;array sample&lt;/h1&gt;
+	Push data &lt;input type="text" data-bind="value:pushData" /&gt;
+	&lt;button type="button" data-bind="click:onPush"&gt;Push&lt;/button&gt;
+	&lt;p class="error" data-bind="if:pushErrorMsg"&gt;
+		&lt;!-- ko text:pushErrorMsg --&gt;&lt;!-- /ko --&gt;
+	&lt;/p&gt;
+	List length is &lt;!-- ko text:list.length --&gt;&lt;!-- /ko --&gt;.
+	&lt;ul data-bind="foreach:list"&gt;
+		&lt;li&gt;
+			&lt;label&gt;
+				&lt;input type="checkbox" data-bind="value:$data, checked:$parent.removeTargets" /&gt;
+				&lt;span data-bind="text:$data"&gt;&lt;/span&gt;
+			&lt;/label&gt;
+		&lt;/li&gt;
+	&lt;/ul&gt;
 
-	<button type="button" data-bind="click:onPop">Pop</button>
-	<button type="button" data-bind="click:onRemove">Remove Checked Data</button>
-</article>
+	&lt;button type="button" data-bind="click:onPop"&gt;Pop&lt;/button&gt;
+	&lt;button type="button" data-bind="click:onRemove"&gt;Remove Checked Data&lt;/button&gt;
+&lt;/article&gt;
 					</pre>
 				</dd>
 			</dl>
@@ -167,7 +177,7 @@ class DemoWithDecorator
 class ObservableArrayDemo
 {
 	@kd.observableArray
-	private list = ["data1", "data2", "data3"] as IObservableArray&lt;string>;
+	private list : kd.IObservableArray&lt;string&gt; = ["data1", "data2", "data3"] as any;
 
 	@kd.observable
 	private pushData = "";
@@ -176,12 +186,12 @@ class ObservableArrayDemo
 	public pushErrorMsg = "";
 
 	@kd.observableArray
-	private removeTargets = [] as IObservableArray&lt;string>;
+	private removeTargets : kd.IObservableArray&lt;string&gt; = [] as any;
 
-	private onPush(): void
+	public onPush(): void
 	{
 		if ( !this.pushData.trim() ) return;
-		if ( 0 <= this.list.indexOf( this.pushData ) )
+		if ( 0 &lt;= this.list.indexOf( this.pushData ) )
 		{
 			this.pushErrorMsg = "'" + this.pushData + "' already exists.";
 			return;
@@ -192,12 +202,12 @@ class ObservableArrayDemo
 		this.pushData = "";
 	}
 
-	private onPop(): void
+	public onPop(): void
 	{
-		this.removeTargets.remove( this.list.pop() );
+		this.removeTargets.remove( this.list.pop()! );
 	}
 
-	private onRemove(): void
+	public onRemove(): void
 	{
 		this.removeTargets.forEach( data =>
 		{
@@ -212,15 +222,7 @@ class ObservableArrayDemo
 		</article>
 
 	</article>
-	<!-- use as global
-		<script src="js/knockout.js"></script>
-		<script src="js/knockout-decorator.min.js"></script>
-	-->
 
-	<!-- use webpack etc -->
-	<script src="js/commons.js"></script>
-
-	<script src="js/demo.js"></script>
-	
+	<script type="module" src="ts/demo.ts"></script>
 </body>
 </html>

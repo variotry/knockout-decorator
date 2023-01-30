@@ -1,11 +1,8 @@
-﻿// use webpack etc.
-// Write to 'import kd from "knockout-decorator"' in your projects.
-import kd from "../../";	// <-- import knockout-decorator module.
-
-// knockout-decorator require global 'ko' variable.
-// If you bundle knockoutjs to a one js using webpack, write as follows.
-import * as ko from "knockout";
+﻿import * as ko from "knockout";
 ( <any>window ).ko = ko;
+
+// vite dev
+import { KnockoutDecorator as kd } from "../../";
 
 // use as global.
 /*
@@ -36,18 +33,17 @@ class ObservableVariablesDemo
 		return this.firstName + " " + this.lastName;
 	}
 
-	private onReset()
+	public onReset()
 	{
 		this.firstName = "vario";
 		this.lastName = "try";
 	}
-	
 }
 
 class ObservableArrayDemo
 {
 	@kd.observableArray
-	private list = ["data1", "data2", "data3"] as kd.IObservableArray<string>;
+	private list : kd.IObservableArray<string> = ["data1", "data2", "data3"] as any;
 
 	@kd.observable
 	private pushData = "";
@@ -56,9 +52,9 @@ class ObservableArrayDemo
 	public pushErrorMsg = "";
 
 	@kd.observableArray
-	private removeTargets = [] as kd.IObservableArray<string>;
+	private removeTargets : kd.IObservableArray<string> = [] as any;
 
-	private onPush(): void
+	public onPush(): void
 	{
 		if ( !this.pushData.trim() ) return;
 		if ( 0 <= this.list.indexOf( this.pushData ) )
@@ -72,12 +68,12 @@ class ObservableArrayDemo
 		this.pushData = "";
 	}
 
-	private onPop(): void
+	public onPop(): void
 	{
-		this.removeTargets.remove( this.list.pop() );
+		this.removeTargets.remove( this.list.pop()! );
 	}
 
-	private onRemove(): void
+	public onRemove(): void
 	{
 		this.removeTargets.forEach( data =>
 		{
@@ -108,7 +104,7 @@ class Nav
 		this.uid = this.items[0].uid;
 	}
 
-	private onClickTab( item: INavItem ): void
+	public onClickTab( item: INavItem ): void
 	{
 		this.uid = item.uid;
 	}
@@ -116,9 +112,9 @@ class Nav
 
 class Demo
 {
-	private nav: Nav;
-	private observableDemo: ObservableVariablesDemo;
-	private observableArrayDemo: ObservableArrayDemo;
+	private readonly nav: Nav;
+	private readonly observableDemo: ObservableVariablesDemo;
+	private readonly observableArrayDemo: ObservableArrayDemo;
 
 	public constructor()
 	{
