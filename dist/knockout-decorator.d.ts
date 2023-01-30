@@ -159,7 +159,7 @@ export declare namespace KnockoutDecorator {
     function getObservableArray<T>(target: any, property: string): KnockoutObservableArray<T>;
     /**
      * Get row knockout observable array object.
-     * @param propertyAccess    execute propety access. e.g. "() => this.property".
+     * @param propertyAccess    execute property access. e.g. "() => this.property".
      */
     function getObservableArray<T>(propertyAccess: () => T[]): KnockoutObservableArray<T>;
     /**
