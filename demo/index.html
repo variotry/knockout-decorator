@@ -91,7 +91,7 @@
 				<dt>TypeScript</dt>
 				<dd>
 					<pre class="brush: js" data-bind="disableBinding:true">
-class DemoWithDecorator
+class ObservableVariablesDemo
 {
 	@kd.observable
 	private firstName = "vario";
@@ -101,12 +101,12 @@ class DemoWithDecorator
 
 	@kd.pureComputed
 	@kd.extend( { rateLimit: 1 } )
-	private get fullName(): string
+	public get fullName(): string
 	{
 		return this.firstName + " " + this.lastName;
 	}
 
-	private onReset()
+	public onReset()
 	{
 		this.firstName = "vario";
 		this.lastName = "try";
