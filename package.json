@@ -26,10 +26,10 @@
 		"build": "tsc && vite build",
 		"preview": "vite preview"
 	},
-	"peerDepenencies": {
-		"typescript": "^3.7.2",
-		"knockout": "^3.7.2",
-		"@types/knockout": "^3.4.72"
+	"peerDependencies": {
+		"typescript": "<3.7.2",
+		"knockout": "<3.5.1",
+		"@types/knockout": "<3.4.72"
 	},
 	"devDependencies": {
 		"@types/node": "^18.11.18",
