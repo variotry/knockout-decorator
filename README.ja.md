@@ -5,12 +5,14 @@
 # 導入
 1. 以下のパッケージを要求しています。
 ```json
-"devDependencies": {
-	"typescript": "^3.7.2",
-	"knockout": "^3.7.2",
-	"@types/knockout": "^3.4.72",
-	"vt-knockout-decorator" : "2.0.0"
-},
+{
+  "devDependencies": {
+    "typescript": ">=3.7.2",
+    "knockout": ">=3.5.1",
+    "@types/knockout": ">=3.4.72"
+    "vt-knockout-decorator": "2.0.0"
+  }
+}
 ```
 
 2. tsconfig.json  
