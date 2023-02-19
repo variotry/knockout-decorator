@@ -1,8 +1,9 @@
+import * as ko from "knockout";
 /*!
-* Knockout decorator
-* (c) vario
-* License: MIT (http://www.opensource.org/licenses/mit-license.php)
-*/
+ * Knockout decorator
+ * (c) vario
+ * License: MIT (http://www.opensource.org/licenses/mit-license.php)
+ */
 export declare namespace KnockoutDecorator {
     /**
      * Provide for accessing methods defined on Knockout ObservableArray.
@@ -143,38 +144,38 @@ export declare namespace KnockoutDecorator {
      * @param property     Property name which is attaching @observable decorator.
      * @return If found then return KnockoutObservable object, else null.
      */
-    function getObservable<T>(target: any, property: string): KnockoutObservable<T>;
+    function getObservable<T>(target: any, property: string): ko.Observable<T>;
     /**
      * Get raw knockout observable object.
      * getObservable( () => this.prop ) equals getObservable( this, 'prop' ).
      * Recommend using this.
      * @param propertyAccess    execute property access. e.g. "() => this.property".
      */
-    function getObservable<T>(propertyAccess: () => T): KnockoutObservable<T>;
+    function getObservable<T>(propertyAccess: () => T): ko.Observable<T>;
     /**
      * Get row knockout observable array object.
      * @param target    Target object.
      * @param property     Property name which is attaching @observableArray decorator.
      */
-    function getObservableArray<T>(target: any, property: string): KnockoutObservableArray<T>;
+    function getObservableArray<T>(target: any, property: string): ko.ObservableArray<T>;
     /**
      * Get row knockout observable array object.
      * @param propertyAccess    execute property access. e.g. "() => this.property".
      */
-    function getObservableArray<T>(propertyAccess: () => T[]): KnockoutObservableArray<T>;
+    function getObservableArray<T>(propertyAccess: () => T[]): ko.ObservableArray<T>;
     /**
      * Get raw knockout computed object.
      * @param target    Target object.
      * @param accessor    Accessor name which is attached the @computed decorator.
      * @return If found then KnockoutComputed object, else null.
      */
-    function getComputed<T>(target: any, accessor: string): KnockoutComputed<T>;
+    function getComputed<T>(target: any, accessor: string): ko.Computed<T>;
     /**
      * Get raw knockout computed object.
      * getComputed( () => this.getter ) equals getComputed( this, 'getter' ).
      * @param getterAccess    execute getter. e.g. "() => this.getter".
      * @return If found then KnockoutComputed object, else null.
      */
-    function getComputed<T>(getterAccess: () => T): KnockoutComputed<T>;
+    function getComputed<T>(getterAccess: () => T): ko.Computed<T>;
 }
 export default KnockoutDecorator;

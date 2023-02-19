@@ -9,12 +9,10 @@
   "devDependencies": {
     "typescript": ">=3.7.2",
     "knockout": ">=3.5.1",
-    "@types/knockout": ">=3.4.72"
-    "vt-knockout-decorator": "2.0.0"
+    "vt-knockout-decorator": "2.0.1"
   }
 }
 ```
-
 2. tsconfig.json  
 デコレータの利用には experimentalDecorators を true にする必要があります。    
 また、useDefineForClassFields はデコレータとの相性が良くないので false を推奨します。
@@ -29,9 +27,8 @@
 
 3. サンプルコード
 ```typescript
-import { KnockoutDecorator as kd } from "vt-knockout-decorator";
+import kd from "vt-knockout-decorator";
 import * as ko from "knockout";
-( <any>window ).ko = ko;
 
 class Sample
 {
@@ -68,7 +65,7 @@ sample.changeText( 'hoge' );
 
 # リファレンス
 ```typescript
-import { KnockoutDecorator as kd } from "vt-knockout-decorator";
+import kd from "vt-knockout-decorator";
 ```
 と ショートネーム `kd` としてエイリアス設定しています。
 

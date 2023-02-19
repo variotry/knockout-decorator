@@ -1,14 +1,7 @@
 ﻿import * as ko from "knockout";
-( <any>window ).ko = ko;
 
 // vite dev
-import { KnockoutDecorator as kd } from "../../";
-
-// use as global.
-/*
-///<reference path="../../dist-globalDefinition/knockout-decorator.d.ts" />
-import kd = KnockoutDecorator;	// alias
-*/
+import kd from "../../";
 
 ko.bindingHandlers["disableBinding"] =
 {

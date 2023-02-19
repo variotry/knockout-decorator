@@ -1,11 +1,12 @@
+import * as A from "knockout";
 /*!
-* Knockout decorator
-* (c) vario
-* License: MIT (http://www.opensource.org/licenses/mit-license.php)
-*/
-var A;
+ * Knockout decorator
+ * (c) vario
+ * License: MIT (http://www.opensource.org/licenses/mit-license.php)
+ */
+var x;
 ((f) => {
-  function S(e) {
+  function E(e) {
     let t;
     if (typeof e == "function")
       t = {
@@ -31,16 +32,16 @@ var A;
           let o = this, m = Object.keys(o), c = m.length;
           for (let b = 0; b < c; ++b) {
             let u = m[b];
-            if (u === p.Key || l.isIgnoreProperty(u) || F(o, u) || I(o, u))
+            if (u === p.Key || l.isIgnoreProperty(u) || I(o, u) || K(o, u))
               continue;
             let y = o[u];
-            delete o[u], Array.isArray(y) ? j(a.prototype, u) : x(a.prototype, u), o[u] = y;
+            delete o[u], Array.isArray(y) ? F(a.prototype, u) : j(a.prototype, u), o[u] = y;
           }
-          let _ = Object.keys(s.prototype), P = [];
-          c = _.length;
+          let S = Object.keys(s.prototype), P = [];
+          c = S.length;
           for (let b = 0; b < c; ++b) {
-            let u = _[b], y = Object.getOwnPropertyDescriptor(s.prototype, u);
-            if (!y || !y.get || l.isIgnoreProperty(u) || (o[u], K(o, u)))
+            let u = S[b], y = Object.getOwnPropertyDescriptor(s.prototype, u);
+            if (!y || !y.get || l.isIgnoreProperty(u) || (o[u], _(o, u)))
               continue;
             v({
               pure: t.pureComputed
@@ -60,12 +61,12 @@ var A;
       return r(s);
     };
   }
-  f.track = S;
-  function E(e, t) {
+  f.track = E;
+  function w(e, t) {
     h.Get(e).pushIgnoreProperty(t);
   }
-  f.ignore = E;
-  function x(e, t) {
+  f.ignore = w;
+  function j(e, t) {
     Object.defineProperty(e, t, {
       get: function() {
         return p.Get(this).makeObservable(t), this[t];
@@ -75,8 +76,8 @@ var A;
       }
     });
   }
-  f.observable = x;
-  function j(e, t) {
+  f.observable = j;
+  function F(e, t) {
     Object.defineProperty(e, t, {
       get: function() {
         return p.Get(this).makeObservableArray(t), this[t];
@@ -86,50 +87,50 @@ var A;
       }
     });
   }
-  f.observableArray = j;
-  function w() {
+  f.observableArray = F;
+  function $() {
     if (arguments.length == 1)
       return v(arguments[0]);
     v(null).apply(this, arguments);
   }
-  f.computed = w;
-  function $(e, t, r) {
+  f.computed = $;
+  function q(e, t, r) {
     v({ pure: !0 })(e, t, r);
   }
-  f.pureComputed = $;
-  function q(e) {
+  f.pureComputed = q;
+  function T(e) {
     return (t, r, s) => {
       h.Get(t).pushKoExtend(r, e);
     };
   }
-  f.extend = q;
+  f.extend = T;
   function O(e) {
     return (t, r) => {
       h.Get(t).pushSetFilter(r, e);
     };
   }
   f.setFilter = O;
-  function T(e, t) {
+  function z(e, t) {
     h.Get(e).pushSetFilter(t, (r) => !r || typeof r == "number" ? r : (r = parseFloat(r), isNaN(r) ? 0 : r));
   }
-  f.asNumber = T;
-  function z(e) {
+  f.asNumber = z;
+  function B(e) {
     return O((t) => t < e ? e : t);
   }
-  f.min = z;
-  function B(e) {
+  f.min = B;
+  function J(e) {
     return O((t) => t > e ? e : t);
   }
-  f.max = B;
-  function J(e, t) {
+  f.max = J;
+  function L(e, t) {
     if (e > t) {
       let r = e;
       e = t, t = r;
     }
     return O((r) => (r < e ? r = e : r > t && (r = t), r));
   }
-  f.clamp = J;
-  function F() {
+  f.clamp = L;
+  function I() {
     if (typeof arguments[0] == "function") {
       d = null, arguments[0]();
       let e = d;
@@ -139,8 +140,8 @@ var A;
       return p.Get(e).getObservable(t);
     }
   }
-  f.getObservable = F;
-  function I() {
+  f.getObservable = I;
+  function K() {
     if (typeof arguments[0] == "function") {
       H = null, arguments[0]();
       let e = H;
@@ -150,18 +151,18 @@ var A;
       return p.Get(e).getObservableArray(t);
     }
   }
-  f.getObservableArray = I;
-  function K() {
+  f.getObservableArray = K;
+  function _() {
     if (typeof arguments[0] == "function") {
-      k = null, arguments[0]();
-      let e = k;
-      return k = null, e;
+      G = null, arguments[0]();
+      let e = G;
+      return G = null, e;
     } else {
       let e = arguments[0], t = arguments[1];
       return p.Get(e).getComputed(t);
     }
   }
-  f.getComputed = K;
+  f.getComputed = _;
   function v(e) {
     return (t, r, s) => {
       let n = s.get;
@@ -175,10 +176,10 @@ var A;
       });
     };
   }
-  let d = null, H = null, k = null;
-  const G = class {
+  let d = null, H = null, G = null;
+  const C = class {
     static Get(e) {
-      return e = typeof e == "function" ? e.prototype : e, e[G.Key] || (e[G.Key] = new this()), e[G.Key];
+      return e = typeof e == "function" ? e.prototype : e, e[C.Key] || (e[C.Key] = new this()), e[C.Key];
     }
     pushIgnoreProperty(e) {
       this.ignoreProperties || (this.ignoreProperties = []), this.ignoreProperties.push(e);
@@ -220,17 +221,17 @@ var A;
     constructor() {
     }
   };
-  let h = G;
+  let h = C;
   h.Key = "__vtKnockoutDecoratorClassInfo__";
-  const C = class {
+  const k = class {
     constructor(e) {
       this.koObservableHash = {}, this.koObservableArrayHash = {}, this.koComputedHash = {}, this.target = e;
     }
     static Get(e) {
-      return e[C.Key] || (e[C.Key] = new this(e)), e[C.Key];
+      return e[k.Key] || (e[k.Key] = new this(e)), e[k.Key];
     }
     makeObservable(e) {
-      let t = ko.observable();
+      let t = A.observable();
       this.koObservableHash[e] = t;
       let r = Object.getPrototypeOf(this.target), s = h.Get(r);
       s.applyKoExtend(e, t), h.Get(r), Object.defineProperty(this.target, e, {
@@ -258,7 +259,7 @@ var A;
           };
         });
       }
-      let s = ko.observableArray();
+      let s = A.observableArray();
       this.koObservableArrayHash[e] = s;
       let n = Object.getPrototypeOf(this.target), i = h.Get(n);
       i.applyKoExtend(e, s), h.Get(n), Object.defineProperty(this.target, e, {
@@ -277,11 +278,11 @@ var A;
       if (s)
         for (let g in s)
           n[g] = s[g];
-      let i = ko.computed(n);
+      let i = A.computed(n);
       this.koComputedHash[e] = i;
       let l = Object.getPrototypeOf(this.target), a = h.Get(l);
       a.applyKoExtend(e, i), Object.defineProperty(this.target, e, {
-        get: () => (k = i, i()),
+        get: () => (G = i, i()),
         set: r != null ? a.getSetter(e, i) : void 0
       });
     }
@@ -295,11 +296,11 @@ var A;
       return this.koComputedHash[e];
     }
   };
-  let p = C;
+  let p = k;
   p.Key = "__vtKnockoutDecoratorObjInfo__";
-})(A || (A = {}));
-const M = A;
+})(x || (x = {}));
+const Q = x;
 export {
-  A as KnockoutDecorator,
-  M as default
+  x as KnockoutDecorator,
+  Q as default
 };

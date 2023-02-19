@@ -1,6 +1,6 @@
 {
 	"name": "vt-knockout-decorator",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"author": "vario <variotries@gmail.com>",
 	"license": "MIT",
 	"description": "Typescript Decorator that assist knockoutjs",
@@ -28,14 +28,12 @@
 	},
 	"peerDependencies": {
 		"typescript": ">=3.7.2",
-		"knockout": ">=3.5.1",
-		"@types/knockout": ">=3.4.72"
+		"knockout": ">=3.5.1"
 	},
 	"devDependencies": {
 		"@types/node": "^18.11.18",
 		"typescript": "^3.7.2",
 		"knockout": "^3.5.1",
-		"@types/knockout": "^3.4.72",
 		"vite": "^4.0.4",
 		"vite-plugin-dts": "^1.7.1",
 		"sass": "^1.57.1"

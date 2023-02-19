@@ -1,9 +1,10 @@
-﻿/*!
+﻿import * as ko from "knockout";
+
+/*!
  * Knockout decorator
  * (c) vario
  * License: MIT (http://www.opensource.org/licenses/mit-license.php)
  */
-
 export namespace KnockoutDecorator
 {
     // #region declare interfaces.
@@ -376,15 +377,15 @@ export namespace KnockoutDecorator
      * @param property     Property name which is attaching @observable decorator.
      * @return If found then return KnockoutObservable object, else null.
      */
-    export function getObservable<T>( target: any, property: string ): KnockoutObservable<T>;
+    export function getObservable<T>( target: any, property: string ): ko.Observable<T>;
     /**
      * Get raw knockout observable object.
      * getObservable( () => this.prop ) equals getObservable( this, 'prop' ).
      * Recommend using this.
      * @param propertyAccess    execute property access. e.g. "() => this.property".
      */
-    export function getObservable<T>( propertyAccess: () => T ): KnockoutObservable<T>;
-    export function getObservable<T>(): KnockoutObservable<T> | null
+    export function getObservable<T>( propertyAccess: () => T ): ko.Observable<T>;
+    export function getObservable<T>(): ko.Observable<T> | null
     {
         if ( typeof arguments[ 0 ] === "function" )
         {
@@ -407,13 +408,13 @@ export namespace KnockoutDecorator
      * @param target    Target object.
      * @param property     Property name which is attaching @observableArray decorator.
      */
-    export function getObservableArray<T>( target: any, property: string ): KnockoutObservableArray<T>;
+    export function getObservableArray<T>( target: any, property: string ): ko.ObservableArray<T>;
     /**
      * Get row knockout observable array object.
      * @param propertyAccess    execute property access. e.g. "() => this.property".
      */
-    export function getObservableArray<T>( propertyAccess: () => T[] ): KnockoutObservableArray<T>;
-    export function getObservableArray<T>(): KnockoutObservableArray<T> | null
+    export function getObservableArray<T>( propertyAccess: () => T[] ): ko.ObservableArray<T>;
+    export function getObservableArray<T>(): ko.ObservableArray<T> | null
     {
         if ( typeof arguments[ 0 ] === "function" )
         {
@@ -437,15 +438,15 @@ export namespace KnockoutDecorator
      * @param accessor    Accessor name which is attached the @computed decorator.
      * @return If found then KnockoutComputed object, else null.
      */
-    export function getComputed<T>( target: any, accessor: string ): KnockoutComputed<T>;
+    export function getComputed<T>( target: any, accessor: string ): ko.Computed<T>;
     /**
      * Get raw knockout computed object.
      * getComputed( () => this.getter ) equals getComputed( this, 'getter' ).
      * @param getterAccess    execute getter. e.g. "() => this.getter".
      * @return If found then KnockoutComputed object, else null.
      */
-    export function getComputed<T>( getterAccess: () => T ): KnockoutComputed<T>;
-    export function getComputed<T>(): KnockoutComputed<T> | null
+    export function getComputed<T>( getterAccess: () => T ): ko.Computed<T>;
+    export function getComputed<T>(): ko.Computed<T> | null
     {
         if ( typeof arguments[ 0 ] === "function" )
         {
@@ -496,9 +497,9 @@ export namespace KnockoutDecorator
         }
     }
 
-    let lastGetKoObservable: KnockoutObservable<any> | null = null;
-    let lastGetKoObservableArray: KnockoutObservableArray<any> | null = null;
-    let lastGetKoComputed: KnockoutComputed<any> | null = null;
+    let lastGetKoObservable: ko.Observable<any> | null = null;
+    let lastGetKoObservableArray: ko.ObservableArray<any> | null = null;
+    let lastGetKoComputed: ko.Computed<any> | null = null;
 
     // Information that class should have.
     class KnockoutDecoratorClassInfo
@@ -534,7 +535,7 @@ export namespace KnockoutDecorator
             this.extendsHash[ name ].push( extendOptions );
         }
 
-        public applyKoExtend( target: string, o: KnockoutObservable<any> ): void
+        public applyKoExtend( target: string, o: ko.Subscribable<any> ): void
         {
             if ( !this.extendsHash ) return;
             let extendArr = this.extendsHash[ target ];
@@ -557,7 +558,7 @@ export namespace KnockoutDecorator
             filters.push( filterFunc );
         }
 
-        public getSetter( target: string, o: KnockoutObservable<any> ): any
+        public getSetter( target: string, o: ko.Subscribable<any> ): any
         {
             if ( !this.setFiltersHash ) return o;
             let filters = this.setFiltersHash[ target ];
@@ -613,7 +614,7 @@ export namespace KnockoutDecorator
 
         public makeObservableArray( property: string ): void
         {
-            function replaceFunction( src: any[], o: KnockoutObservableArray<any> )
+            function replaceFunction( src: any[], o: ko.ObservableArray<any> )
             {
                 let originals: { [ fn: string ]: Function } = {};
                 [ "splice", "pop", "push", "shift", "unshift", "reverse", "sort" ].forEach( fnName => {
@@ -637,7 +638,7 @@ export namespace KnockoutDecorator
                 } );
             }
 
-            function mergeFunction( src: any[], o: KnockoutObservableArray<any> )
+            function mergeFunction( src: any[], o: ko.ObservableArray<any> )
             {
                 [ "replace", "remove", "removeAll", "destroy", "destroyAll" ].forEach( fnName => {
                     ( <any>src )[ fnName ] = function () {
@@ -673,7 +674,7 @@ export namespace KnockoutDecorator
 
         public makeComputed( accessor: string, getter: () => any, setter: ( v: any ) => void, options: IComputedOptions ): void
         {
-            let computedOptions: KnockoutComputedDefine<any> = {
+            let computedOptions: ko.ComputedOptions<any> = {
                 read: getter,
                 write: setter,
                 owner: this.target
@@ -701,26 +702,26 @@ export namespace KnockoutDecorator
             } );
         }
 
-        public getObservable<T>( property: string ): KnockoutObservable<T>
+        public getObservable<T>( property: string ): ko.Observable<T>
         {
             return this.koObservableHash[ property ];
         }
 
-        public getObservableArray<T>( property: string ): KnockoutObservableArray<T>
+        public getObservableArray<T>( property: string ): ko.ObservableArray<T>
         {
             return this.koObservableArrayHash[ property ];
         }
 
-        public getComputed<T>( accessor: string ): KnockoutComputed<T>
+        public getComputed<T>( accessor: string ): ko.Computed<T>
         {
             return this.koComputedHash[ accessor ];
         }
 
         public static readonly Key = "__vtKnockoutDecoratorObjInfo__";
         private readonly target: any;
-        private koObservableHash: { [ property: string ]: KnockoutObservable<any> } = {};
-        private koObservableArrayHash: { [ property: string ]: KnockoutObservableArray<any> } = {};
-        private koComputedHash: { [ accessor: string ]: KnockoutComputed<any> } = {};
+        private koObservableHash: { [ property: string ]: ko.Observable<any> } = {};
+        private koObservableArrayHash: { [ property: string ]: ko.ObservableArray<any> } = {};
+        private koComputedHash: { [ accessor: string ]: ko.Computed<any> } = {};
 
         private constructor( target: any )
         {

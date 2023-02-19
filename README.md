@@ -1,4 +1,4 @@
-# Abount knockout-decorator
+# About knockout-decorator
 
 This plug-in will assist you write code using [knockoutjs](https://github.com/knockout/knockout).  
 
@@ -9,8 +9,7 @@ This plug-in will assist you write code using [knockoutjs](https://github.com/kn
   "devDependencies": {
     "typescript": ">=3.7.2",
     "knockout": ">=3.5.1",
-    "@types/knockout": ">=3.4.72"
-    "vt-knockout-decorator": "2.0.0"
+    "vt-knockout-decorator": "2.0.1"
   }
 }
 ```
@@ -25,12 +24,10 @@ And, useDefineForClassFields is not compatible with decorator, so it recommend s
   }
 }
 ```
-
 3. Sample Code
 ```typescript
-import { KnockoutDecorator as kd } from "vt-knockout-decorator";
+import kd from "vt-knockout-decorator";
 import * as ko from "knockout";
-( <any>window ).ko = ko;
 
 class Sample
 {
@@ -67,7 +64,7 @@ Getting/Setting of simple inputText property behaves like KnockoutJs.
 
 # Reference
 ```typescript
-import { KnockoutDecorator as kd } from "vt-knockout-decorator";
+import kd from "vt-knockout-decorator";
 ```
 set alias as short name `kd`.
 

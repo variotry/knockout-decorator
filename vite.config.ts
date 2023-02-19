@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import dts from "vite-plugin-dts";
 
-export default defineConfig( ( { command} ) => {
+export default defineConfig( ( { command } ) => {
     if ( command === 'serve' )
     {
         return {
@@ -21,6 +21,11 @@ export default defineConfig( ( { command} ) => {
                 lib: {
                     entry: "src/knockout-decorator.ts",
                     name: "KnockoutDecorator"
+                },
+                rollupOptions: {
+                    external: [
+                        'knockout'
+                    ]
                 }
             },
             plugins: [
