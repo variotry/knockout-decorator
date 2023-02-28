@@ -126,18 +126,18 @@ export declare namespace KnockoutDecorator {
      * Property and Setter decorator.
      * Variable keeps greater than or equal to minValue.
      */
-    function min(minValue: number): number;
+    function min(minValue: number): any;
     /**
      * Property and Setter decorator.
      * Variable keeps less than or equal to maxValue.
      * @extend require attaching observable decorator.
      */
-    function max(maxValue: number): number;
+    function max(maxValue: number): any;
     /**
      * Property and Setter decorator.
      * Variable keeps between minValue and maxValue inclusive.
      */
-    function clamp(minValue: number, maxValue: number): number;
+    function clamp(minValue: number, maxValue: number): any;
     /**
      * Get raw knockout observable object.
      * @param target    Target object.

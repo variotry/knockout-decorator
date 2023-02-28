@@ -335,7 +335,7 @@ export namespace KnockoutDecorator
      * Property and Setter decorator.
      * Variable keeps greater than or equal to minValue.
      */
-    export function min( minValue: number ): number
+    export function min( minValue: number ): any
     {
         return setFilter<number>( v => v < minValue ? minValue : v );
     }
@@ -345,7 +345,7 @@ export namespace KnockoutDecorator
      * Variable keeps less than or equal to maxValue.
      * @extend require attaching observable decorator.
      */
-    export function max( maxValue: number ): number
+    export function max( maxValue: number ): any
     {
         return setFilter<number>( v => v > maxValue ? maxValue : v );
     }
@@ -354,7 +354,7 @@ export namespace KnockoutDecorator
      * Property and Setter decorator.
      * Variable keeps between minValue and maxValue inclusive.
      */
-    export function clamp( minValue: number, maxValue: number ): number
+    export function clamp( minValue: number, maxValue: number ): any
     {
         if ( minValue > maxValue )
         {
